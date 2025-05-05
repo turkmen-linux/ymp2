@@ -1,7 +1,7 @@
 #include <stddef.h>
 
 /**
- * @file operation.h
+ * @file operations.h
  * @brief Header file for operation registration and callback handling.
  */
 
@@ -13,7 +13,6 @@
  * and returns an integer. It can be used to implement various operations that require
  * callback functionality.
  *
- * @param arg A pointer to the data that will be passed to the callback function.
  * @return int The result of the operation, typically indicating success (0) or failure (non-zero).
  */
 typedef int (*callback)(void*);
@@ -59,7 +58,6 @@ typedef struct {
  * @note Ensure that the callback function pointed to by `new_op.call` is valid and
  *       properly defined before calling this function.
  *
- * @return void
  */
 void operation_register(OperationManager *manager, Operation new_op);
 

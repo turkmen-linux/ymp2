@@ -5,7 +5,7 @@
 
 #include <operations.h>
 
-OperationManager visible *operation_manager_new() {
+visible OperationManager* operation_manager_new() {
     // Allocate memory for the OperationManager instance
     OperationManager *manager = (OperationManager *)malloc(sizeof(OperationManager));
     if (manager == NULL) {
