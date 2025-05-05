@@ -14,6 +14,21 @@
  * callback functionality.
  *
  * @return int The result of the operation, typically indicating success (0) or failure (non-zero).
+ * @code
+ * // example usage:
+ * int test(void* args){
+ *     ...
+ *    return 0;
+ * }
+ * int main(int argc, char** argv){
+ *     OperationManager *manager = operation_manager_new();
+ *     Operation op;
+ *     op.call = (callback)test;
+ *     op.name = "test";
+ *     operation_register(manager, op);
+ *     return operation_main(manager, "test", NULL);
+ * }
+ * @endcode
  */
 typedef int (*callback)(void*);
 

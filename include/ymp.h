@@ -79,6 +79,15 @@ void ymp_add(Ymp* ymp, const char* name, void* args);
  *             the iteration was stopped. A value of 0 or negative
  *             indicates that all operations were executed without
  *             early termination.
+ * @code
+ * // example usage:
+ * int main(int argc, char** argv){
+ *     Ymp *ymp = ymp_new();
+ *     ymp_add(ymp, "print", "Hello World\n");
+ *     ymp_add(ymp, "print", "How are you?\n");
+ *     return ymp_run(ymp);
+ * }
+ * @endcode
  */
 
 int ymp_run(Ymp* ymp);
