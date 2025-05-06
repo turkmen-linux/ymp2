@@ -10,6 +10,8 @@ typedef struct {
     bool read_only;
 } Variable;
 
+visible VariableManager* global_variables;
+
 visible VariableManager* variable_manager_new(){
     VariableManager *variables = (VariableManager*)malloc(sizeof(VariableManager));
     variables->capacity = 0;
@@ -22,8 +24,26 @@ void visible variable_set_value(VariableManager* variables, const char* name, co
     Variable* vars = (Variable*)variables->priv_data;
     for(size_t i=0; i< variables->length; i++){
         if(strcmp(name, vars[i].name) == 0){
-            strcpy(vars[i].value, value);
+            vars[i].value = (char*)value;
             return;
         }
     }
+    if(variables->length >= variables->capacity){
+        variables->capacity +=32;
+        variables->priv_data = realloc(variables->priv_data, sizeof(VariableManager)*variables->capacity);
+    }
+    vars[variables->length] = (Variable)malloc(sizeof(Variable));
+    vars[variables->length].name = (char*)name;
+    vars[variables->length].value = (char*)value;
+    variables->length++;
+}
+
+visible char* variable_get_value(VariableManager* variables, const char* name){
+    Variable* vars = (Variable*)variables->priv_data;
+    for(size_t i=0; i< variables->length; i++){
+        if(strcmp(name, vars[i].name) == 0){
+            return vars[i].value;
+        }
+    }
+    return "";
 }

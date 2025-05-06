@@ -24,5 +24,7 @@ typedef struct {
 
 VariableManager *variable_manager_new();
 
+extern VariableManager* global_variables;
 
 void variable_set_value(VariableManager* variables, const char* name, const char* value);
+char* variable_get_value(VariableManager* variables, const char* name);

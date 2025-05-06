@@ -9,6 +9,7 @@
  */
 
 #include <operations.h>
+#include <variable.h>
 
 /**
  * @struct Ymp
@@ -21,6 +22,7 @@
  */
 typedef struct {
     OperationManager *manager; /**< Pointer to the main `OperationManager` instance */
+    VariableManager *variables; /**< Pointer to the main `VariableManager` instance */
 /** @cond */
     void* priv_data; /* Private data. Do not touch! */
 /** @endcond */

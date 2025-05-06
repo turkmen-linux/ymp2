@@ -23,6 +23,7 @@ visible Ymp* ymp_init(){
         return NULL; // Memory allocation failed!
     }
     ymp->manager = operation_manager_new(); // Operation manager.
+    ymp->variables = variable_manager_new();
     // Fill private space
     YmpPrivate *queue = (YmpPrivate*) malloc(sizeof(YmpPrivate));
     queue->length = 0;
@@ -52,6 +53,7 @@ void visible ymp_add(Ymp* ymp, const char* name, void* args) {
 
 int visible ymp_run(Ymp* ymp){
     YmpPrivate *queue = (YmpPrivate*)ymp->priv_data;
+    global_variables = ymp->variables;
     int rc = 0;
     for(size_t i=0; i< queue->length; i++){
         rc = operation_main(ymp->manager, queue->item[i].name, queue->item[i].args);
@@ -59,5 +61,6 @@ int visible ymp_run(Ymp* ymp){
             break;
         }
     }
+    global_variables = NULL;
     return rc;
 }
