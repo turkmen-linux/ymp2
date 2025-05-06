@@ -252,3 +252,23 @@ visible void array_reverse(array *arr) {
     }
     pthread_mutex_unlock(&arr->lock);
 }
+
+visible void array_unref(array *arr) {
+    if (arr == NULL) {
+        return; // Nothing to free
+    }
+
+    // Free each string in the array
+    for (size_t i = 0; i < arr->size; i++) {
+        free(arr->data[i]); // Free each string
+    }
+
+    // Free the array of strings itself
+    free(arr->data);
+
+    // Destroy the mutex if it was initialized
+    pthread_mutex_destroy(&arr->lock);
+
+    // Free the array structure
+    free(arr);
+}

@@ -65,7 +65,10 @@ visible jobs* jobs_new() {
     j->current = 0;
     j->finished = 0;
     j->total = 0;
-    j->parallel = atoi(variable_get_value(global_variables,"jobs"));
+    j->parallel = -1;
+    if(global_variables){
+        j->parallel = atoi(variable_get_value(global_variables,"jobs"));
+    }
     if(j->parallel < 1){
         j->parallel = get_nprocs_conf();
     }

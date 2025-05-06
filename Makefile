@@ -6,9 +6,11 @@ build:
 	ninja -C build
 
 test:
-	@for example in $(shell find build/test/ -type f -iname *.c) ; do \
-	    echo Testing: $$example ; \
-	    [ ! -f $$example ] || $$example >/dev/null;\
+	@for example in $(wildcard build/examples/*) ; do \
+	    if [ -f $$example ] ; then \
+	        echo Testing: $$example ; \
+	        $$example >/dev/null;\
+	    fi \
 	done ; echo DONE
 
 clean:
