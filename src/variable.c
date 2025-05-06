@@ -16,7 +16,7 @@ visible VariableManager* variable_manager_new(){
     VariableManager *variables = (VariableManager*)malloc(sizeof(VariableManager));
     variables->capacity = 0;
     variables->length = 0;
-    variables->priv_data = NULL;
+    variables->priv_data = malloc(sizeof(Variable));
     return variables;
 }
 
@@ -32,7 +32,6 @@ void visible variable_set_value(VariableManager* variables, const char* name, co
         variables->capacity +=32;
         variables->priv_data = realloc(variables->priv_data, sizeof(VariableManager)*variables->capacity);
     }
-    vars[variables->length] = (Variable)malloc(sizeof(Variable));
     vars[variables->length].name = (char*)name;
     vars[variables->length].value = (char*)value;
     variables->length++;
