@@ -60,8 +60,6 @@ Ymp* ymp_init();
  *             the entry. The interpretation of this pointer depends on
  *             the specific implementation and usage context.
  *
- * @return void This function does not return a value.
- *
  * @note Ensure that the Ymp structure is properly initialized before
  *       calling this function. The behavior is undefined if the
  *       structure is not valid.

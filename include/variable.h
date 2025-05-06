@@ -8,7 +8,6 @@
 #include <stddef.h>
 
 /**
- * @struct VariableManager
  * @brief Variable storage struct.
 */
 typedef struct {
@@ -20,7 +19,6 @@ typedef struct {
 } VariableManager;
 
 /**
- * @function variable_manager_new
  * @brief Create a new `VariableManager` instance
 */
 
