@@ -34,16 +34,18 @@ visible void jobs_unref(jobs *j) {
 }
 
 visible void jobs_add(jobs* j, callback call, void* ctx, void* args, ...) {
-    if (j->total < j->max) {
-        job new_job;
-        new_job.call = call;
-        new_job.args = args;
-        new_job.ctx = ctx;
-        new_job.id = j->total;
-        j->jobs[j->total++] = new_job;
-        j->current++;
-        pthread_cond_signal(&j->cond);
+    if (j->total >= j->max) {
+        j->max += 32;
+        j->jobs = (job*)realloc(j->jobs, sizeof(job)* j->max);
     }
+    job new_job;
+    new_job.call = call;
+    new_job.args = args;
+    new_job.ctx = ctx;
+    new_job.id = j->total;
+    j->jobs[j->total++] = new_job;
+    j->current++;
+    pthread_cond_signal(&j->cond);
 }
 
 visible void jobs_run(jobs* j) {
@@ -63,7 +65,7 @@ visible void jobs_run(jobs* j) {
 
 visible jobs* jobs_new() {
     jobs* j = (jobs*)malloc(sizeof(jobs));
-    j->max = INT_MAX;
+    j->max = 32;
     j->current = 0;
     j->finished = 0;
     j->total = 0;
