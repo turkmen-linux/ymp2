@@ -6,8 +6,8 @@
 #include <stdarg.h>
 #include <sys/sysinfo.h>
 
-#include <jobs.h>
-#include <variable.h>
+#include <utils/jobs.h>
+#include <core/variable.h>
 
 typedef struct _worker_job {
     jobs* j;

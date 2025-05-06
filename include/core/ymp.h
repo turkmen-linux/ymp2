@@ -10,8 +10,8 @@
  * management functionality.
  */
 
-#include <operations.h>
-#include <variable.h>
+#include <core/operations.h>
+#include <core/variable.h>
 
 /**
  * @struct Ymp

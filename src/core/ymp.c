@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <ymp.h>
+#include <core/ymp.h>
 
 void ctx_init(OperationManager *manager);
 

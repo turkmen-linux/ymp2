@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <ymp.h>
+#include <core/ymp.h>
 
 int set_fn(char** args){
     variable_set_value(global_variables, args[0], args[1]);

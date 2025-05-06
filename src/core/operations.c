@@ -4,7 +4,7 @@
 #include <string.h>
 
 
-#include <operations.h>
+#include <core/operations.h>
 
 typedef struct {
     bool running;

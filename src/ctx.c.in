@@ -1,5 +1,5 @@
 #define VERSION "@VERSION@"
 #define DEBUG_MODE @DEBUG_MODE@
 
-#include <ymp.h>
+#include <core/ymp.h>
 @CTX@

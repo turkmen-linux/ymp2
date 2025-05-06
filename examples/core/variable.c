@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <ymp.h>
-#include <variable.h>
+#include <core/ymp.h>
+#include <core/variable.h>
 
 int main(int argc, char** argv){
     (void)argc, (void)argv;

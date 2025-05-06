@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include <array.h>
+#include <utils/array.h>
 
 #define strdup(A) strcpy(calloc(strlen(A) + 1, sizeof(char)), A)
 

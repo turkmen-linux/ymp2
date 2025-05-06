@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <variable.h>
+#include <core/variable.h>
 
 typedef struct {
     char* name;

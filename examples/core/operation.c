@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <operations.h>
+#include <core/operations.h>
 
 
 int my_print(void* args){
