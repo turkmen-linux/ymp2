@@ -6,9 +6,10 @@ build:
 	ninja -C build
 
 test:
-	for example in $(wildcard build/docs/examples/*) ; do \
-	    [ ! -f $$example ] || $$example ;\
-	done
+	@for example in $(shell find build/test/ -type f -iname *.c) ; do \
+	    echo Testing: $$example ; \
+	    [ ! -f $$example ] || $$example >/dev/null;\
+	done ; echo DONE
 
 clean:
 	rm -rvf build docs/html docs/latex

@@ -12,5 +12,3 @@ if doxygen.found()
         build_by_default: true
     )
 endif
-
-subdir('examples')
