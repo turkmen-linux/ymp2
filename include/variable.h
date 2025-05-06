@@ -1,3 +1,5 @@
+#ifndef _variable_h
+#define _variable_h
 /**
  * @file variable.h
  * @brief Define string or boolean variables.
@@ -27,4 +29,7 @@ VariableManager *variable_manager_new();
 extern VariableManager* global_variables;
 
 void variable_set_value(VariableManager* variables, const char* name, const char* value);
+void variable_set_value_read_only(VariableManager* variables, const char* name, const char* value);
 char* variable_get_value(VariableManager* variables, const char* name);
+
+#endif

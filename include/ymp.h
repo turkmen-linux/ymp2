@@ -1,3 +1,5 @@
+#ifndef _ymp_h
+#define _ymp_h
 /**
  * @file ymp.h
  * @brief Main header file for the libymp library.
@@ -93,3 +95,4 @@ void ymp_add(Ymp* ymp, const char* name, void* args);
  */
 
 int ymp_run(Ymp* ymp);
+#endif

@@ -1,3 +1,5 @@
+#ifndef _operations_h
+#define _operations_h
 #include <stddef.h>
 
 /**
@@ -120,3 +122,4 @@ OperationManager *operation_manager_new();
  */
 int operation_main(OperationManager *manager, const char* name, void* args);
 
+#endif
