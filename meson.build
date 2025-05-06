@@ -4,7 +4,7 @@ project(
   version: '2.0.0'
 )
 
-add_project_arguments('-I'+meson.current_source_dir()+'/include', language: 'c')
+add_project_arguments('-I'+meson.current_source_dir()+'/include', '-pthread',  language: 'c')
 add_project_arguments('-fvisibility=hidden', '-Dvisible=__attribute__((visibility("default")))',  language: 'c')
 add_project_arguments('-Wall', '-Wextra', '-Werror',  language: 'c')
 
