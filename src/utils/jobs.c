@@ -19,7 +19,7 @@ static void* worker_thread(void* arg) {
     jobs *j = jb->j;
     int i;
     for (i = jb->id; i < j->total; i+=j->parallel) {
-        j->jobs[i].callback((void*)j->jobs[i].ctx, (void*)j->jobs[i].args);
+        j->jobs[i].call((void*)j->jobs[i].ctx, (void*)j->jobs[i].args);
         j->finished++;
     }
     return NULL;
@@ -31,10 +31,10 @@ visible void jobs_unref(jobs *j) {
     free(j);
 }
 
-visible void jobs_add(jobs* j, void (*callback)(void*, ...), void* ctx, void* args, ...) {
+visible void jobs_add(jobs* j, callback call, void* ctx, void* args, ...) {
     if (j->total < j->max) {
         job new_job;
-        new_job.callback = callback;
+        new_job.call = call;
         new_job.args = args;
         new_job.ctx = ctx;
         new_job.id = j->total;
