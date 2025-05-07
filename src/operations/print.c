@@ -3,7 +3,7 @@
 extern Ymp* global;
 
 #include <stdio.h>
-int print(void* args) {
+static int print(void* args) {
     printf("%s\n", (char*)args);
     return 0;
 }
