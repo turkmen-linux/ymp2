@@ -96,9 +96,4 @@ void ymp_add(Ymp* ymp, const char* name, void* args);
 
 int ymp_run(Ymp* ymp);
 
-/** @cond 
- * Global ymp struct. Will set before execute ymp and reset after execution.
- */
-extern Ymp* global;
-/** @endcond */
 #endif

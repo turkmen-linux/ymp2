@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <core/ymp.h>
 
+extern Ymp* global;
+
 int set_fn(char** args){
     variable_set_value(global->variables, args[0], args[1]);
     return 0;

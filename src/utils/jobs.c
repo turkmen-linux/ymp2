@@ -70,13 +70,7 @@ visible jobs* jobs_new() {
     j->current = 0;
     j->finished = 0;
     j->total = 0;
-    j->parallel = -1;
-    if(global){
-        j->parallel = atoi(variable_get_value(global->variables,"jobs"));
-    }
-    if(j->parallel < 1){
-        j->parallel = get_nprocs_conf();
-    }
+    j->parallel = get_nprocs_conf();
     j->jobs = (job*)malloc(j->max * sizeof(job));
     pthread_cond_init(&j->cond, NULL);
     return j;

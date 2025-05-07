@@ -19,6 +19,7 @@
  */
 typedef struct {
     struct archive *archive;      /**< Pointer to the archive object. */
+    array* errors;               /**< Archive error message array */
     char *archive_path;          /**< Path to the archive file. */
     char *target_path;           /**< Path to the target directory or file. */
     int add_list_size;           /**< Size of the list of files to be added to the archive. */

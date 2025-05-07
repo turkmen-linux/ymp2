@@ -1,5 +1,7 @@
 #include <core/ymp.h>
 
+extern Ymp* global;
+
 #include <stdio.h>
 int print(void* args) {
     printf("%s\n", (char*)args);
