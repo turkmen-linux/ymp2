@@ -8,7 +8,7 @@
 #define strdup(A) strcpy(calloc(strlen(A) + 1, sizeof(char)), A)
 
 static int string_compare(const void* a, const void* b){
-    return strcmp(*(const char**)a, *(const char**)b);
+    return strcmp(*(char**)a, *(char**)b);
 }
 
 static void csort(char* arr[], int n){
@@ -29,7 +29,7 @@ visible array *array_new() {
     return arr;
 }
 
-visible void array_add(array *arr, char *value) {
+visible void array_add(array *arr, const char *value) {
     if(value == NULL){
         return;
     }
@@ -89,7 +89,7 @@ visible void array_adds(array *arr, char **value, size_t len) {
     }
 }
 
-visible void array_remove(array* arr, char* item){
+visible void array_remove(array* arr, const char* item){
     pthread_mutex_lock(&arr->lock);
     size_t start = 0;
     while(start < arr->capacity){
@@ -103,7 +103,7 @@ visible void array_remove(array* arr, char* item){
     pthread_mutex_unlock(&arr->lock);
 }
 
-visible bool array_has(array* arr, char* name){
+visible bool array_has(array* arr, const char* name){
     pthread_mutex_lock(&arr->lock);
     size_t start = 0;
     while(start < arr->size + arr->removed){
@@ -151,13 +151,13 @@ visible void array_pop(array* arr, size_t index){
 }
 
 
-visible void array_insert(array* arr, char* value, size_t index){
+visible void array_insert(array* arr, const char* value, size_t index){
     pthread_mutex_lock(&arr->lock);
     if (arr->size >= arr->capacity) {
         array_add(arr,NULL);
     }
     if (arr->data[index] == NULL){
-        arr->data[index] = value;
+        arr->data[index] = (char*)value;
         arr->size++;
         pthread_mutex_unlock(&arr->lock);
         return;

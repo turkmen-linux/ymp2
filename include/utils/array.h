@@ -42,7 +42,7 @@ array* array_new();
  * @param arr Pointer to the dynamic array.
  * @param data The string to add to the array.
  */
-void array_add(array *arr, char* data);
+void array_add(array *arr, const char* data);
 
 /**
  * @brief Add multiple strings to the dynamic array.
@@ -122,7 +122,7 @@ void array_uniq(array *arr);
  * @param value The string to insert.
  * @param index The index at which to insert the string.
  */
-void array_insert(array *arr, char* value, size_t index);
+void array_insert(array *arr, const char* value, size_t index);
 
 /**
  * @brief Sort the elements of the dynamic array.
@@ -170,7 +170,7 @@ void array_pop(array *arr, size_t index);
  * @param item The string to check for existence in the array.
  * @return `true` if the item exists in the array, `false` otherwise.
  */
-bool array_has(array *arr, char* item);
+bool array_has(array *arr, const char* item);
 
 /**
  * @brief Remove a specific item from the dynamic array.
@@ -180,6 +180,6 @@ bool array_has(array *arr, char* item);
  * @param arr Pointer to the dynamic array.
  * @param item The string to remove from the array.
  */
-void array_remove(array* arr, char* item);
+void array_remove(array* arr, const char* item);
 
 #endif

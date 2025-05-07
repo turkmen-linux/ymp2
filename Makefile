@@ -9,7 +9,7 @@ test:
 	@for example in $(wildcard build/examples/*) ; do \
 	    if [ -f $$example ] ; then \
 	        echo Testing: $$example ; \
-	        $$example >/dev/null;\
+	        cd build ; ../$$example >/dev/null; cd .. ;\
 	    fi \
 	done ; echo DONE
 

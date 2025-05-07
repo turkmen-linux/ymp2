@@ -4,6 +4,11 @@
 #include <stdbool.h>
 
 /**
+ * @file yaml.h
+ * @brief yaml parser
+ */
+
+/**
  * @brief Checks if a specific area exists in the data.
  *
  * @param data The data to search within.
