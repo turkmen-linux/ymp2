@@ -5,6 +5,11 @@
 #include <stddef.h>
 #include <pthread.h>
 
+/** @file array.h
+ * @brief Dynamic string array storage
+ */
+
+
 /**
  * @brief Dynamic array structure.
  *
@@ -70,7 +75,7 @@ void array_set(array *arr, char** new_data, size_t len);
  * @param len Pointer to a variable to store the length of the array.
  * @return Pointer to the array of strings.
  */
-char **array_get(array *arr, int* len);
+char **array_get(array *arr, size_t* len);
 
 /**
  * @brief Get a single concatenated string from the dynamic array.
@@ -136,6 +141,15 @@ void array_sort(array *arr);
  * @param arr Pointer to the dynamic array to free.
  */
 void array_unref(array *arr);
+
+/** @brief Erase all element from dynamic array.
+ *
+ * This function removes all string from dynamic array.
+ *
+ * @param arr Pointer to the dynamic array.
+ */
+
+void array_clear(array *arr);
 
 /**
  * @brief Remove an element at a specific index from the dynamic array.

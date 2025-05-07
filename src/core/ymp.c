@@ -16,6 +16,8 @@ typedef struct {
     size_t capacity;
 } YmpPrivate;
 
+visible Ymp* global;
+
 visible Ymp* ymp_init(){
     // Allocate memory for Ymp instance
     Ymp* ymp = (Ymp*)malloc(sizeof(Ymp));
@@ -53,7 +55,7 @@ void visible ymp_add(Ymp* ymp, const char* name, void* args) {
 
 int visible ymp_run(Ymp* ymp){
     YmpPrivate *queue = (YmpPrivate*)ymp->priv_data;
-    global_variables = ymp->variables;
+    global = ymp;
     int rc = 0;
     for(size_t i=0; i< queue->length; i++){
         rc = operation_main(ymp->manager, queue->item[i].name, queue->item[i].args);
@@ -61,6 +63,6 @@ int visible ymp_run(Ymp* ymp){
             break;
         }
     }
-    global_variables = NULL;
+    global = NULL;
     return rc;
 }

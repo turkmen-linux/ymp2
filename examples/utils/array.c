@@ -19,10 +19,10 @@ int main() {
     array_add(myArray, "grape");
 
     // Get the current contents of the array
-    int len;
+    size_t len;
     char **contents = array_get(myArray, &len);
     printf("Current contents of the array:\n");
-    for (int i = 0; i < len; i++) {
+    for (size_t i = 0; i < len; i++) {
         printf("%s\n", contents[i]);
     }
 
@@ -30,7 +30,7 @@ int main() {
     array_uniq(myArray);
     printf("\nContents after removing duplicates:\n");
     contents = array_get(myArray, &len);
-    for (int i = 0; i < len; i++) {
+    for (size_t i = 0; i < len; i++) {
         printf("%s\n", contents[i]);
     }
 
@@ -38,7 +38,7 @@ int main() {
     array_sort(myArray);
     printf("\nContents after sorting:\n");
     contents = array_get(myArray, &len);
-    for (int i = 0; i < len; i++) {
+    for (size_t i = 0; i < len; i++) {
         printf("%s\n", contents[i]);
     }
 

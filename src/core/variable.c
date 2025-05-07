@@ -11,8 +11,6 @@ typedef struct {
     bool read_only;
 } Variable;
 
-visible VariableManager* global_variables;
-
 visible VariableManager* variable_manager_new(){
     VariableManager *variables = (VariableManager*)malloc(sizeof(VariableManager));
     variables->capacity = 0;
@@ -22,6 +20,10 @@ visible VariableManager* variable_manager_new(){
 }
 
 static void variable_set_value_fn(VariableManager* variables, const char* name, const char* value, bool read_only){
+    if(!variables){
+        printf("%s\n","Invalid VariableManager");
+        return;
+    }
     Variable* vars = (Variable*)variables->priv_data;
     // Search for existing variable
     for(size_t i=0; i< variables->length; i++){
@@ -55,6 +57,10 @@ void visible variable_set_value_read_only(VariableManager* variables, const char
 
 
 visible char* variable_get_value(VariableManager* variables, const char* name){
+    if(!variables){
+        printf("%s\n","Invalid VariableManager");
+        return "";
+    }
     Variable* vars = (Variable*)variables->priv_data;
     for(size_t i=0; i< variables->length; i++){
         if(strcmp(name, vars[i].name) == 0){

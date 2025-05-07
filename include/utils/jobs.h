@@ -5,6 +5,11 @@
 #include <core/operations.h>
 
 /**
+ * @file jobs.h
+ * @brief parallel job control and management
+ */
+
+/**
  * @brief Job structure.
  *
  * This struct represents a single job that can be executed by the job manager.

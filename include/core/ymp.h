@@ -12,6 +12,7 @@
 
 #include <core/operations.h>
 #include <core/variable.h>
+#include <utils/array.h>
 
 /**
  * @struct Ymp
@@ -25,6 +26,7 @@
 typedef struct {
     OperationManager *manager; /**< Pointer to the main `OperationManager` instance */
     VariableManager *variables; /**< Pointer to the main `VariableManager` instance */
+    array *errors; /**< Pointer to an array that holds error messages. */
 /** @cond */
     void* priv_data; /* Private data. Do not touch! */
 /** @endcond */
@@ -93,4 +95,10 @@ void ymp_add(Ymp* ymp, const char* name, void* args);
  */
 
 int ymp_run(Ymp* ymp);
+
+/** @cond 
+ * Global ymp struct. Will set before execute ymp and reset after execution.
+ */
+extern Ymp* global;
+/** @endcond */
 #endif

@@ -31,12 +31,6 @@ typedef struct {
  */
 VariableManager *variable_manager_new();
 
-/** @cond
- * Global variables. Used by internal functions.
- */
-extern VariableManager* global_variables;
-/** @endcond */
-
 /**
  * @brief Set the value of a variable.
  *

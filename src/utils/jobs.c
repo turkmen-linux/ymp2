@@ -8,6 +8,7 @@
 
 #include <limits.h>
 
+#include <core/ymp.h>
 #include <utils/jobs.h>
 #include <core/variable.h>
 
@@ -70,8 +71,8 @@ visible jobs* jobs_new() {
     j->finished = 0;
     j->total = 0;
     j->parallel = -1;
-    if(global_variables){
-        j->parallel = atoi(variable_get_value(global_variables,"jobs"));
+    if(global){
+        j->parallel = atoi(variable_get_value(global->variables,"jobs"));
     }
     if(j->parallel < 1){
         j->parallel = get_nprocs_conf();

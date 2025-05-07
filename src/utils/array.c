@@ -201,7 +201,7 @@ visible void array_sort(array* arr){
     pthread_mutex_unlock(&arr->lock);
 }
 
-visible char **array_get(array *arr, int* len) {
+visible char **array_get(array *arr, size_t* len) {
     pthread_mutex_lock(&arr->lock);
     *len = arr->size;
     char** ret = calloc(arr->size+1, sizeof(char*));
@@ -271,4 +271,12 @@ visible void array_unref(array *arr) {
 
     // Free the array structure
     free(arr);
+}
+
+visible void array_clear(array* arr){
+    if (arr == NULL) {
+        return; // Nothing to free
+    }
+    array_unref(arr);
+    arr = array_new();
 }
