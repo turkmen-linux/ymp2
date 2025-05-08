@@ -8,16 +8,17 @@
 #define BUFFER_SIZE 1024
 #define OPENSSL_API_COMPAT
 
-char *calculate_sha1(const char *path) {
+visible char *calculate_sha1(const char *path) {
     unsigned char buffer[BUFFER_SIZE];
     unsigned char digest[EVP_MAX_MD_SIZE];
     unsigned int md_len;
-    
+
+    // https://pragmaticjoe.gitlab.io/posts/2015-02-09-how-to-generate-a-sha1-hash-in-c
     EVP_MD_CTX *mdctx;
     const EVP_MD *md;
     md = EVP_sha1();
     mdctx = EVP_MD_CTX_create();
-    
+
     ssize_t byte = 0;
 
     int fd = open(path, O_RDONLY);
