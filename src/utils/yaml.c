@@ -43,7 +43,7 @@ visible char *yaml_get_area(const char *data, const char *path) {
     }
     fclose(stream);
     // shrink memory
-    char *area = strdup(area_data);
+    char *area = strdup(trim(area_data));
     free(area_data);
     return area;
 }
