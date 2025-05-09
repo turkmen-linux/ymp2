@@ -12,6 +12,7 @@ visible char *calculate_sha1(const char *path) {
     unsigned char buffer[BUFFER_SIZE];
     unsigned char digest[EVP_MAX_MD_SIZE];
     unsigned int md_len;
+    char hashstring[EVP_MAX_MD_SIZE*2+1];
 
     // https://pragmaticjoe.gitlab.io/posts/2015-02-09-how-to-generate-a-sha1-hash-in-c
     EVP_MD_CTX *mdctx;
@@ -33,6 +34,9 @@ visible char *calculate_sha1(const char *path) {
     EVP_MD_CTX_destroy(mdctx);
     close(fd);
     EVP_cleanup();
+    for(unsigned int i = 0; i < md_len; i++){
+        sprintf(&hashstring[i*2], "%02x", (unsigned int)digest[i]);
+    }
 
-    return strdup((char*)digest);
+    return strdup(hashstring);
 }
