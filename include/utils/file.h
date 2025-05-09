@@ -71,4 +71,6 @@ void create_dir(const char *dir);
 
 
 char** listdir(const char* path);
+char** find(const char* path);
+
 #endif

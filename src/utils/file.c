@@ -10,6 +10,7 @@
 #include <limits.h>
 
 #include <utils/array.h>
+#include <utils/string.h>
 
 visible uint64_t filesize(const char* path) {
     struct stat st;
@@ -83,4 +84,30 @@ visible char** listdir(const char* path){
     char** dirs = array_get(a, &len);
     array_unref(a);
     return dirs;
+}
+
+static void find_operation(array* array, const char* path){
+    char** inodes = listdir(path);
+    int i=0;
+    while(inodes[i]){
+        if(iseq(inodes[i], "..") || iseq(inodes[i], ".")){
+            i++;
+            continue;
+        }
+        char* inode = build_string("%s/%s", path, inodes[i]);
+        if(isdir(inode)){
+            find_operation(array, inode);
+        }
+        array_add(array, inode);
+        i++;
+    }
+}
+
+visible char** find(const char* path){
+    array* a = array_new();
+    find_operation(a, path);
+    size_t len;
+    char** list = array_get(a, &len);
+    array_unref(a);
+    return list;
 }

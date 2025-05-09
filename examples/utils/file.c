@@ -64,5 +64,12 @@ int main() {
         }
         i++;
     }
+    // Find (list files recursivelly)
+    char** files = find("./");
+    i=0;
+    while(files[i]){
+        printf("%s\n", files[i]);
+        i++;
+    }
     return 0;
 }
