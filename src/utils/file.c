@@ -11,16 +11,19 @@
 
 #include <utils/array.h>
 #include <utils/string.h>
+#include <core/logger.h>
 
 visible uint64_t filesize(const char* path) {
     struct stat st;
     if (stat(path, &st) == 0) {
+        debug("file size: %s %lld\n", path, st.st_size);
         return st.st_size;
     }
     return 0; // Return 0 if the file does not exist or an error occurs
 }
 
 visible bool issymlink(const char *filename) {
+    debug("check is symlink: %s\n", filename);
     if (filename == NULL) {
         return false;
     }
@@ -29,11 +32,13 @@ visible bool issymlink(const char *filename) {
 }
 
 visible bool isexists(const char* path) {
+    debug("check is exists: %s\n", path);
     struct stat path_stat;
     return (stat(path, &path_stat) == 0);
 }
 
 visible bool isdir(const char *path) {
+    debug("check is directory: %s\n", path);
     if (path == NULL || issymlink(path)) {
         return false;
     }
@@ -46,6 +51,7 @@ visible bool isdir(const char *path) {
 }
 
 visible void create_dir(const char *dir) {
+    debug("create directory: %s\n", dir);
     char tmp[PATH_MAX];
     char *p = NULL;
     size_t len;
@@ -70,6 +76,7 @@ visible void create_dir(const char *dir) {
 }
 
 visible char** listdir(const char* path){
+    debug("list directory: %s\n", path);
     DIR *dp;
     struct dirent *ep;
     dp = opendir (path);
@@ -87,6 +94,7 @@ visible char** listdir(const char* path){
 }
 
 static void find_operation(array* array, const char* path){
+    debug("find files from: %s\n", path);
     char** inodes = listdir(path);
     int i=0;
     while(inodes[i]){
@@ -104,6 +112,7 @@ static void find_operation(array* array, const char* path){
 }
 
 visible char** find(const char* path){
+    debug("find files: %s\n", path);
     array* a = array_new();
     find_operation(a, path);
     size_t len;

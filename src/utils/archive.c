@@ -15,6 +15,7 @@
 #include <utils/archive.h>
 #include <core/ymp.h>
 
+#include <core/logger.h>
 
 visible Archive* archive_new(){
     Archive *data = calloc(1, sizeof(Archive));
@@ -25,6 +26,7 @@ visible Archive* archive_new(){
 }
 
 visible void archive_load(Archive *data, const char* path) {
+    debug("archive load:  %s\n", path);
     data->archive_path = strdup(path);
     archive_set_type(data, "zip", "none");
 }
@@ -40,10 +42,12 @@ static void archive_load_archive(Archive *data) {
 }
 
 visible void archive_set_target(Archive *data, const char* target){
+    debug("set archive target:  %s\n", target);
     data->target_path = strdup(target);
 }
 
 visible bool archive_is_archive(Archive *data, const char *path) {
+    debug("check is archive:  %s\n", path);
     data->archive = archive_read_new();
     archive_read_support_filter_all(data->archive);
     archive_read_support_format_all(data->archive);
@@ -54,6 +58,7 @@ visible bool archive_is_archive(Archive *data, const char *path) {
 }
 
 visible char** archive_list_files(Archive *data, size_t* len) {
+    debug("list archive files\n");
     archive_load_archive(data);
     struct archive_entry *entry;
     while (archive_read_next_header(data->archive, &entry) == ARCHIVE_OK) {
@@ -67,6 +72,7 @@ visible char** archive_list_files(Archive *data, size_t* len) {
 }
 
 visible void archive_add(Archive *data, const char *path) {
+    debug("archive add file: %s\n", path);
     array_add(data->a, path);
 }
 
@@ -90,6 +96,7 @@ static void archive_extract_fn(Archive *data, const char *path, bool all) {
             continue;
         }
         target_file = build_string("%s/%s", data->target_path, entry_path);
+        info("Extract: %s\n", entry_path);
         /* Check if entry is a directory */
         mode_t mode = archive_entry_filetype(entry);
         if (S_ISDIR(mode)) {
@@ -152,6 +159,7 @@ visible void archive_extract(Archive *data, const char* path) {
 }
 
 visible char* archive_readfile(Archive *data, const char *file_path) {
+    debug("archive read file: %s\n", file_path);
     archive_load_archive(data);
     struct archive_entry *entry;
     char *ret = NULL;
@@ -183,11 +191,7 @@ visible char* archive_readfile(Archive *data, const char *file_path) {
 
 
 visible void archive_set_type(Archive *data, const char* form, const char* filt){
-    #ifdef debug
-    debug("Archive type changed");
-    debug(form);
-    debug(filt);
-    #endif
+    debug("archive type changed: %s %s\n", form, filt);
     if(strcmp(form,"zip")==0)
         data->aformat=zip;
     else if(strcmp(form,"tar")==0)
@@ -241,10 +245,11 @@ visible void archive_write(Archive *data, const char *outname, char **filename) 
       error_add(data->errors, "Libarchive error!");
       return;
   }
-  
+
   archive_write_open_filename(a, outname);
   entry = NULL;
   while (*filename) {
+    debug("archive write : %s\n", filename);
     if(!isexists(*filename)){
         filename++;
         continue;

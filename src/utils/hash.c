@@ -5,6 +5,8 @@
 #include <string.h>
 #include <openssl/evp.h>
 #include <utils/file.h>
+#include <core/logger.h>
+
 #define BUFFER_SIZE 8196
 #define OPENSSL_API_COMPAT
 
@@ -14,6 +16,7 @@
 #define SHA512 3
 
 static char *calculate_hash(int type, const char *path) {
+    debug("calculate hash: %d %s\n", type, path);
     unsigned char buffer[BUFFER_SIZE];
     unsigned char digest[EVP_MAX_MD_SIZE];
     unsigned int md_len;
