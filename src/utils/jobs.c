@@ -51,15 +51,19 @@ visible void jobs_add(jobs* j, callback call, void* ctx, void* args, ...) {
 
 visible void jobs_run(jobs* j) {
     pthread_t* threads = (pthread_t*)calloc(j->parallel, sizeof(pthread_t));
+    worker_job *jb[j->parallel];
     int i;
     for (i = 0; i < j->parallel; ++i) {
-        worker_job *jb = (worker_job*)calloc(1,sizeof(worker_job));
-        jb->j = j;
-        jb->id = i;
-        pthread_create(&threads[i], NULL, worker_thread, (void*)jb);
+        jb[i] = (worker_job*)calloc(1,sizeof(worker_job));
+        jb[i]->j = j;
+        jb[i]->id = i;
+        pthread_create(&threads[i], NULL, worker_thread, (void*)jb[i]);
     }
     for (i = 0; i < j->parallel; ++i) {
         pthread_join(threads[i], NULL);
+    }
+    for (i = 0; i < j->parallel; ++i) {
+        free(jb[i]);
     }
     free(threads);
 }
