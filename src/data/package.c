@@ -7,6 +7,8 @@
 #include <utils/error.h>
 #include <utils/string.h>
 #include <utils/file.h>
+#include <utils/hash.h>
+
 #include <core/logger.h>
 #include <core/ymp.h>
 #include <core/variable.h>
@@ -98,5 +100,22 @@ visible bool package_extract(Package* pkg){
     create_dir(tmpdir);
     archive_set_target(pkg->archive, tmpdir);
     archive_extract_all(pkg->archive);
+    size_t i=0;
+    char** files = listdir(tmpdir);
+    while(files[i]){
+        if(!isfile(files[i])){
+            i++;
+            continue;
+        }
+        if(startswith(files[i],"data.")) {
+            char* hash = calculate_sha1(build_string("%s/%s", tmpdir, files[i]));
+            char* yaml_hash = yaml_get_value(pkg->metadata, "archive-hash");
+            if(!iseq(hash, yaml_hash)){
+                warning("%s Excepted %s <> Received %s\n", "Package archive hash is wrong!", hash, yaml_hash);
+                return false;
+            }
+        }
+        i++;
+    }
     return true;
 }
