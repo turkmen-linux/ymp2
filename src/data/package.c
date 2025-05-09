@@ -96,8 +96,8 @@ visible bool package_extract(Package* pkg){
         return false;
     }
     char* destdir = variable_get_value(global->variables,"DESTDIR");
-    char* tmpdir = build_string("%s/%s/quarantine/tmp/%s", destdir, get_storage(), pkg->name);
     char* rootfs = build_string("%s/%s/quarantine/rootfs", destdir, get_storage());
+    char* tmpdir = build_string("%s/../tmp/%s", rootfs, pkg->name);
     create_dir(rootfs);
     create_dir(build_string("%s/../metadata", rootfs));
     create_dir(build_string("%s/../files", rootfs));
