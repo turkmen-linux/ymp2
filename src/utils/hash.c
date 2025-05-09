@@ -8,7 +8,12 @@
 #define BUFFER_SIZE 1024
 #define OPENSSL_API_COMPAT
 
-visible char *calculate_sha1(const char *path) {
+#define SHA1   0
+#define MD5    1
+#define SHA256 2
+#define SHA512 3
+
+static char *calculate_hash(int type, const char *path) {
     unsigned char buffer[BUFFER_SIZE];
     unsigned char digest[EVP_MAX_MD_SIZE];
     unsigned int md_len;
@@ -17,7 +22,20 @@ visible char *calculate_sha1(const char *path) {
     // https://pragmaticjoe.gitlab.io/posts/2015-02-09-how-to-generate-a-sha1-hash-in-c
     EVP_MD_CTX *mdctx;
     const EVP_MD *md;
-    md = EVP_sha1();
+    switch(type){
+        case SHA1:
+            md = EVP_sha1();
+            break;
+        case MD5:
+            md = EVP_md5();
+            break;
+        case SHA256:
+            md = EVP_sha256();
+            break;
+        case SHA512:
+            md = EVP_sha512();
+            break;
+    }
     mdctx = EVP_MD_CTX_create();
 
     ssize_t byte = 0;
@@ -39,4 +57,17 @@ visible char *calculate_sha1(const char *path) {
     }
 
     return strdup(hashstring);
+}
+visible char *calculate_sha1(const char *path) {
+    return calculate_hash(SHA1, path);
+}
+
+visible char *calculate_md5(const char *path) {
+    return calculate_hash(MD5, path);
+}
+visible char *calculate_sha256(const char *path) {
+    return calculate_hash(SHA256, path);
+}
+visible char *calculate_sha512(const char *path) {
+    return calculate_hash(SHA512, path);
 }
