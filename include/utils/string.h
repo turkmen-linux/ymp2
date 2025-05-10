@@ -130,5 +130,37 @@ char* build_string(char* format, ...);
     (A >= 'a' && A <= 'f')
 
 /** @endcond */
+
+/**
+ * @brief Replaces all occurrences of a substring within a string with a new substring.
+ *
+ * This function searches for all occurrences of the specified substring (`oldSub`) 
+ * in the input string (`str`) and replaces them with the new substring (`newSub`).
+ * The resulting string is dynamically allocated and must be freed by the caller.
+ *
+ * @param str The original string in which the replacement will occur. This string 
+ *            should be null-terminated and not modified by this function.
+ * @param oldSub The substring to be replaced. This should also be null-terminated.
+ * @param newSub The substring to replace `oldSub` with. This should also be 
+ *               null-terminated.
+ *
+ * @return A pointer to a new string with the replacements made. If no replacements 
+ *         are made, a copy of the original string is returned. If memory allocation 
+ *         fails, NULL is returned.
+ *
+ * @note The caller is responsible for freeing the memory allocated for the 
+ *       returned string.
+ * @warning If `oldSub` is an empty string, the behavior is undefined. Ensure that 
+ *          `oldSub` is not empty before calling this function.
+ *
+ * @example
+ * char* result = str_replace("Hello World", "World", "C!");
+ * // result now contains "Hello C!"
+ * free(result); // Remember to free the allocated memory.
+ */
+char* str_replace(const char* str, const char* oldSub, const char* newSub);
+
+
+
 #endif // _string_h
 

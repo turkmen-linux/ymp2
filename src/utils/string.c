@@ -243,4 +243,43 @@ visible char* build_string(char* format, ...) {
     return result;
 }
 
+visible char* str_replace(const char* str, const char* oldSub, const char* newSub) {
+    // Calculate lengths
+    size_t strLen = strlen(str);
+    size_t oldSubLen = strlen(oldSub);
+    size_t newSubLen = strlen(newSub);
+
+    // Count occurrences of oldSub in str
+    int count = 0;
+    const char* temp = str;
+    while ((temp = strstr(temp, oldSub)) != NULL) {
+        count++;
+        temp += oldSubLen; // Move past the last found occurrence
+    }
+
+    // Allocate memory for the new string
+    size_t newStrLen = strLen + count * (newSubLen - oldSubLen);
+    char* newStr = (char*)malloc(newStrLen + 1); // +1 for the null terminator
+    if (!newStr) {
+        return NULL; // Memory allocation failed
+    }
+
+    // Replace occurrences
+    char* pos = newStr;
+    while (*str) {
+        if (strstr(str, oldSub) == str) {
+            // Found oldSub, replace it
+            strcpy(pos, newSub);
+            pos += newSubLen;
+            str += oldSubLen;
+        } else {
+            // Copy the current character
+            *pos++ = *str++;
+        }
+    }
+    *pos = '\0'; // Null-terminate the new string
+
+    return newStr;
+}
+
 #endif
