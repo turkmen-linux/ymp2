@@ -1,0 +1,1 @@
+option('startfiles', type: 'boolean', value: true)

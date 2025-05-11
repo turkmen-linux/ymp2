@@ -4,11 +4,6 @@ project(
   version: '2.0.0'
 )
 architecture = run_command('uname', '-m', check:true).stdout().strip()
-# Detect musl libc
-musl = false
-if run_command('/bin/sh', '-c', 'ldd /proc/self/exe | grep /lib/ld-musl-'+architecture+'.so.1').returncode() == 0
-    musl = true
-endif
 
 add_project_arguments('-I'+meson.current_source_dir()+'/include', '-pthread',  language: 'c')
 add_project_arguments('-fvisibility=hidden', '-Dvisible=__attribute__((visibility("default")))',  language: 'c')
@@ -33,7 +28,7 @@ subdir('src')
 
 start = [meson.current_source_dir()+'/src/start/'+architecture+'.s']
 nostdlib = ['-nostdlib', '-lc']
-if musl
+if not get_option('startfiles')
     start = []
     nostdlib = []
 endif
