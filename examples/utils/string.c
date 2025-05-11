@@ -75,6 +75,18 @@ int main() {
     char* formatted = build_string("Formatted string: %s %d", "Number", 100);
     printf("%s\n", formatted);
     free(formatted); // Free the allocated memory
+    
+    const char *data2 = "Hello,World,This,Is,A,Test";
+    const char *delimiter = ",";
+    
+    char **result = split(data2, delimiter);
+    
+    for (size_t i = 0; result[i]; i++) {
+        printf("%ld-> %s\n",i, result[i]);
+    }
+
+    // Free the allocated memory
+    free(result);
 
     return 0;
 }

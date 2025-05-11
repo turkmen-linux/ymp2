@@ -160,7 +160,39 @@ char* build_string(char* format, ...);
  */
 char* str_replace(const char* str, const char* oldSub, const char* newSub);
 
+/**
+ * @brief Splits a string into an array of strings based on a specified delimiter.
+ *
+ * This function takes a string and splits it into multiple substrings based on the
+ * provided delimiter. The resulting substrings are stored in a dynamically allocated
+ * array of strings, which must be freed by the caller to avoid memory leaks.
+ *
+ * @param data The input string to be split. This string should be null-terminated.
+ * @param f The delimiter character used to split the string. 
+ *          If this character is not found in the string, the entire string will be returned as the first element.
+ * 
+ * @return A pointer to an array of strings (char**) containing the split substrings.
+ *         The last element of the array is a NULL pointer to indicate the end of the array.
+ *         If memory allocation fails, NULL is returned.
+ *
+ * @note The caller is responsible for freeing the memory allocated for the array and its contents.
+ */
+char** split(const char* data, const char* f);
 
+/**
+ * @brief Removes leading and trailing whitespace from a string.
+ *
+ * This function takes a string and removes any leading and trailing whitespace characters,
+ * including spaces, tabs, and newlines. The modified string is returned.
+ *
+ * @param str The input string to be stripped of whitespace. This string should be mutable.
+ * 
+ * @return A pointer to the modified string with leading and trailing whitespace removed.
+ *         If the input string is NULL, the function will return NULL.
+ *
+ * @note The input string is modified in place. Ensure that the string is mutable and not a string literal.
+ */
+char* strip(char* str);
 
 #endif // _string_h
 

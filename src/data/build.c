@@ -1,19 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+
 #include <core/ymp.h>
+#include <core/logger.h>
+
 #include <utils/string.h>
 #include <utils/file.h>
 #include <utils/hash.h>
-#include <stdlib.h>
 
-typedef struct {
-    char* ctx;
-    char* path;
-    char* header;
-} ympbuild;
+#include <data/build.h>
 
-static char* ympbuild_get_value(ympbuild* ymp, const char* name) {
-    char* command = build_string("%s; echo $%s", ymp->ctx, name);
+visible char* ympbuild_get_value(ympbuild* ymp, const char* name) {
+    char* command = build_string("exec 2>/dev/null ; %s \necho ${%s}", ymp->ctx, name);
     char* args[] = {"/bin/bash", "-c", command, NULL};
-    return getoutput(args);
+    char* output = strip(getoutput(args));
+    debug("variable: %s -> %s\n", name, output);
+    return output;
+}
+
+visible char** ympbuild_get_array(ympbuild* ymp, const char* name){
+    char* command = build_string("exec 2>/dev/null ; %s \necho ${%s[@]}", ymp->ctx, name);
+    char* args[] = {"/bin/bash", "-c", command, NULL};
+    char* output = strip(getoutput(args));
+    debug("variable: %s -> %s\n", name, output);
+    return split(output," ");
+
 }
 
 visible bool build_from_path(const char* path){
@@ -31,6 +42,7 @@ visible bool build_from_path(const char* path){
     create_dir(ymp->path);
     // fetch values
     char* name = ympbuild_get_value(ymp, "name");
-    (void)name;
+    char** deps = ympbuild_get_array(ymp, "depends");
+    (void)name; (void)deps;
     return true;
 }

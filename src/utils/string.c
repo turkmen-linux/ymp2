@@ -6,8 +6,10 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <string.h>
+#include <ctype.h>
 
 #include <utils/string.h>
+#include <utils/array.h>
 
 extern char* resource(const char* path);
 
@@ -282,4 +284,40 @@ visible char* str_replace(const char* str, const char* oldSub, const char* newSu
     return newStr;
 }
 
+visible char** split(const char* data, const char* f) {
+    array *a = array_new();
+    size_t cur=0;
+    size_t i=0;
+    size_t s=strlen(f);
+    char *word;
+    for (i=0; data[i];i++){
+        if (strncmp(data+i, f,  s) == 0){
+            word = calloc(i - (cur+s) + 1, sizeof(char));
+            strncpy(word, &data[cur], i-cur);
+            array_add(a, word);
+            free(word);
+            cur=i+s;
+        }
+    }
+    word = calloc(i - (cur+s) + 1, sizeof(char));
+    strncpy(word, &data[cur], i-cur);
+    array_add(a, word);
+    return array_get(a, &i);
+}
+
+
+// Function to trim whitespace from both ends of a string
+visible char* strip(char* str) {
+    // Trim leading whitespace
+    while (isspace((unsigned char)*str)) str++;
+
+    // Trim trailing whitespace
+    char* end = str + strlen(str) - 1;
+    while (end > str && isspace((unsigned char)*end)) end--;
+
+    // Null terminate the trimmed string
+    *(end + 1) = '\0';
+
+    return str;
+}
 #endif
