@@ -3,6 +3,12 @@ project(
   'c',
   version: '2.0.0'
 )
+architecture = run_command('uname', '-m', check:true).stdout().strip()
+# Detect musl libc
+musl = false
+if run_command('/bin/sh', '-c', 'ldd /proc/self/exe | grep /lib/ld-musl-'+architecture+'.so.1').returncode() == 0
+    musl = true
+endif
 
 add_project_arguments('-I'+meson.current_source_dir()+'/include', '-pthread',  language: 'c')
 add_project_arguments('-fvisibility=hidden', '-Dvisible=__attribute__((visibility("default")))',  language: 'c')
@@ -25,10 +31,17 @@ endforeach
 subdir('src')
 
 
+start = [meson.current_source_dir()+'/src/start/'+architecture+'.s']
+nostdlib = ['-nostdlib', '-lc']
+if musl
+    start = []
+    nostdlib = []
+endif
+
 # Main library
-libymp = library('ymp', srcs, dependencies: deps, c_args: ['-DLIBYMP'], link_args: ['-nostdlib', '-lc'])
+libymp = library('ymp', srcs, dependencies: deps, c_args: ['-DLIBYMP'], link_args: nostdlib)
 
 subdir('docs')
 subdir('examples')
 
-executable('ymp-cli', ['src/core/cli.c', start], link_with: libymp, link_args: ['-nostdlib', '-lc'])
+executable('ymp-cli', ['src/core/cli.c']+start, link_with: libymp, link_args: nostdlib)
