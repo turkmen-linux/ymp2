@@ -26,7 +26,9 @@ subdir('src')
 
 
 # Main library
-libymp = library('ymp', srcs, dependencies: deps, link_args: ['-nostdlib', '-lc'])
+libymp = library('ymp', srcs, dependencies: deps, c_args: ['-DLIBYMP'], link_args: ['-nostdlib', '-lc'])
 
 subdir('docs')
 subdir('examples')
+
+executable('ymp-cli', ['src/core/cli.c', start], link_with: libymp)

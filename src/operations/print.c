@@ -1,8 +1,11 @@
 #include <core/ymp.h>
 
 #include <stdio.h>
-static int print(void* args) {
-    printf("%s\n", (char*)args);
+static int print(void** args) {
+    for(size_t i=0; args[i]; i++){
+        printf("%s ", (char*)args[i]);
+    }
+    printf("\n");
     return 0;
 }
 
