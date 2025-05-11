@@ -104,4 +104,32 @@ char** listdir(const char* path);
  */
 char** find(const char* path);
 
+/**
+ * @brief Executes a command with arguments and captures its output.
+ *
+ * This function creates a child process to execute the specified command
+ * using the execvp() function. The output of the command is captured and
+ * returned as a dynamically allocated string. The caller is responsible for
+ * freeing the returned string after use.
+ *
+ * @param argv An array of command-line arguments, where the first element
+ *             is the command to execute, followed by its arguments, and
+ *             the last element must be NULL to indicate the end of the array.
+ *             Example: {"ls", "-l", NULL}.
+ *
+ * @return A pointer to a dynamically allocated string containing the output
+ *         of the command. If the command fails to execute or if there is
+ *         an error in creating the pipe or forking the process, the function
+ *         returns NULL. In case of memory allocation failure, the program
+ *         will terminate with an error message.
+ *
+ * @note The output string is null-terminated. The caller must free the
+ *       returned string using free() to avoid memory leaks.
+ *
+ * @warning This function does not handle commands that require user input
+ *          or commands that may block indefinitely.
+ */
+char* getoutput(char* argv[]);
+
+
 #endif

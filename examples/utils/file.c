@@ -71,5 +71,9 @@ int main() {
         printf("%s\n", files[i]);
         i++;
     }
+    // command output
+    char* args[] = {"/bin/cat", "/etc/os-release", NULL};
+    char* out = getoutput(args);
+    printf("%s\n", out);
     return 0;
 }

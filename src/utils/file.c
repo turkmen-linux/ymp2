@@ -8,6 +8,8 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <limits.h>
+#include <string.h>
+#include <sys/wait.h>
 
 #include <utils/array.h>
 #include <utils/string.h>
@@ -120,3 +122,74 @@ visible char** find(const char* path){
     array_unref(a);
     return list;
 }
+
+visible char* getoutput(char* argv[]) {
+    int pipefd[2];
+    if (pipe(pipefd) == -1) {
+        perror("pipe");
+        return NULL;
+    }
+    pid_t pid = fork();
+    if (pid == -1) {
+        perror("fork");
+        return NULL;
+    }
+    if (pid == 0) { // Child process
+        // Close the read end of the pipe
+        close(pipefd[0]);
+        
+        // Redirect stdout to the write end of the pipe
+        dup2(pipefd[1], STDOUT_FILENO);
+        close(pipefd[1]); // Close the original write end
+
+        // Execute the command
+        execvp(argv[0], argv);
+        
+        // If execvp returns, it must have failed
+        perror("execvp");
+        exit(EXIT_FAILURE);
+    } else { // Parent process
+        // Close the write end of the pipe
+        close(pipefd[1]);
+
+        // Read the output from the read end of the pipe
+        char* ret = NULL;
+        size_t bufsize = 1024;
+        ret = calloc(bufsize, sizeof(char));
+        if (!ret) {
+            perror("Memory allocation error");
+            return "";
+        }
+
+        size_t total_read = 0;
+        char buff[1024];
+        ssize_t bytes_read;
+        while ((bytes_read = read(pipefd[0], buff, sizeof(buff) - 1)) > 0) {
+            buff[bytes_read] = '\0'; // Null-terminate the buffer
+            size_t len = total_read + bytes_read + 1;
+            if (len > bufsize) {
+                // Resize buffer if needed
+                bufsize = len * 2;
+                ret = realloc(ret, bufsize);
+                if (!ret) {
+                    perror("Memory reallocation error");
+                    return "";
+                }
+            }
+            strcat(ret, buff);
+            total_read += bytes_read;
+        }
+
+        close(pipefd[0]); // Close the read end of the pipe
+
+        // Wait for the child process to finish
+        int status;
+        wait(&status);
+
+        // Trim the buffer to the actual size needed
+        ret = realloc(ret, (strlen(ret) + 1) * sizeof(char));
+
+        return ret;
+    }
+}
+
