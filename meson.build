@@ -31,4 +31,4 @@ libymp = library('ymp', srcs, dependencies: deps, c_args: ['-DLIBYMP'], link_arg
 subdir('docs')
 subdir('examples')
 
-executable('ymp-cli', ['src/core/cli.c', start], link_with: libymp)
+executable('ymp-cli', ['src/core/cli.c', start], link_with: libymp, link_args: ['-nostdlib', '-lc'])

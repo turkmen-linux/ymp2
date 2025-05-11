@@ -7,6 +7,6 @@ foreach src : run_command('find', '.', '-type', 'f', '-iname', '*.c',check:true)
     name = src.replace('./','')
     name = name.replace('.c','')
     name = name.replace('/','_')
-    executable(name, [src, start], link_with: libymp)
+    executable(name, [src, start], link_with: libymp, link_args: ['-nostdlib', '-lc'])
 endforeach
 
