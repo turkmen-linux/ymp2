@@ -8,6 +8,7 @@ export SHELL="/bin/bash"
 export EDITOR="/bin/false"
 export PAGER="/bin/cat"
 export CONFIG_SHELL="/bin/bash"
+export DESTDIR="@buildpath@/output"
 
 declare -r TARGET="@BUILD_TARGET@"
 declare -r DISTRO="@DISTRO@"

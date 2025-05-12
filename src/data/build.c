@@ -50,10 +50,14 @@ visible int ympbuild_run_function(ympbuild* ymp, const char* name) {
         "set -e \n"
         "if declare -F %s ; then\n"
         "    %s\n"
-        "fi", ymp->header, ymp->ctx, name);
+        "fi", ymp->header, ymp->ctx, name, name);
     char* args[] = {"/bin/bash", "-c", command, NULL};
     pid_t pid = fork();
     if(pid == 0){
+        if(chdir(ymp->path) < 0){
+            free(command);
+            return -1;
+        }
         execvp(args[0], args);
         free(command);
         return -1;
@@ -83,7 +87,6 @@ static bool get_resource(const char* path, const char* name, size_t type, const 
             free(source_target);
             source_target = build_string("%s/%s",target, source);
             status = copy_file(local_file, source_target);
-            
         } else {
             status = fetch(source, source_target);
         }
@@ -103,6 +106,8 @@ static bool get_resource(const char* path, const char* name, size_t type, const 
     return status;
 }
 
+static char* actions[] = {"prepare", "setup", "build", "package", NULL};
+
 visible bool build_from_path(const char* path){
     char* ympfile = build_string("%s/ympbuild",path);
     if(!isfile(ympfile)){
@@ -117,6 +122,11 @@ visible bool build_from_path(const char* path){
     ymp->path = calculate_md5(ympfile);
     ymp->path = build_string("%s/%s", BUILD_DIR, ymp->path);
     ymp->header = str_replace(ymp->header, "@buildpath@", ymp->path);
+    ymp->header = str_replace(ymp->header, "@CC@", "gcc");
+    ymp->header = str_replace(ymp->header, "@CXX@", "g++");
+    ymp->header = str_replace(ymp->header, "@CFLAGS@", "");
+    ymp->header = str_replace(ymp->header, "@CXXFLAGS@", "");
+    ymp->header = str_replace(ymp->header, "@LDFLAGS@", "");
     create_dir(ymp->path);
     // fetch values
     char* name = ympbuild_get_value(ymp, "name");
@@ -153,6 +163,19 @@ visible bool build_from_path(const char* path){
             archive_load(a, src_files[i]);
             archive_set_target(a, ymp->path);
             archive_extract_all(a);
+        } else {
+            char* src_name = src_files[i]+strlen(src_cache);
+            char* target_path = build_string("%s/%s", ymp->path, src_name);
+            copy_file(src_files[i], target_path);
+            free(target_path);
+        }
+    }
+    int status = 0;
+    for(size_t i=0; actions[i]; i++){
+        status = ympbuild_run_function(ymp, actions[i]);
+        if(status != 0){
+            free(ympfile);
+            return false;
         }
     }
     (void)name; (void)deps;
