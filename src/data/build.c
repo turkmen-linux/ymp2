@@ -14,7 +14,10 @@
 #include <config.h>
 
 visible char* ympbuild_get_value(ympbuild* ymp, const char* name) {
-    char* command = build_string("exec 2>/dev/null ; %s \necho ${%s}", ymp->ctx, name);
+    char* command = build_string(
+    "exec 2>/dev/null\n"
+    "%s\n"
+    "echo ${%s}", ymp->ctx, name);
     char* args[] = {"/bin/bash", "-c", command, NULL};
     char* output = strip(getoutput(args));
     debug("variable: %s -> %s\n", name, output);
@@ -23,7 +26,10 @@ visible char* ympbuild_get_value(ympbuild* ymp, const char* name) {
 }
 
 visible char** ympbuild_get_array(ympbuild* ymp, const char* name){
-    char* command = build_string("exec 2>/dev/null ; %s \necho ${%s[@]}", ymp->ctx, name);
+    char* command = build_string(
+    "exec 2>/dev/null\n"
+    "%s\n"
+    "echo ${%s[@]}", ymp->ctx, name);
     char* args[] = {"/bin/bash", "-c", command, NULL};
     char* output = strip(getoutput(args));
     debug("variable: %s -> %s\n", name, output);
@@ -33,7 +39,13 @@ visible char** ympbuild_get_array(ympbuild* ymp, const char* name){
 }
 
 visible int ympbuild_run_function(ympbuild* ymp, const char* name) {
-    char* command = build_string("set +e ; %s \n %s \n set -e \n %s", ymp->header, ymp->ctx, name);
+    char* command = build_string(
+        "set +e ; %s\n"
+        "%s\n"
+        "set -e \n"
+        "if declare -F %s ; then\n"
+        "    %s\n"
+        "fi", ymp->header, ymp->ctx, name);
     char* args[] = {"/bin/bash", "-c", command, NULL};
     pid_t pid = fork();
     if(pid == 0){
