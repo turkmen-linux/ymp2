@@ -58,7 +58,12 @@ visible int ympbuild_run_function(ympbuild* ymp, const char* name) {
             free(command);
             return -1;
         }
-        execvp(args[0], args);
+        char* envs[] = {
+            build_string("PATH=/usr/bin:/usr/sbin:/bin:/sbin/%s", ymp->path),
+            build_string("HOME=%s", ymp->path),
+            NULL
+        };
+        execve(args[0], args, envs);
         free(command);
         return -1;
     } else {
@@ -121,6 +126,48 @@ static bool get_resource(const char* resource_path, const char* resource_name, s
 
 static char* actions[] = {"prepare", "setup", "build", "package", NULL};
 
+static void configure_header(ympbuild *ymp) {
+    if(!global){
+        return;
+    }
+    ymp->header = str_replace(ymp->header, "@buildpath@", ymp->path);
+    ymp->header = str_replace(ymp->header, "@CC@", variable_get_value(global->variables, "build:cc"));
+    ymp->header = str_replace(ymp->header, "@CXX@", variable_get_value(global->variables, "build:cxx"));
+    ymp->header = str_replace(ymp->header, "@CFLAGS@", variable_get_value(global->variables, "build:cflags"));
+    ymp->header = str_replace(ymp->header, "@CXXFLAGS@", variable_get_value(global->variables, "build:cxxflags"));
+    ymp->header = str_replace(ymp->header, "@LDFLAGS@", variable_get_value(global->variables, "build:ldflags"));
+    ymp->header = str_replace(ymp->header, "@APIKEY@", variable_get_value(global->variables, "build:token"));
+    ymp->header = str_replace(ymp->header, "@DISTRODIR@", DISTRODIR);
+}
+
+static void generate_links_files(const char* path){
+    char* rootfs = build_string("%s/output", path);
+    char** inodes = find(rootfs);
+    array *files = array_new();
+    array *links = array_new();
+    for(size_t i=0; inodes[i]; i++){
+        if(issymlink(inodes[i])){
+            printf("%s\n", inodes[i]);
+            array_add(links, build_string("%s %s\n",sreadlink(inodes[i]), inodes[i]+strlen(rootfs)+1));
+        } else if(isfile(inodes[i])){
+            char* hash = calculate_sha1(inodes[i]);
+            array_add(files, build_string("%s %s\n", hash, inodes[i]+strlen(rootfs)+1));
+            free(hash);
+        }
+        free(inodes[i]);
+    }
+    char* files_path = build_string("%s/files", path);
+    char* links_path = build_string("%s/links", path);
+    writefile(files_path, array_get_string(files));
+    writefile(links_path, array_get_string(links));
+    // cleanup
+    free(inodes);
+    free(links_path);
+    free(files_path);
+    array_unref(files);
+    array_unref(links);
+}
+
 visible bool build_from_path(const char* path){
     char* ympfile = build_string("%s/ympbuild",path);
     if(!isfile(ympfile)){
@@ -134,12 +181,7 @@ visible bool build_from_path(const char* path){
     // Create build path
     ymp->path = calculate_md5(ympfile);
     ymp->path = build_string("%s/%s", BUILD_DIR, ymp->path);
-    ymp->header = str_replace(ymp->header, "@buildpath@", ymp->path);
-    ymp->header = str_replace(ymp->header, "@CC@", "gcc");
-    ymp->header = str_replace(ymp->header, "@CXX@", "g++");
-    ymp->header = str_replace(ymp->header, "@CFLAGS@", "");
-    ymp->header = str_replace(ymp->header, "@CXXFLAGS@", "");
-    ymp->header = str_replace(ymp->header, "@LDFLAGS@", "");
+    configure_header(ymp);
     create_dir(ymp->path);
     // fetch values
     char* name = ympbuild_get_value(ymp, "name");
@@ -191,6 +233,8 @@ visible bool build_from_path(const char* path){
             return false;
         }
     }
+    // Generate links file
+    generate_links_files(ymp->path);
     (void)name; (void)deps;
     // Cleanup
     free(ympfile);

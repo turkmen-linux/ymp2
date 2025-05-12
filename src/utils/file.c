@@ -26,6 +26,15 @@ visible uint64_t filesize(const char* path) {
     return 0; // Return 0 if the file does not exist or an error occurs
 }
 
+visible bool isfile(const char *filename) {
+    debug("check is file: %s\n", filename);
+    if (filename == NULL) {
+        return false;
+    }
+    struct stat st;
+    return (stat(filename, &st) == 0) && S_ISREG(st.st_mode);
+}
+
 visible bool issymlink(const char *filename) {
     debug("check is symlink: %s\n", filename);
     if (filename == NULL) {
@@ -125,6 +134,21 @@ visible char** find(const char* path){
     return list;
 }
 
+visible void writefile(const char* path, const char* data) {
+    FILE *file = fopen(path, "w");
+    if (file == NULL) {
+        perror("Error opening file");
+        return;
+    }
+
+    size_t length = strlen(data);
+    size_t written = fwrite(data, sizeof(char), length, file);
+    if (written != length) {
+        perror("Error writing to file");
+    }
+
+    fclose(file);
+}
 visible char* getoutput(char* argv[]) {
     int pipefd[2];
     if (pipe(pipefd) == -1) {
@@ -289,4 +313,24 @@ visible bool copy_directory(const char *sourceDir, const char *destDir) {
 
     closedir(dir);
     return true;
+}
+
+visible char* sreadlink(const char* path) {
+    // Buffer size for the target path
+    ssize_t bufsize = 1024; // You can adjust this size as needed
+    char* buf = malloc(bufsize);
+    if (buf == NULL) {
+        perror("malloc");
+        return NULL; // Return NULL if memory allocation fails
+    }
+
+    ssize_t len = readlink(path, buf, bufsize - 1);
+    if (len == -1) {
+        perror("readlink");
+        free(buf); // Free the allocated memory on error
+        return NULL; // Return NULL on error
+    }
+
+    buf[len] = '\0'; // Null-terminate the string
+    return buf; // Return the dynamically allocated string
 }

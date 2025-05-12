@@ -4,8 +4,10 @@
 #include <stdbool.h>
 
 #include <core/logger.h>
-
 #include <utils/fetcher.h>
+#include <utils/string.h>
+
+#include <config.h>
 
 typedef struct {
     CURL *curl;
@@ -40,6 +42,7 @@ visible bool fetch(const char* url, const char* path) {
         chunk = curl_slist_append(chunk, "Sec-GPC: 1");
         chunk = curl_slist_append(chunk, "Ymp: \"NE MUTLU TURKUM DIYENE\"");
         curl_easy_setopt(fetch->curl, CURLOPT_HTTPHEADER, chunk);
+        curl_easy_setopt(fetch->curl, CURLOPT_USERAGENT, build_string("Ymp fetcher/%s", VERSION));
         curl_easy_setopt(fetch->curl, CURLOPT_URL, url); // Set the URL
         curl_easy_setopt(fetch->curl, CURLOPT_WRITEFUNCTION, write_data); // Set the write callback
         curl_easy_setopt(fetch->curl, CURLOPT_WRITEDATA, fetch); // Pass the file pointer to the callback

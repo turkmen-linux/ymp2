@@ -27,7 +27,7 @@ uint64_t filesize(const char* path);
  * @param filename The name of the file to check.
  * @return true if the file is a file, false otherwise.
  */
-#define isfile(filename) (access(filename, F_OK) == 0)
+bool isfile(const char *filename);
 
 /**
  * @brief Checks if a file or directory exists at the specified path.
@@ -178,5 +178,39 @@ bool copy_file(const char *sourceFile, const char *destFile);
  */
 bool copy_directory(const char *sourceDir, const char *destDir);
 
+/**
+ * @brief Reads the target of a symbolic link.
+ *
+ * This function reads the value of a symbolic link specified by the
+ * given path and returns it as a dynamically allocated string. The
+ * caller is responsible for freeing the allocated memory.
+ *
+ * @param path The path to the symbolic link.
+ * @return A pointer to a dynamically allocated string containing the
+ *         target of the symbolic link, or NULL if an error occurs.
+ *         In case of an error, errno is set to indicate the error.
+ *
+ * @note The returned string is null-terminated. If the symbolic link
+ *       points to a target that is too long to fit in the allocated
+ *       buffer, the function will return the target path truncated
+ *       to the buffer size.
+ *
+ * @warning The caller must free the memory allocated for the returned
+ *          string to avoid memory leaks.
+ */
+char* sreadlink(const char* path);
+
+/**
+ * @brief Writes data to a specified file.
+ *
+ * This function opens a file in write mode and writes the provided data
+ * to it. If the file cannot be opened or if there is an error during
+ * writing, an error message is printed to stderr.
+ *
+ * @param path The path to the file where data will be written.
+ * @param data The data to be written to the file.
+ */
+
+void writefile(const char* path, const char* data);
 
 #endif

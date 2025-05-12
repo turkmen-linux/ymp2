@@ -26,6 +26,7 @@ configure_file(
     'VERSION': meson.project_version(),
     'DEBUG': get_option('debug') ? '1' : '0',
     'BUILD_DIR': '/tmp/ymp-build/',
+    'DISTRODIR': '/lib/turkman',
     'STORAGE': '/var/lib/ymp/',
   }
 )

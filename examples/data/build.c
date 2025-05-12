@@ -3,9 +3,11 @@
 
 #include <data/build.h>
 #include <core/logger.h>
+#include <core/ymp.h>
 
 int main(int argc, char* argv[]) {
     // Check if the user provided a path as an argument
+    global = ymp_init();
     if (argc < 2) {
         fprintf(stderr, "Usage: %s <path>\n", argv[0]);
         return 0;
