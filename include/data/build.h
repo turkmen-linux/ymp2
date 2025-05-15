@@ -70,6 +70,9 @@ char** ympbuild_get_array(ympbuild* ymp, const char* name);
  */
 bool build_from_path(const char* path);
 
+char *build_source_from_path(const char* path);
+char *build_binary_from_path(const char* path);
+
 /**
  * @brief Executes a specified function within the YMP build context.
  *
