@@ -135,6 +135,7 @@ visible char** find(const char* path){
 }
 
 visible void writefile(const char* path, const char* data) {
+    debug("write to file: %s\n", path);
     FILE *file = fopen(path, "w");
     if (file == NULL) {
         perror("Error opening file");

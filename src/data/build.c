@@ -222,14 +222,13 @@ static void generate_metadata(ympbuild *ymp, bool is_source) {
     } else {
         // Use flags
         char** flags = ympbuild_get_array(ymp, "uses");
-        if(flags[0]){
+        if(strlen(flags[0]) > 0){
             array_add(a, "    use-flags:\n");
         }
-        for(size_t i=0; flags[i]; i++){
+        for(size_t i=0; flags[i] && strlen(flags[0]) > 0; i++){
             array_add(a, build_string("      - %s:\n", flags[i]));
-            free(flags[i]);
         }
-        for(size_t i=0; flags[i]; i++){
+        for(size_t i=0; flags[i] && strlen(flags[0]) > 0; i++){
             array_add(a, build_string("    %s-depends:\n"));
             char** deps = ympbuild_get_array(ymp, build_string("%s_depends", flags[i]));
             for(size_t j=0; deps[j]; j++){
@@ -261,15 +260,19 @@ visible bool build_from_path(const char* path){
     ympbuild *ymp = malloc(sizeof(ympbuild));
     ymp->ctx = readfile(ympfile);
     ymp->header = readfile(":/ympbuild-header.sh");
+    // define variables
+    char* name = ympbuild_get_value(ymp, "name");
+    char* version = ympbuild_get_value(ymp, "version");
+    char* src_cache = build_string("%s/cache/%s-%s/",BUILD_DIR, name, version);
+    create_dir(src_cache);
+    // configure header and generate source metadata
+    ymp->path = src_cache;
+    configure_header(ymp);
+    generate_metadata(ymp, true);
     // Create build path
     ymp->path = calculate_md5(ympfile);
     ymp->path = build_string("%s/%s", BUILD_DIR, ymp->path);
-    configure_header(ymp);
     create_dir(ymp->path);
-    // fetch values
-    char* name = ympbuild_get_value(ymp, "name");
-    char** deps = ympbuild_get_array(ymp, "depends");
-    char** sources = ympbuild_get_array(ymp, "source");
     // detect hash
     char** hashs = NULL;
     size_t hash_type = 0;
@@ -284,16 +287,16 @@ visible bool build_from_path(const char* path){
         free(hashs);
     }
     // copy ympbuild file
-    char* target = build_string("%s/cache/%s/ympbuild",BUILD_DIR, name);
+    char* target = build_string("%s/ympbuild",src_cache);
     copy_file(ympfile, target);
     free(target);
     // copy resources
+    char** sources = ympbuild_get_array(ymp, "source");
     for(size_t i=0; sources[i] && hashs[i]; i++){
-        if(!get_resource(path, name, hash_type, sources[i], hashs[i])){
+        if(!get_resource(path, build_string("%s-%s", name, version), hash_type, sources[i], hashs[i])){
             return false;
         }
     }
-    char* src_cache = build_string("%s/cache/%s/",BUILD_DIR, name);
     char** src_files = find(src_cache);
     Archive *a = archive_new();
     for(size_t i=0; src_files[i];i++){
@@ -319,7 +322,6 @@ visible bool build_from_path(const char* path){
     // Generate links file
     generate_links_files(ymp->path);
     generate_metadata(ymp, false);
-    (void)name; (void)deps;
     // Cleanup
     free(ympfile);
     return true;
