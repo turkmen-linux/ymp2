@@ -97,4 +97,15 @@ int print_fn(const char* caller, int type, const char* format, ...);
  */
 #define warning(A, ...) print_fn(__func__, WARNING, A, ##__VA_ARGS__)
 
+#define BLACK 30
+#define RED 31
+#define GREEN 32
+#define YELLOW 33
+#define BLUE 34
+#define MAGENTA 35
+#define CYAN 36
+#define WHITE 37
+
+char* colorize(int color, const char* message);
+
 #endif

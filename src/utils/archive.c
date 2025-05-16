@@ -249,7 +249,7 @@ visible void archive_write(Archive *data, const char *outname, char **filename) 
   archive_write_open_filename(a, outname);
   entry = NULL;
   while (*filename) {
-    debug("archive write : %s\n", filename);
+    debug("archive write : %s\n", filename[0]);
     if(!isexists(*filename)){
         filename++;
         continue;

@@ -72,6 +72,7 @@ bool build_from_path(const char* path);
 
 char *build_source_from_path(const char* path);
 char *build_binary_from_path(const char* path);
+char *create_package(const char* path);
 
 /**
  * @brief Executes a specified function within the YMP build context.

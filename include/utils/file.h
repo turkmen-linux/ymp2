@@ -216,4 +216,5 @@ char* sreadlink(const char* path);
 
 void writefile(const char* path, const char* data);
 
+char* pwd();
 #endif

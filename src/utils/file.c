@@ -343,3 +343,12 @@ visible char* sreadlink(const char* path) {
     return buf; // Return the dynamically allocated string
 }
 
+visible char* pwd(){
+   char cwd[1024]; // Buffer to store the directory path
+   if (getcwd(cwd, sizeof(cwd)) != NULL) {
+      printf("Current working directory: %s\n", cwd);
+   } else {
+      perror("getcwd() error"); // Prints error if getcwd() fails
+   }
+   return strdup(cwd);
+}

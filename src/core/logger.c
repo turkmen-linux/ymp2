@@ -1,7 +1,11 @@
+#include <unistd.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdarg.h>
+#include <stdlib.h>
+#include <string.h>
 
+#include <utils/string.h>
 #include <core/logger.h>
 
 typedef int (*logger)(const char*, ...);
@@ -19,6 +23,13 @@ visible void logger_set_status(int type, bool status){
     }
 }
 
+visible char* colorize(int color, const char* message){
+    if(!isatty(fileno(stdout))){
+        return strdup(message);
+    }
+    return build_string("\x1b[;%dm%s\x1b[;0m", color, message);
+}
+
 visible int print_fn(const char* caller, int type, const char* format, ...){
     if(print_functions[type] == NULL){
         return 0;
@@ -27,7 +38,9 @@ visible int print_fn(const char* caller, int type, const char* format, ...){
     va_list args;
     va_start(args, format);
     if(type == DEBUG){
-        printf("[%s]:", caller);
+        char* msg = colorize(BLUE,caller);
+        printf("[%s]:", msg);
+        free(msg);
     }
 
     int status = print_functions[type](format, args);

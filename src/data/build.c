@@ -17,6 +17,7 @@
 #include <utils/hash.h>
 #include <utils/fetcher.h>
 #include <utils/archive.h>
+#include <utils/yaml.h>
 
 #include <data/build.h>
 #include <config.h>
@@ -399,4 +400,42 @@ visible bool build_from_path(const char* path){
     char* build = build_binary_from_path(cache);
     print("Binary created at: %s\n", build);
     return (build != NULL && cache != NULL);
+}
+
+visible char* create_package(const char* path){
+    char* curdir = pwd();
+    char* metadata_file = build_string("%s/metadata.yaml", path);
+    char* ret = build_string("%s/package.zip", path);
+    char* metadata = readfile(metadata_file);
+    if(!isfile(metadata_file)){
+        print("Failed to find %s\n", metadata_file);
+        return NULL;
+    }
+    free(metadata_file);
+    if(chdir(path) < 0){
+        print("Failed to change directory\n");
+        return NULL;
+    }
+    if(!yaml_has_area(metadata, "ymp")){
+        print("Invalid metadata\n");
+        return NULL;
+    }
+    metadata = yaml_get_area(metadata, "ymp");
+    if(yaml_has_area(metadata, "source")){
+        Archive *a = archive_new();
+        archive_load(a, ret);
+        archive_set_type(a, "zip", "none");
+        char** files = find(path);
+        for(size_t i=0; files[i]; i++){
+            archive_add(a, files[i]+strlen(path)+1);
+        }
+        archive_create(a);
+        free(a);
+        free(files);
+    }
+    if(chdir(curdir) < 0){
+        print("Failed to change directory\n");
+        return NULL;
+    }
+    return ret;
 }
