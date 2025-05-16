@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <dlfcn.h>
-
+#include <unistd.h>
 
 #include <core/ymp.h>
+#include <core/logger.h>
 
 void ctx_init(OperationManager *manager);
 
@@ -25,6 +26,9 @@ visible Ymp* ymp_init(){
     Ymp* ymp = (Ymp*)malloc(sizeof(Ymp));
     if(ymp == NULL){
         return NULL; // Memory allocation failed!
+    }
+    if(!isatty(fileno(stdout))){
+        logger_set_status(COLORIZE, false);
     }
     ymp->manager = operation_manager_new(); // Operation manager.
     ymp->variables = variable_manager_new();

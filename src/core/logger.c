@@ -14,9 +14,6 @@ typedef int (*logger)(const char*, ...);
 static logger print_functions[] = {(logger)vprintf, NULL, (logger)vprintf, NULL};
 
 static char* colorize_fn(int color, const char* message){
-    if(!isatty(fileno(stdout))){
-        return strdup(message);
-    }
     return build_string("\x1b[;%dm%s\x1b[;0m", color, message);
 }
 
