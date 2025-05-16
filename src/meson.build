@@ -11,7 +11,7 @@ foreach ops : run_command('find', 'operations','-type','f',check:true).stdout().
 endforeach
 ctx_c += '}\n\n'
 ctx_c += '#include <string.h>\n'
-ctx_c += 'char* resource(const char* name){\n'
+ctx_c += '__attribute__((section(".resource"))) char* resource(const char* name){\n'
 foreach data : run_command('find', '../data','-type','f',check:true).stdout().strip().split('\n')
     data = data.substring(7)
     fdata = run_command('cat', '../data/'+data ,check:true).stdout()

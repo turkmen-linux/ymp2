@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <dlfcn.h>
+#include <error.h>
+
 
 #include <core/ymp.h>
 
@@ -66,4 +69,18 @@ int visible ymp_run(Ymp* ymp){
     }
     global = NULL;
     return rc;
+}
+visible void load_plugin(const char* path){
+    void *handle;
+    handle = dlopen(path, RTLD_LAZY);
+    if (!handle) {
+        printf("Failed to load plugin: %s from %s\n ",dlerror(), path);
+        return;
+    }
+    dlerror();
+    void (*plugin_func)();
+    *(void**)(&plugin_func) = dlsym(handle, "main");
+    if(plugin_func){
+        plugin_func();
+    }
 }
