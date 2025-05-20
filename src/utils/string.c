@@ -106,7 +106,8 @@ visible char* trim(char* data) {
 
         }
     }
-    return str;
+    data=str;
+    return data;
 }
 
 visible char* int_to_string(int num){

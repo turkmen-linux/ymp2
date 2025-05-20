@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 #include <utils/string.h>
+#include <utils/array.h>
 
 #define MAX_LINE_LENGTH 1024
 
@@ -44,7 +45,6 @@ visible char *yaml_get_area(const char *data, const char *path) {
     fclose(stream);
     // shrink memory
     char *area = strdup(trim(area_data));
-    free(area_data);
     return area;
 }
 
@@ -104,56 +104,49 @@ visible char** yaml_get_area_list(const char* fdata, const char* path, int* area
         ret[i] = NULL; // Initialize pointers to NULL
     }
 
-    char area_builder[MAX_LINE_LENGTH] = "";
+    array * area = array_new();
+    char line[MAX_LINE_LENGTH];
     bool e = false;
     *area_count = 0;
 
-    char* fdata_copy = strdup(fdata); // Create a mutable copy of fdata
-    char* line = strtok(fdata_copy, "\n");
-
-    while (line != NULL) {
-        if (line[0] != ' ' && strstr(line, ":") != NULL) {
+    FILE *stream = fmemopen((void *)fdata, strlen(fdata), "r");
+    while (fgets(line, sizeof(line), stream)) {
+        if (line[0] != ' ' && strstr(line, ":")) {
             char* name = strtok(line, ":");
             // Flush memory to array
-            if (strlen(area_builder) > 0) {
-                // Check if we need to resize the array
-                if (*area_count >= max) {
-                    max += 32; // Increase size by 32
-                    ret = realloc(ret, max * sizeof(char*));
-                    if (ret == NULL) {
-                        fprintf(stderr, "Memory allocation failed\n");
-                        free(fdata_copy);
-                        return NULL; // Handle allocation failure
-                    }
+            // Check if we need to resize the array
+            if (*area_count >= max) {
+                max += 32; // Increase size by 32
+                ret = realloc(ret, max * sizeof(char*));
+                if (ret == NULL) {
+                    fprintf(stderr, "Memory allocation failed\n");
+                    return NULL; // Handle allocation failure
                 }
-                ret[*area_count] = strdup(trim(area_builder));
-                (*area_count)++;
-                memset(area_builder, 0, sizeof(area_builder)); // Reset memory
             }
+            ret[*area_count] = trim(array_get_string(area));
+            (*area_count)++;
+            array_clear(area);
             e = (strcmp(trim(name), path) == 0);
         } else if (e && strlen(line) > 0) {
-            strcat(area_builder, line);
-            strcat(area_builder, "\n");
+            array_add(area,line);
+            array_add(area,"\n");
         }
-        line = strtok(NULL, "\n");
     }
 
     // Flush memory for last item
-    if (e && strlen(area_builder) > 0) {
+    if (e) {
         // Check if we need to resize the array
         if (*area_count >= max) {
             max += 32; // Increase size by 32
             ret = realloc(ret, max * sizeof(char*));
             if (ret == NULL) {
                 fprintf(stderr, "Memory allocation failed\n");
-                free(fdata_copy);
                 return NULL; // Handle allocation failure
             }
         }
-        ret[*area_count] = strdup(trim(area_builder));
+        ret[*area_count] = trim(array_get_string(area));
         (*area_count)++;
     }
 
-    free(fdata_copy); // Free the mutable copy
     return ret;
 }
