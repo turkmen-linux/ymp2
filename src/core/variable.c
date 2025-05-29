@@ -11,13 +11,13 @@ typedef struct {
     char* name;
     char* value;
     bool read_only;
-} Variable;
+} YmpVariable;
 
 visible VariableManager* variable_manager_new(){
     VariableManager *variables = (VariableManager*)malloc(sizeof(VariableManager));
     variables->capacity = 0;
     variables->length = 0;
-    variables->priv_data = malloc(sizeof(Variable));
+    variables->priv_data = malloc(sizeof(YmpVariable));
     return variables;
 }
 
@@ -26,7 +26,7 @@ static void variable_set_value_fn(VariableManager* variables, const char* name, 
         printf("%s\n","Invalid VariableManager");
         return;
     }
-    Variable* vars = (Variable*)variables->priv_data;
+    YmpVariable* vars = (YmpVariable*)variables->priv_data;
     // Search for existing variable
     for(size_t i=0; i< variables->length; i++){
         if(!read_only && vars[i].read_only) {
@@ -63,7 +63,7 @@ visible char* variable_get_value(VariableManager* variables, const char* name){
         printf("%s\n","Invalid VariableManager");
         return "";
     }
-    Variable* vars = (Variable*)variables->priv_data;
+    YmpVariable* vars = (YmpVariable*)variables->priv_data;
     for(size_t i=0; i< variables->length; i++){
         if(strcmp(name, vars[i].name) == 0){
             return vars[i].value;

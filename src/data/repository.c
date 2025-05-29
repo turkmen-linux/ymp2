@@ -16,13 +16,16 @@
 #include <data/repository.h>
 
 visible Repository* repository_new(){
-    return (Repository*)malloc(sizeof(Repository));
+    Repository* repo = (Repository*)malloc(sizeof(Repository));
+    repo->packages = malloc(sizeof(Package*));
+    return repo;
 }
 
 visible void repository_unref(Repository* repo){
     for(size_t i=0; i<repo->package_count; i++){
         package_unref(repo->packages[i]);
     }
+    free(repo->packages);
     free(repo);
 }
 
@@ -47,6 +50,9 @@ static void repository_load_data(Repository* repo, const char* data, bool is_sou
 }
 
 visible Package* repository_get(Repository *repo, const char* name, bool is_source){
+    if(repo == NULL){
+        return NULL;
+    }
     for(size_t i=0; i<repo->package_count;i++){
         if (repo->packages[i]->is_source != is_source){
             continue;
@@ -66,6 +72,9 @@ visible void repository_load_from_index(Repository* repo, const char* index){
     free(data);
 }
 visible void repository_load_from_data(Repository* repo, const char* data){
+    if(repo == NULL){
+        return;
+    }
     // get uri
     char* inner = yaml_get_area(data, "index");
     repo->uri = yaml_get_value(inner, "address");
@@ -76,6 +85,9 @@ visible void repository_load_from_data(Repository* repo, const char* data){
 }
 
 visible bool repository_download_package(Repository* repo, const char* name, bool is_source){
+    if(repo == NULL){
+        return false;
+    }
     // get package from repository
     Package *p = repository_get(repo, name, is_source);
     if(p == NULL){
