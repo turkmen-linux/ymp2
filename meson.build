@@ -10,6 +10,9 @@ add_project_arguments('-fvisibility=hidden', '-Dvisible=__attribute__((visibilit
 add_project_arguments('-DPATH_MAX=1024', '-pthread', '-fPIC', language: 'c')
 add_project_arguments('-Wall', '-Wextra', '-Werror',  language: 'c')
 
+if get_option('debug')
+    add_project_arguments('-DDEBUG',  language: 'c')
+endif
 
 srcs = []
 deps = [
@@ -45,7 +48,7 @@ if not get_option('startfiles')
 endif
 
 # Main library
-libymp = library('ymp', srcs, dependencies: deps, c_args: ['-DLIBYMP'], link_args: nostdlib)
+libymp = library('ymp', srcs, dependencies: deps, c_args: ['-DLIBYMP', '-Dinvisible=extern'], link_args: nostdlib)
 
 subdir('docs')
 subdir('examples')

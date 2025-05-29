@@ -32,7 +32,3 @@ visible ssize_t write(int fd, const void *buf, size_t count) {
     return bytes_written;
 }
 
-
-visible void* malloc(size_t size){
-    return (void*) calloc((size_t)1, size);
-}

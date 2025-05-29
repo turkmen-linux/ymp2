@@ -27,8 +27,13 @@ static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
 visible bool fetch(const char* url, const char* path) {
     debug("Fetch: %s -> %s\n", url, path);
     fetcher* fetch = malloc(sizeof(fetcher));
+    
+    if(!fetch) {
+        perror("malloc");
+    }
 
-    fetch->curl = curl_easy_init();
+    CURL *curl = curl_easy_init();
+    fetch->curl = curl;
     if (fetch->curl) {
         fetch->fp = fopen(path, "wb"); // Open file for writing
         if (fetch->fp == NULL) {

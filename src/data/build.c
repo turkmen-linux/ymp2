@@ -26,8 +26,6 @@
 #define UNSHARE_FLAGS (CLONE_NEWNS | CLONE_NEWUTS | CLONE_NEWUSER | CLONE_NEWNET)
 
 
-extern Ymp* global;
-
 visible char* ympbuild_get_value(ympbuild* ymp, const char* name) {
     char* command = build_string(
     "exec <&-\n"

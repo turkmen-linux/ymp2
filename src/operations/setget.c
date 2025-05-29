@@ -1,14 +1,12 @@
 #include <stdio.h>
 #include <core/ymp.h>
 
-extern Ymp* global;
-
 static int set_fn(char** args){
-    variable_set_value(global->variables, args[0], args[1]);
+    set_value(args[0], args[1]);
     return 0;
 }
 static int get_fn(char** args){
-    char* value = variable_get_value(global->variables, args[0]);
+    char* value = get_value(args[0]);
     printf("%s\n", value);
     return 0;
 }

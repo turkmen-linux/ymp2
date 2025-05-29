@@ -36,7 +36,6 @@ int main() {
     char *value = yaml_get_value(data, value_name);
     if (value) {
         printf("Value of '%s': %s\n", value_name, value);
-        free(value); // Free the allocated memory
     }
 
     // Get an array of items from an area
@@ -53,9 +52,9 @@ int main() {
 
     // Get a list of areas
     int area_count;
-    char **area_list = yaml_get_area_list(data, "area", &area_count);
+    char **area_list = yaml_get_area_list(data, "area1", &area_count);
     if (area_list) {
-        printf("Areas found:\n");
+        printf("Areas found: %d\n", area_count);
         for (int i = 0; i < area_count; i++) {
             printf("  %s\n", area_list[i]);
             free(area_list[i]); // Free each area

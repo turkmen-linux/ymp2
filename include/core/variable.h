@@ -5,6 +5,10 @@
  * @brief Define string or boolean variables.
  */
 
+#ifndef LIBYMP
+#define invisible ;//
+#endif
+
 #include <stddef.h>
 
 /**
@@ -42,6 +46,7 @@ VariableManager *variable_manager_new();
  * @param value The value to assign to the variable.
  */
 void variable_set_value(VariableManager* variables, const char* name, const char* value);
+invisible void set_value(const char* name, const char* value);
 
 /**
  * @brief Set the value of a read-only variable.
@@ -55,6 +60,7 @@ void variable_set_value(VariableManager* variables, const char* name, const char
  * @param value The value to assign to the variable.
  */
 void variable_set_value_read_only(VariableManager* variables, const char* name, const char* value);
+invisible void set_value_read_only(const char* name, const char* value);
 
 /**
  * @brief Get the value of a variable.
@@ -67,5 +73,6 @@ void variable_set_value_read_only(VariableManager* variables, const char* name, 
  *         does not exist.
  */
 char* variable_get_value(VariableManager* variables, const char* name);
+invisible char* get_value(const char* name);
 
 #endif

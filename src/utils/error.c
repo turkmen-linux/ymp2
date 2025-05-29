@@ -6,8 +6,6 @@
 #include <utils/error.h>
 #include <core/ymp.h>
 
-extern Ymp* global;
-
 visible void error_fn(array* error, int status){
     if(!error){
         return;

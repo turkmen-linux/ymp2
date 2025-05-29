@@ -4,6 +4,8 @@
 #include <stdlib.h>
 
 #include <core/variable.h>
+#include <core/logger.h>
+#include <core/ymp.h>
 
 typedef struct {
     char* name;
@@ -68,4 +70,28 @@ visible char* variable_get_value(VariableManager* variables, const char* name){
         }
     }
     return "";
+}
+
+char* get_value(const char* name){
+    if(!global){
+        global = ymp_init();
+        warning("please call ymp_init after use get_value");
+    }
+    return variable_get_value(global->variables, name);
+}
+
+void set_value(const char* name, const char* value){
+    if(!global){
+        global = ymp_init();
+        warning("please call ymp_init after use set_value");
+    }
+    return variable_set_value(global->variables, name, value);
+}
+
+void set_value_read_only(const char* name, const char* value){
+    if(!global){
+        global = ymp_init();
+        warning("please call ymp_init after use set_value_read_only");
+    }
+    return variable_set_value_read_only(global->variables, name, value);
 }

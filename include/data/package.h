@@ -17,16 +17,16 @@
  * version, dependencies, and other metadata.
  */
 typedef struct {
-    char* name; /**< Package name */
+    const char* name; /**< Package name */
     char** dependencies; /**< List of package dependencies */
-    char* version; /**< Package version string */
+    const char* version; /**< Package version string */
     int release; /**< Package release number */
     bool is_source; /**< Indicates if the package is a source package */
     
     /** @cond */
-    char* metadata; /**< Package metadata. Used by internal functions. Do not modify! */
-    char* files; /**< Package files metadata. Used by internal functions. Do not modify! */
-    char* links; /**< Package links metadata. Used by internal functions. Do not modify! */
+    const char* metadata; /**< Package metadata. Used by internal functions. Do not modify! */
+    const char* files; /**< Package files metadata. Used by internal functions. Do not modify! */
+    const char* links; /**< Package links metadata. Used by internal functions. Do not modify! */
     array *errors; /**< List of errors encountered during package processing */
     Archive *archive; /**< Pointer to the package archive */
     /** @endcond */
@@ -82,4 +82,6 @@ void package_load_from_metadata(Package* pkg, const char* metadata, bool is_sour
  */
 bool package_extract(Package* pkg);
 
+
+void package_unref(Package *pkg);
 #endif

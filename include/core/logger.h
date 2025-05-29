@@ -69,6 +69,7 @@ int print_fn(const char* caller, int type, const char* format, ...);
  */
 #define print(A, ...) print_fn(__func__, PRINT, A, ##__VA_ARGS__)
 
+#ifdef DEBUG
 /**
  * @brief Macro for printing debug messages.
  *
@@ -78,6 +79,9 @@ int print_fn(const char* caller, int type, const char* format, ...);
  * @param ... Additional arguments for the format string.
  */
 #define debug(A, ...)   print_fn(__func__, DEBUG, A, ##__VA_ARGS__)
+#else
+#define debug(A, ...)
+#endif
 
 /**
  * @brief Macro for printing informational messages.

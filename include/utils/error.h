@@ -6,6 +6,10 @@
 #include <stdbool.h>
 #include <utils/array.h>
 
+#ifndef LIBYMP
+#define invisible ;//
+#endif
+
 /**
  * @brief Reports an error with a specific status.
  *
@@ -15,7 +19,7 @@
  * @param status The error status code to be reported.
  */
 void error_fn(array* error, int status);
-void error(int status);
+invisible void error(int status);
 
 /**
  * @brief Adds an error message to the error array.
@@ -27,7 +31,7 @@ void error(int status);
  * @param message The error message to be added to the error array.
  */
 void error_add_fn(array* error, const char* message);
-void error_add(const char* message);
+invisible void error_add(const char* message);
 
 /**
  * @brief Checks if there are any errors in the error array.
@@ -39,5 +43,5 @@ void error_add(const char* message);
  * @return true if there are errors in the array, false otherwise.
  */
 bool has_error_fn(array* error);
-bool has_error();
+invisible bool has_error();
 

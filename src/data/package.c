@@ -18,8 +18,6 @@
 
 #include <config.h>
 
-extern Ymp* global;
-
 visible Package* package_new() {
     // Allocate memory for a new Package structure
     Package *pkg = malloc(sizeof(Package));
@@ -27,13 +25,14 @@ visible Package* package_new() {
     // Initialize the archive member of the Package with a new archive
     pkg->archive = archive_new();
 
-    // Initialize the errors member with a new array to store error messages
-    pkg->errors = array_new();
-
     // Return the newly created Package instance
     return pkg;
 }
 
+visible void package_unref(Package *pkg){
+    free(pkg->archive);
+    free(pkg);
+}
 
 visible void package_load_from_file(Package* pkg, const char* path) {
     debug("Package load from file: %s\n", path);
@@ -74,7 +73,7 @@ visible void package_load_from_file(Package* pkg, const char* path) {
 
 visible void package_load_from_metadata(Package* pkg, const char* metadata, bool is_source){
     pkg->is_source = is_source;
-    pkg->metadata = strdup(metadata);
+    pkg->metadata = metadata;
     if(!pkg->is_source && pkg->files){
         // 3. Read the list of files from the archive
         pkg->files = archive_readfile(pkg->archive, "files");
