@@ -9,6 +9,8 @@ add_project_arguments('-I'+meson.current_source_dir()+'/include', '-pthread',  l
 add_project_arguments('-fvisibility=hidden', '-Dvisible=__attribute__((visibility("default")))',  language: 'c')
 add_project_arguments('-DPATH_MAX=1024', '-pthread', '-fPIC', language: 'c')
 add_project_arguments('-Wall', '-Wextra', '-Werror',  language: 'c')
+add_project_arguments('-Wno-unused-command-line-argument',  language: 'c') # for clang
+
 
 if get_option('debug')
     add_project_arguments('-DDEBUG',  language: 'c')

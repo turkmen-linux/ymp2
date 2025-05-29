@@ -1,0 +1,15 @@
+Source: ymp
+Section: utils
+Priority: optional
+Maintainer: Ali Riza KESKIN <parduscix@yandex.ru>
+Build-Depends: libarchive-dev,
+               libcurl4-openssl-dev,
+               meson, gcc
+Standards-Version: 4.3.0
+Homepage: https://turkman.gitlab.io
+
+Package: ymp
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: Yerli ve Milli Package manager (ymp)
+ A package manager for Turkish
