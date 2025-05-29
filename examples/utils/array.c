@@ -3,7 +3,11 @@
 #include <string.h>
 #include <utils/array.h>
 
+
+#include <core/ymp.h>
+
 int main() {
+    (void)ymp_init();
     // Create a new dynamic array
     array *myArray = array_new();
     if (myArray == NULL) {

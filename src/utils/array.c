@@ -4,12 +4,22 @@
 #include <stdbool.h>
 
 #include <utils/array.h>
+#include <core/logger.h>
 
 #define csort(A, B) qsort(A, B, sizeof(const char*), (int (*)(const void *, const void *))strcmp)
 
 visible array *array_new() {
-    array *arr = (array *)calloc(1,sizeof(array));
+    array *arr = (array *)malloc(sizeof(array));
+    if(!arr){
+        printf("memory allocation failed");
+        return NULL;
+    }
     arr->data = (char**)calloc(1024, sizeof(char*));
+    if(!arr->data){
+        printf("memory allocation failed");
+        free(arr);
+        return NULL;
+    }
     arr->size = 0;
     arr->capacity = 1024;
     arr->removed = 0;
@@ -22,20 +32,32 @@ visible array *array_new() {
 }
 
 visible void array_add(array *arr, const char *value) {
-    if(value == NULL){
-        return;
-    }
     pthread_mutex_lock(&arr->lock);
-    if (arr->size >= arr->capacity-1) {
+    
+    // Check if we need to increase capacity
+    if (arr->size >= arr->capacity) {
         arr->capacity += 1024;
         arr->data = (char **)realloc(arr->data, arr->capacity * sizeof(char *));
-        size_t start;
-        for(start=arr->capacity-1024;start<arr->capacity;start++){
+        if (!arr->data) {
+            // Handle memory allocation failure
+            pthread_mutex_unlock(&arr->lock);
+            return;
+        }
+        // Initialize new slots to NULL
+        for (size_t start = arr->size; start < arr->capacity; start++) {
             arr->data[start] = NULL;
         }
     }
+
+    // Free the previous value if it exists
+    if (arr->data[arr->size]) {
+        free(arr->data[arr->size]);
+    }
+
+    // Add the new value
+    arr->data[arr->size] = strdup(value);
     arr->size++;
-    arr->data[arr->size]=strdup(value);
+
     pthread_mutex_unlock(&arr->lock);
 }
 
@@ -193,22 +215,47 @@ visible void array_sort(array* arr){
 }
 
 visible char **array_get(array *arr, size_t* len) {
+    if (!arr) {
+        return NULL;
+    }
+    
     pthread_mutex_lock(&arr->lock);
-    *len = arr->size;
-    char** ret = calloc(arr->size+1, sizeof(char*));
+    
+    
+    // Allocate memory for the return array
+    char** ret = calloc(arr->size + 1, sizeof(char*));
+    if (!ret) {
+        pthread_mutex_unlock(&arr->lock);
+        return NULL; // Handle memory allocation failure
+    }
+
     size_t start = 0;
-    size_t skip = 0;
-    while(start < arr->size+arr->removed+1 && start < arr->capacity){
-        if(arr->data[start] == NULL){
-            start++;
-            skip++;
-            continue;
+    size_t ret_index = 0; // Index for ret array
+    while (start < arr->size) {
+        if (arr->data[start] != NULL) {
+            ret[ret_index] = strdup(arr->data[start]);
+            debug("item: %s index: %ld len: %ld\n", ret[ret_index], ret_index, arr->size);
+            if (!ret[ret_index]) {
+                // Handle strdup failure
+                // Free previously allocated strings in ret
+                for (size_t i = 0; i < ret_index; i++) {
+                    free(ret[i]);
+                }
+                free(ret);
+                pthread_mutex_unlock(&arr->lock);
+                return NULL; // Return NULL on failure
+            }
+            ret_index++;
         }
-        ret[start-skip]=strdup(arr->data[start]);
         start++;
     }
+    // Set length if len is not NULL
+    if (len) {
+        *len = ret_index;
+    }
+    
     pthread_mutex_unlock(&arr->lock);
-    return ret;
+    return ret; // Caller is responsible for freeing this memory
 }
 
 visible size_t array_length(array *arr) {
