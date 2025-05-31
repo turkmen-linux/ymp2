@@ -36,6 +36,7 @@ configure_file(
     'VERSION': meson.project_version(),
     'BUILD_DIR': '/tmp/ymp-build/',
     'DISTRODIR': '/lib/turkman',
+    'PLUGINDIR': get_option('plugindir'),
     'STORAGE': '/var/lib/ymp/',
   }
 )
@@ -53,8 +54,16 @@ if not get_option('startfiles')
     nostdlib = []
 endif
 
+
 # Main library
 libymp = library('ymp', srcs, dependencies: deps, c_args: ['-DLIBYMP', '-Dinvisible=extern'], link_args: nostdlib, install: true)
+
+# Plugins
+foreach src : run_command('find', 'plugin', '-type', 'f', '-iname', '*.c',check:true).stdout().strip().split('\n')
+    name = src.replace('.c', '').split('/')[-1]
+    library('ymp_'+name, [src], link_with: libymp, link_args: nostdlib, install: true)
+endforeach
+
 
 subdir('docs')
 subdir('examples')

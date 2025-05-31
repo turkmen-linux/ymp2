@@ -1,1 +1,2 @@
 option('startfiles', type: 'boolean', value: true)
+option('plugindir', type: 'string', value:'/lib/turkman/plugins')

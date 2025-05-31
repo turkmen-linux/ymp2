@@ -100,5 +100,5 @@ int ymp_run(Ymp* ymp);
 * @brief Global Ymp struct.
 */
 invisible Ymp *global;
-void load_plugin(const char* path);
+void load_plugin(Ymp *ymp, const char* path);
 #endif

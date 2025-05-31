@@ -5,4 +5,5 @@
 #define VERSION "@VERSION@"
 #define BUILD_DIR "@BUILD_DIR@"
 #define DISTRODIR "@DISTRODIR@"
+#define PLUGINDIR "@PLUGINDIR@"
 #endif

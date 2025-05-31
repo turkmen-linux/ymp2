@@ -49,7 +49,7 @@ visible Ymp* ymp_init(){
     return ymp; // Return the pointer to the newly created instance
 }
 
-void visible ymp_add(Ymp* ymp, const char* name, void* args) {
+visible void ymp_add(Ymp* ymp, const char* name, void* args) {
     YmpPrivate *queue = (YmpPrivate*)ymp->priv_data;
     if(queue->length >= queue->capacity){
         size_t new_capacity = queue->capacity + 32;
@@ -66,7 +66,7 @@ void visible ymp_add(Ymp* ymp, const char* name, void* args) {
     queue->length++;
 }
 
-int visible ymp_run(Ymp* ymp){
+visible int ymp_run(Ymp* ymp){
     YmpPrivate *queue = (YmpPrivate*)ymp->priv_data;
     global = ymp;
     int rc = 0;
@@ -79,7 +79,7 @@ int visible ymp_run(Ymp* ymp){
     global = NULL;
     return rc;
 }
-visible void load_plugin(const char* path){
+visible void load_plugin(Ymp* ymp, const char* path){
     void *handle;
     handle = dlopen(path, RTLD_LAZY);
     if (!handle) {
@@ -87,9 +87,16 @@ visible void load_plugin(const char* path){
         return;
     }
     dlerror();
-    void (*plugin_func)();
-    *(void**)(&plugin_func) = dlsym(handle, "main");
-    if(plugin_func){
-        plugin_func();
+    void (*plugin_func)(Ymp* ymp);
+    *(void**)(&plugin_func) = dlsym(handle, "ymp_main");
+    if(!plugin_func){
+        printf("Plugin is invalid: %s\n ", path);
+        return;
     }
+    plugin_func(ymp);
+}
+
+// libymp as also empty ymp plugin
+visible void ymp_main(Ymp* ymp){
+    (void)ymp;
 }
