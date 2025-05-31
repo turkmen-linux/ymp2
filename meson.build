@@ -9,8 +9,6 @@ project(
 
 architecture = run_command('uname', '-m', check:true).stdout().strip()
 
-add_project_arguments('-I'+meson.current_source_dir()+'/include', '-pthread',  language: 'c')
-add_project_arguments('-DPATH_MAX=1024', '-pthread', '-fPIC', '-fno-plt', language: 'c')
 add_project_arguments('-Wno-unused-command-line-argument',  language: 'c') # for clang
 
 if not get_option('debug')
@@ -26,25 +24,6 @@ deps = [
     dependency('openssl', required:true)
 ]
 
-
-configure_file(
-  input: 'include/config.h.in',
-  output: 'config.h',
-  configuration: {
-    'VERSION': meson.project_version(),
-    'BUILD_DIR': '/tmp/ymp-build/',
-    'DISTRODIR': '/lib/turkman',
-    'PLUGINDIR': get_option('plugindir'),
-    'STORAGE': '/var/lib/ymp/',
-  }
-)
-
-foreach src : run_command('find', 'src', '-type', 'f', '-iname', '*.c',check:true).stdout().strip().split('\n')
-    srcs += src
-endforeach
-
-subdir('src')
-
 start = [meson.current_source_dir()+'/src/start/'+architecture+'.s']
 nostdlib = ['-nostdlib', '-lc']
 if not get_option('startfiles')
@@ -52,25 +31,24 @@ if not get_option('startfiles')
     nostdlib = []
 endif
 
-if get_option('library')
-    add_project_arguments('-fvisibility=hidden', '-Dvisible=__attribute__((visibility("default")))',  language: 'c')
-else
-    add_project_arguments('-fvisibility=hidden', '-Dvisible=', language: 'c')
+subdir('src')
+subdir('data')
+
+if get_option('plugins')
+    add_project_arguments('-DPLUGIN_SUPPORT', language: 'c')
 endif
 
 l_args =  ['-flto'] + nostdlib
+
 if get_option('library')
     # Main library
     libymp = library('ymp', srcs, dependencies: deps, c_args: ['-Dinvisible=extern'], link_args: l_args, install: true)
     executable('ymp-cli', ['src/core/cli.c']+start, c_args: ['-Dymp_main=main'], link_with: libymp, link_args: l_args, install: true)
-    subdir('examples')
-    if get_option('plugins')
-        subdir('plugin')
-    endif
 else
     # single binary
     executable('ymp-cli', srcs+start, dependencies: deps, c_args: ['-Dymp_main=main', '-Dinvisible=extern'], link_args: l_args, install: true)
 endif
-
+subdir('examples')
+subdir('plugin')
 subdir('docs')
 

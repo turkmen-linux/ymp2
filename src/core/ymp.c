@@ -84,6 +84,8 @@ visible int ymp_run(Ymp* ymp){
     return rc;
 }
 visible void load_plugin(Ymp* ymp, const char* path){
+    (void)ymp; (void) path;
+    #ifdef PLUGIN_SUPPORT
     void *handle;
     handle = dlopen(path, RTLD_LAZY);
     if (!handle) {
@@ -98,5 +100,6 @@ visible void load_plugin(Ymp* ymp, const char* path){
         return;
     }
     plugin_func(ymp);
+    #endif
 }
 

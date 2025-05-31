@@ -100,6 +100,7 @@ int ymp_run(Ymp* ymp);
 * @brief Global Ymp struct.
 */
 invisible Ymp *global;
+#ifdef PLUGIN_SUPPORT
 /**
  * @brief Loads a plugin from the specified path into the Ymp instance.
  *
@@ -111,5 +112,5 @@ invisible Ymp *global;
  * @param path The path to the plugin file to be loaded.
  */
 void load_plugin(Ymp *ymp, const char* path);
-
+#endif
 #endif

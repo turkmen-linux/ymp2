@@ -33,3 +33,16 @@ configure_file(
 )
 
 srcs += [meson.current_build_dir()+'/ctx.c']
+
+foreach src : run_command('find', '.', '-type', 'f', '-iname', '*.c',check:true).stdout().strip().split('\n')
+    srcs += 'src/' + src
+endforeach
+
+if get_option('library')
+    add_project_arguments('-fvisibility=hidden', '-Dvisible=__attribute__((visibility("default")))',  language: 'c')
+else
+    add_project_arguments('-fvisibility=hidden', '-Dvisible=', language: 'c')
+endif
+
+add_project_arguments('-I'+meson.current_source_dir()+'/../include',  language: 'c')
+add_project_arguments('-DPATH_MAX=1024', '-pthread', '-fPIC', '-fno-plt', language: 'c')

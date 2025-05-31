@@ -10,6 +10,7 @@
 
 int ymp_main(int argc, char** argv){
     Ymp* ymp = ymp_init(); // Create ymp context
+    #ifdef PLUGIN_SUPPORT
     char** plugins = find(PLUGINDIR);
     size_t i = 0;
     while(plugins[i]){
@@ -18,6 +19,7 @@ int ymp_main(int argc, char** argv){
         }
         i++;
     }
+    #endif
     if(argc > 1) {
         if(isfile(argv[1])){
             return run_script(readfile(argv[1]));
@@ -29,4 +31,3 @@ int ymp_main(int argc, char** argv){
     }
     return ymp_run(ymp);
 }
-#endif

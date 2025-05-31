@@ -1,0 +1,9 @@
+prefix=@PREFIX@
+includedir=${prefix}/include
+
+Name: Ymp
+Description: Package manager for Turkish
+Version: @VERSION@
+Cflags: -DTURKMAN -I${includedir}/ymp
+Libs: -L@PLUGINDIR@ -lymp
+
