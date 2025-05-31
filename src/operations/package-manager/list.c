@@ -17,12 +17,17 @@ static void list_available(){
     size_t i=0;
     Repository *repo;
     while(dirs[i]){
+        if(!endswith(dirs[i], ".yaml")){
+            i++;
+            continue;
+        }
         repo = repository_new();
-        repository_load_from_index(repo, dirs[i]);
-        for(size_t i=0; i< repo->package_count;i++){
+        repository_load_from_index(repo, build_string("%s/%s",repodir,dirs[i]));
+        for(size_t j=0; j< repo->package_count;j++){
             printf("%s %s\n", repo->packages[i]->name, yaml_get_value(repo->packages[i]->metadata, "description"));
         }
         repository_unref(repo);
+        i++;
     }
 }
 
