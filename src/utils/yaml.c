@@ -25,10 +25,19 @@ visible bool yaml_has_area(const char *data, const char *path) {
 visible char *yaml_get_area(const char *data, const char *path) {
     char line[MAX_LINE_LENGTH];
     bool in_area = false;
-    char *area_data = malloc(strlen(data) + 1);
-    area_data[0] = '\0';
+    size_t area_data_size = strlen(data) + 1;
+    char *area_data = malloc(area_data_size);
+    if (!area_data) return NULL; // Check for allocation failure
+    area_data[0] = '\0'; // Initialize the area_data buffer
 
     FILE *stream = fmemopen((void *)data, strlen(data), "r");
+    if (!stream) {
+        free(area_data);
+        return NULL; // Check for stream creation failure
+    }
+
+    size_t current_length = 0; // Track the current length of area_data
+
     while (fgets(line, sizeof(line), stream)) {
         if (line[0] != ' ' && strstr(line, ":")) {
             if (in_area) {
@@ -40,15 +49,23 @@ visible char *yaml_get_area(const char *data, const char *path) {
             }
         }
         if (in_area) {
-            strcat(area_data, line);
+            size_t line_length = strlen(line);
+            // Ensure there's enough space in area_data
+            if (current_length + line_length < area_data_size) {
+                memcpy(area_data + current_length, line, line_length);
+                current_length += line_length;
+                area_data[current_length] = '\0'; // Null-terminate the string
+            }
         }
     }
     fclose(stream);
-    // shrink memory
+    
+    // Trim the area_data and return a duplicate
     char *area = strdup(trim(area_data));
     free(area_data);
     return area;
 }
+
 
 visible char *yaml_get_value(const char *data, const char *name) {
     char line[MAX_LINE_LENGTH];
