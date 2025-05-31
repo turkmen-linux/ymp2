@@ -89,27 +89,17 @@ visible char* str_add(char* str1, char* str2){
 }
 
 visible char* trim(char* data) {
-    int i=0;
-    int j=0;
-    int cnt=0;
-    int len = strlen(data);
-    char* str = calloc(len+1, sizeof(char));
-    strcpy(str,data);
-    cnt = count_tab (data);
-    j=cnt-1;
-    for(i=0; i<len; i++) {
-        j += 1;
-        if(j >= len || str[i] == '\0') {
-            str[i] = '\0';
-            break;
-        }
-        str[i] = data[j];
-        if(str[i] == '\n'){
-            j += cnt;
-
+    size_t cnt= count_tab (data);
+    array *a = array_new();
+    char** lines = split(data, "\n");
+    for(size_t i=0; lines[i]; i++){
+        if(strlen(lines[i]) > cnt){
+            array_add(a, lines[i]+cnt);
+            array_add(a,"\n");
         }
     }
-    data=str;
+    data=array_get_string(a);
+    array_unref(a);
     return data;
 }
 

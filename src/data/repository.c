@@ -55,6 +55,7 @@ static void repository_load_data(Repository* repo, const char* data, bool is_sou
         return;
     }
     debug("loaded: %d\n", len);
+
     // Reallocate package storage
     repo->packages = realloc(repo->packages, (repo->package_count + len) * sizeof(Package*));
     if (!repo->packages) {

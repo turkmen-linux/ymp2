@@ -24,7 +24,7 @@ static void list_available(){
         repo = repository_new();
         repository_load_from_index(repo, build_string("%s/%s",repodir,dirs[i]));
         for(size_t j=0; j< repo->package_count;j++){
-            printf("%s %s\n", repo->packages[i]->name, yaml_get_value(repo->packages[i]->metadata, "description"));
+            printf("%s %s\n", repo->packages[j]->name, yaml_get_value(repo->packages[j]->metadata, "description"));
         }
         repository_unref(repo);
         i++;
