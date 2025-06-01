@@ -154,6 +154,7 @@ visible char** yaml_get_area_list(const char* fdata, const char* path, int* area
                 ret[*area_count] = trim(array_get_string(area));
                 (*area_count)++;
                 array_clear(area);
+                area = array_new();
                 e = false;
             } else if (strlen(line) > 0) {
                 array_add(area,line);

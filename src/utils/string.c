@@ -105,11 +105,11 @@ visible char* trim(char *content) {
     
     // Process the first line
     if (strlen(line) > n) {
-        memmove(line, line + n, strlen(line) - n + 1); // Trim the first line
+        memmove(trimmed_content, line + n, strlen(line) - n + 1); // Trim the first line
     } else {
         line[0] = '\0'; // If n is greater than or equal to line length, set line to empty
     }
-    size_t cur = strlen(line) - n;
+    size_t cur = strlen(line) - n +1;
     // Process the remaining lines
     while ((line = strtok(NULL, "\n")) != NULL) {
         if (strlen(line) > n) {
