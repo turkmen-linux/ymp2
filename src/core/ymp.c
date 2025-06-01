@@ -11,7 +11,11 @@
 #include <core/ymp.h>
 #include <core/logger.h>
 
+#include <config.h>
+
+#include <utils/process.h>
 #include <utils/error.h>
+#include <utils/file.h>
 #include <utils/string.h>
 
 void ctx_init(OperationManager *manager);
@@ -61,6 +65,7 @@ static void sigsegv_event(int signal){
 
 visible Ymp* ymp_init(){
     // Allocate memory for Ymp instance
+    size_t begin_time = get_epoch();
     Ymp* ymp = (Ymp*)malloc(sizeof(Ymp));
     if(ymp == NULL){
         return NULL; // Memory allocation failed!
@@ -85,6 +90,17 @@ visible Ymp* ymp_init(){
     sigemptyset(&sigact.sa_mask);
     sigact.sa_flags = 0;
     sigaction(SIGSEGV, &sigact, NULL);
+    #ifdef PLUGIN_SUPPORT
+    char** plugins = find(PLUGINDIR);
+    size_t i = 0;
+    while(plugins[i]){
+        if(endswith(plugins[i], ".so")){
+            load_plugin(ymp, plugins[i]);
+        }
+        i++;
+    }
+    #endif
+    debug("ymp init done in %ld µs\n", get_epoch() - begin_time);
 
     return ymp; // Return the pointer to the newly created instance
 }
@@ -107,6 +123,7 @@ visible void ymp_add(Ymp* ymp, const char* name, void* args) {
 }
 
 visible int ymp_run(Ymp* ymp){
+    size_t begin_time = get_epoch();
     YmpPrivate *queue = (YmpPrivate*)ymp->priv_data;
     int rc = 0;
     for(size_t i=0; i< queue->length; i++){
@@ -117,6 +134,7 @@ visible int ymp_run(Ymp* ymp){
     }
     free(queue);
     ymp->priv_data = (void*) queue_init();
+    debug("ymp run done in %ld µs\n", get_epoch() - begin_time);
     return rc;
 }
 visible void load_plugin(Ymp* ymp, const char* path){

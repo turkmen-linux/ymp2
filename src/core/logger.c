@@ -6,6 +6,8 @@
 #include <string.h>
 
 #include <utils/string.h>
+#include <utils/process.h>
+
 #include <core/logger.h>
 
 typedef int (*logger)(const char*, ...);
@@ -43,6 +45,8 @@ visible void logger_set_status(int type, bool status){
     }
 }
 
+static size_t cur_time = 0;
+
 visible int print_fn(const char* caller, int type, const char* format, ...){
     (void)caller;
     if(print_functions[type] == NULL){
@@ -52,8 +56,12 @@ visible int print_fn(const char* caller, int type, const char* format, ...){
     va_list args;
     va_start(args, format);
     if(type == DEBUG){
+        if(cur_time == 0){
+            cur_time = get_epoch();
+        }
         char* msg = colorize(BLUE, (char*)caller);
-        printf("[%s]: ", msg);
+        printf("[%s:%ld]: ", msg, get_epoch() - cur_time);
+        cur_time = get_epoch();
         free(msg);
     }else if(type == ERROR){
         char* msg = colorize(RED, "ERROR");

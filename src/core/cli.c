@@ -12,16 +12,6 @@
 
 int ymp_main(int argc, char** argv){
     Ymp* ymp = ymp_init(); // Create ymp context
-    #ifdef PLUGIN_SUPPORT
-    char** plugins = find(PLUGINDIR);
-    size_t i = 0;
-    while(plugins[i]){
-        if(endswith(plugins[i], ".so")){
-            load_plugin(ymp, plugins[i]);
-        }
-        i++;
-    }
-    #endif
     if(argc > 1) {
         bool show_ver = false;
         for(int i= 0; argv[i]; i++){
