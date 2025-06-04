@@ -4,6 +4,7 @@
 #include <core/variable.h>
 
 #include <data/repository.h>
+#include <data/dependency.h>
 
 #include <config.h>
 
@@ -12,23 +13,17 @@
 #include <utils/file.h>
 
 static void list_available(){
-    char* repodir = build_string("%s/%s/index", get_value("DESTDIR"), STORAGE);
-    char** dirs = listdir(repodir);
     size_t i=0;
-    Repository *repo;
-    while(dirs[i]){
-        if(!endswith(dirs[i], ".yaml")){
-            i++;
-            continue;
+    Repository **repos = resolve_begin();
+    while(repos[i]){
+        for(size_t j=0; j< repos[i]->package_count;j++){
+            const char* name = repos[i]->packages[j]->name;
+            const char* desc = yaml_get_value(repos[i]->packages[j]->metadata, "description");
+            printf("%s %s\n", name, desc);
         }
-        repo = repository_new();
-        repository_load_from_index(repo, build_string("%s/%s",repodir,dirs[i]));
-        for(size_t j=0; j< repo->package_count;j++){
-            printf("%s %s\n", repo->packages[j]->name, yaml_get_value(repo->packages[j]->metadata, "description"));
-        }
-        repository_unref(repo);
         i++;
     }
+    resolve_end(repos);
 }
 
 static int list(void** args){

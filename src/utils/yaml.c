@@ -105,7 +105,7 @@ visible char **yaml_get_array(const char *data, const char *name, int *count) {
     FILE *stream = fmemopen(area_data, strlen(area_data), "r");
     while (fgets(line, sizeof(line), stream)) {
         if (line[0] == '-') {
-            array_add(a, line+2);
+            array_add(a, strip(line+2));
         }
     }
     fclose(stream);
