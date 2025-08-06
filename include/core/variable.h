@@ -5,11 +5,13 @@
  * @brief Define string or boolean variables.
  */
 
+/** @cond **/
 #ifndef invisible
 #define invisible ;//
 #endif
 
 #include <stddef.h>
+/** @endcond */
 
 /**
  * @brief Variable storage struct.
@@ -46,8 +48,9 @@ VariableManager *variable_manager_new();
  * @param value The value to assign to the variable.
  */
 void variable_set_value(VariableManager* variables, const char* name, const char* value);
+/** @cond **/
 invisible void set_value(const char* name, const char* value);
-
+/** @endcond */
 /**
  * @brief Set the value of a read-only variable.
  *
@@ -60,7 +63,9 @@ invisible void set_value(const char* name, const char* value);
  * @param value The value to assign to the variable.
  */
 void variable_set_value_read_only(VariableManager* variables, const char* name, const char* value);
+/** @cond **/
 invisible void set_value_read_only(const char* name, const char* value);
+/** @endcond */
 
 /**
  * @brief Get the value of a variable.
@@ -73,6 +78,8 @@ invisible void set_value_read_only(const char* name, const char* value);
  *         does not exist.
  */
 char* variable_get_value(VariableManager* variables, const char* name);
+/** @cond **/
 invisible char* get_value(const char* name);
+/** @endcond */
 
 #endif

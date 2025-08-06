@@ -68,6 +68,18 @@ Package* package_new();
  */
 void package_load_from_file(Package* pkg, const char* path);
 
+/*
+ * @brief Loads a package from the provided metadata.
+ *
+ * This function initializes a Package structure using the metadata string.
+ * It can handle both source and binary packages based on the is_source flag.
+ *
+ * @param pkg Pointer to the Package structure to be initialized.
+ * @param metadata A string containing the metadata for the package.
+ * @param is_source A boolean flag indicating whether the package is a source package.
+ *                  If true, the function treats the metadata as source package data;
+ *                  otherwise, it treats it as binary package data.
+ */
 void package_load_from_metadata(Package* pkg, const char* metadata, bool is_source);
 
 /**
@@ -105,10 +117,19 @@ bool package_extract(Package* pkg);
 void package_unref(Package *pkg);
 
 /**
- * @brief Check package is installed id system.
+ * @brief Checks if a specified package is installed in the system.
  *
- * @param pkg Pointer to the Package to be checked
+ * This function verifies the installation status of the given package. 
+ * It returns true if the package is installed, and false otherwise.
+ *
+ * @param pkg Pointer to the Package structure that contains the package information.
+ *            This structure must be valid and properly initialized before calling this function.
+ *
+ * @return true if the package is installed; false if it is not installed or if an error occurs.
+ *
+ * @note Ensure that the package pointer is not NULL before calling this function to avoid undefined behavior.
  */
 bool package_is_installed(Package *pkg);
+
 
 #endif

@@ -16,13 +16,21 @@
 
 #include <setjmp.h>
 
+/**
+ * @struct ErrorContext
+ * @brief Represents the context for error handling.
+ *
+ * This structure holds the information necessary for managing error states,
+ * including a jump buffer for non-local jumps, an error code, and a flag
+ * indicating whether error handling is enabled.
+ */
 typedef struct {
-    jmp_buf buf;
-    int code;
-    bool enable;
+    jmp_buf buf;    /**< Buffer for non-local jumps. */
+    int code;       /**< Error code representing the type of error. */
+    bool enable;    /**< Flag indicating if error handling is enabled. */
 } ErrorContext;
 
-
+/** @cond */
 extern ErrorContext exception;
 #ifndef try
 #define try \
@@ -38,7 +46,7 @@ extern ErrorContext exception;
         longjmp(exception.buf, code); \
     }
 #endif
-
+/** @endcond */
 /**
  * @struct Ymp
  * @brief Represents the main structure for the Ymp library.
@@ -121,10 +129,9 @@ void ymp_add(Ymp* ymp, const char* name, void* args);
 
 int ymp_run(Ymp* ymp);
 
-/**
-* @brief Global Ymp struct.
-*/
+/** @cond */
 invisible Ymp *global;
+/** @endcond */
 #ifdef PLUGIN_SUPPORT
 /**
  * @brief Loads a plugin from the specified path into the Ymp instance.
