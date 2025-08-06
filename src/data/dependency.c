@@ -32,7 +32,7 @@ static void resolve_dependency_fn(char* name, bool emerge) {
     array_add(cache, name);
 
     // Log the current package being searched and the depth level
-    print("Search: %s depth:%d\n", name, depth);
+    info("Search: %s depth:%d\n", name, depth);
 
     // Iterate through the repositories to find the package
     for (size_t i = 0; repos[i]; i++) {
@@ -49,7 +49,7 @@ static void resolve_dependency_fn(char* name, bool emerge) {
         depth--; // Decrease the depth after processing all dependencies
 
         // Log the resolved package and current depth
-        print("Resolved: %s depth:%d\n", name, depth);
+        info("Resolved: %s depth:%d\n", name, depth);
 
 
         // Check list length reallocate if needed
@@ -85,7 +85,7 @@ visible Repository** resolve_begin() {
     }
 
     // Allocate memory for the repository pointers
-    Repository** repos = calloc(j, sizeof(Repository*));
+    repos = calloc(j, sizeof(Repository*));
     i = 0;
     j=0;
     // Load each repository from the index
@@ -126,7 +126,7 @@ visible Package** resolve_dependency(char* name) {
         free(resolved);
     }
     if(repos == NULL){
-        info("Dependencies resolve failed\n");
+        print("Dependencies resolve failed\n");
         return NULL; // Dont resolve package if repository list is empty
     }
     resolved = malloc(sizeof(Package*)* 1024); // Create a new array for resolved packages
