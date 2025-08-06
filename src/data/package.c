@@ -251,6 +251,21 @@ visible bool package_is_installed(Package *pkg){
     char* destdir = variable_get_value(global->variables, "DESTDIR");
     char* meta = build_string("%s/%s/metadata/%s.yaml", destdir, STORAGE, pkg->name);
     bool is_package = isfile(meta);
+    if(is_package){
+        // check update available
+        Package *pi = package_new();
+        pi->is_virtual = true;
+        char* manifest = readfile(meta);
+        char* ymp_data = yaml_get_area(manifest, "ymp");
+        char* data = yaml_get_area(ymp_data, "package");
+        package_load_from_metadata(pi, data, false); // load virtual installed package
+        is_package = (pi->release == pkg->release); // check installed release and package release are same
+        // cleanup
+        package_unref(pi);
+        free(data);
+        free(ymp_data);
+        free(manifest);
+    }
     free(meta);
     return is_package;
 }
