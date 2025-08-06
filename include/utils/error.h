@@ -6,9 +6,11 @@
 #include <stdbool.h>
 #include <utils/array.h>
 
+/** @cond */
 #ifndef invisible
 #define invisible ;//
 #endif
+/** @endcond */
 
 /**
  * @brief Reports an error with a specific status.
@@ -19,7 +21,9 @@
  * @param status The error status code to be reported.
  */
 void error_fn(array* error, int status);
+/** @cond */
 invisible void error(int status);
+/** @endcond */
 
 /**
  * @brief Adds an error message to the error array.
@@ -31,7 +35,9 @@ invisible void error(int status);
  * @param message The error message to be added to the error array.
  */
 void error_add_fn(array* error, const char* message);
+/** @cond */
 invisible void error_add(const char* message);
+/** @endcond */
 
 /**
  * @brief Checks if there are any errors in the error array.
@@ -43,5 +49,7 @@ invisible void error_add(const char* message);
  * @return true if there are errors in the array, false otherwise.
  */
 bool has_error_fn(array* error);
+/** @cond */
 invisible bool has_error();
+/** @endcond */
 
