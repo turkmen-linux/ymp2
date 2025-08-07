@@ -22,7 +22,10 @@ static void* worker_thread(void* arg) {
     jobs *j = jb->j;
     int i;
     for (i = jb->id; i < j->total; i+=j->parallel) {
-        if( j->jobs[i].call((void*)j->jobs[i].ctx, (void*)j->jobs[i].args) > 0){
+        if(j->failed){
+            return NULL;
+        }
+        if(j->jobs[i].call((void*)j->jobs[i].ctx, (void*)j->jobs[i].args) > 0){
             j->failed = true;
             return NULL;
         }
