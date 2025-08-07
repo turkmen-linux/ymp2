@@ -22,7 +22,10 @@ static void* worker_thread(void* arg) {
     jobs *j = jb->j;
     int i;
     for (i = jb->id; i < j->total; i+=j->parallel) {
-        j->jobs[i].call((void*)j->jobs[i].ctx, (void*)j->jobs[i].args);
+        if( j->jobs[i].call((void*)j->jobs[i].ctx, (void*)j->jobs[i].args) > 0){
+            j->failed = true;
+            return NULL;
+        }
         j->finished++;
     }
     return NULL;
@@ -75,6 +78,7 @@ visible jobs* jobs_new() {
     j->finished = 0;
     j->total = 0;
     j->parallel = get_nprocs_conf();
+    j->failed = false;
     j->jobs = (job*)malloc(j->max * sizeof(job));
     pthread_cond_init(&j->cond, NULL);
     return j;

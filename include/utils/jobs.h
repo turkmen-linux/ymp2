@@ -35,6 +35,7 @@ typedef struct {
     int finished;           /**< Track the number of finished jobs. */
     int total;              /**< Total number of jobs added to the manager. */
     pthread_cond_t cond;    /**< Condition variable for signaling job completion. */
+    bool failed;            /**< is Jobs failed */
 } jobs;
 
 /**
