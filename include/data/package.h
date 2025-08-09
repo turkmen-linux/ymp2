@@ -89,6 +89,8 @@ void package_load_from_metadata(Package* pkg, const char* metadata, bool is_sour
  * @param pkg A pointer to the Package structure that contains the package
  *            to be downloaded.
  *
+ * @param repo_uri A pointer to a string that contains the URI of the repository.
+ *
  * @return true if the extraction was successful, false otherwise.
  */
 bool package_download(Package* pkg, const char* repo_uri);
