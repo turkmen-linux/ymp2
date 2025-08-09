@@ -15,6 +15,7 @@
 #include <utils/jobs.h>
 
 static int quarantine_validate_files(const char* name){
+    printf("Validate %s (files)\n", name);
     char* destdir = variable_get_value(global->variables, "DESTDIR");
     // validate package files
     int status = 0;
@@ -22,35 +23,41 @@ static int quarantine_validate_files(const char* name){
     if(!isfile(files_path)){
         return 0;
     }
-    char* files_ctx = readfile(files_path);
-    char** files = split(files_ctx, "\n");
-    size_t i = 0;
+    FILE *files = fopen(files_path, "r");
     char sha1[40];
-    for(; files[i];i++){
-        if(strlen(files[i]) <= 40){
+    char line[1024+41]; // maximum file name length is 1024
+    while(fgets(line, sizeof(line), files)){
+        // trim line string
+        while(line[strlen(line)-1] == '\n'){
+            line[strlen(line)-1] = '\0';
+        }
+        // stop if invalid line detected
+        if(strlen(line) <= 40){
             status = 1;
             goto free_quarantine_package;
         }
         // extract sha1 and file path
-        char *file = files[i]+41;
-        strncpy(sha1, files[i], 40);
-        // calculate file and check are same
-        char* actual_file = build_string("%s/%s/quarantine/rootfs/%s", destdir, STORAGE, file);
-        char* actual_sha1 = calculate_sha1(actual_file);
-        status = strncmp(actual_sha1, sha1, 40);
+        strncpy(sha1, line, 40);
+        // check file
+        char* actual_file = build_string("%s/%s/quarantine/rootfs/%s", destdir, STORAGE, line+41);
+        if(!isfile(actual_file)){
+            // stop missing file detected
+            status = 1;
+        } else {
+            // calculate hash and check are same
+            char* actual_sha1 = calculate_sha1(actual_file);
+            status = strncmp(actual_sha1, sha1, 40);
+            free(actual_sha1);
+        }
         free(actual_file);
-        free(actual_sha1);
         if(status){
             goto free_quarantine_package;
         }
     }
 free_quarantine_package:
-    for(i=0;files[i];i++){
-        free(files[i]);
-    }
     // free memory
     free(files_path);
-    free(files_ctx);
+    fclose(files);
     return status;
 }
 
