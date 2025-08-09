@@ -33,7 +33,6 @@ static int quarantine_validate_files(const char* name) {
 
     // Open the files for reading
     FILE *files = fopen(files_path, "r");
-    char sha1[40]; // Buffer to hold SHA1 hash
     char line[1024 + 41]; // Buffer for reading lines (max file name length is 1024)
     char actual_file[1024 +	strlen(rootfs_path)]; // Buffer for actual file path (max file name length is 1024)
 
@@ -50,9 +49,6 @@ static int quarantine_validate_files(const char* name) {
             goto free_quarantine_package;
         }
 
-        // Extract SHA1 hash and file path from the line
-        strncpy(sha1, line, 40);
-
         // Build the actual file path in quarantine root filesystem
         strcpy(actual_file, rootfs_path);
         strcat(actual_file, line + 41);
@@ -64,7 +60,7 @@ static int quarantine_validate_files(const char* name) {
             // Calculate the SHA1 hash of the actual file
             char* actual_sha1 = calculate_sha1(actual_file);
             // Compare the calculated hash with the expected hash
-            status = strncmp(actual_sha1, sha1, 40);
+            status = strncmp(actual_sha1, line, 40);
             free(actual_sha1);
         }
 
