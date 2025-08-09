@@ -65,6 +65,7 @@ visible bool isdir(const char *path) {
     return false;
 }
 
+
 visible void create_dir(const char *dir) {
     debug("create directory: %s\n", dir);
     char tmp[PATH_MAX];
@@ -239,7 +240,7 @@ visible bool copy_file(const char *sourceFile, const char *destFile) {
         perror("Error opening source file");
         return false;
     }
-    
+
     // Create destination file directory
     char* dir = strdup(destFile);
     dirname(dir);
@@ -276,18 +277,21 @@ visible bool copy_directory(const char *sourceDir, const char *destDir) {
     struct stat st;
     if (stat(sourceDir, &st) != 0) {
         perror("Error accessing source directory");
+        printf("%s\n", sourceDir);
         return false;
     }
 
     // Create the destination directory
-    if (mkdir(destDir, st.st_mode) != 0) {
+    if (!isdir(destDir) && mkdir(destDir, st.st_mode) != 0) {
         perror("Error creating destination directory");
+        printf("%s\n", destDir);
         return false;
     }
 
     DIR *dir = opendir(sourceDir);
     if (dir == NULL) {
         perror("Error opening source directory");
+        printf("%s\n", sourceDir);
         return false;
     }
 

@@ -127,6 +127,25 @@ visible bool package_download(Package* p, const char* repo_uri){
 }
 
 
+// Function to import built package into quarantine
+static bool package_import_from_build(Package* pkg, const char* path){
+    // Get the destination directory from global variables
+    char* destdir = variable_get_value(global->variables, "DESTDIR");
+
+    // Copy Rootfs files
+    char* rootfs = build_string("%s/%s/quarantine/rootfs", destdir, STORAGE);
+    char* output = build_string("%s/output/", path);
+    if(!copy_directory(output, rootfs)){
+        return false;
+    }
+    // Copy metadata, files, links
+    #define copy_free(A,B) {char *a=A; char *b=B; if(!copy_file(a,b)){free(a) ; free(b); return false;} ; free(a) ; free(b);}
+    copy_free(build_string("%s/metadata.yaml", path), build_string("%s/../metadata/%s.yaml", rootfs, pkg->name));
+    copy_free(build_string("%s/files", path), build_string("%s/../files/%s", rootfs, pkg->name));
+    copy_free(build_string("%s/links", path), build_string("%s/../links/%s", rootfs, pkg->name));
+    return true;
+}
+
 // Function to extract a package
 visible bool package_extract(Package* pkg) {
     // Check if the package pointer is NULL
@@ -159,8 +178,7 @@ visible bool package_extract(Package* pkg) {
         archive_extract_all(pkg->archive);
         // Build source package
         char* build = build_binary_from_path(cache);
-        printf("%s\n", build);
-        return true;
+        return package_import_from_build(pkg, build);
     }
 
     // Build a temporary directory path for extraction
