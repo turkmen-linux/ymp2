@@ -308,6 +308,9 @@ visible bool quarantine_validate() {
         jobs_unref(j); // Unreference the job queue
     }
 
+    // Reset after sync
+    quarantine_reset();
+
     // Cleanup: free allocated memory for metadata file names
     for (size_t i = 0; metadatas[i]; i++) {
         free(metadatas[i]);
@@ -319,11 +322,14 @@ visible bool quarantine_validate() {
 
 
 visible void quarantine_reset(){
+    // Build quarantine directory
     char* destdir = variable_get_value(global->variables, "DESTDIR");
     char* path = build_string("%s/%s/quarantine/", destdir, STORAGE);
+    // remove if exists
     if(isdir(path)){
         remove_all(path);
     }
+    // recreate again
     create_dir(path);
     // cleanup
     free(path);
