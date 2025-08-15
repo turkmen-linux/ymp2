@@ -264,6 +264,31 @@ visible bool package_extract(Package* pkg) {
     return true; // Return true if extraction was successful
 }
 
+visible bool package_load_from_installed(Package* pkg, const char* name){
+    // build strings
+    char* destdir = variable_get_value(global->variables, "DESTDIR");
+    char* meta = build_string("%s/%s/metadata/%s.yaml", destdir, STORAGE, name);
+    // check metadata exists
+    bool is_package = isfile(meta);
+    if(!is_package){
+        goto free_package_load_from_installed;
+    }
+    // set virtual package
+    pkg->is_virtual = true;
+    // read metadata
+    char* manifest = readfile(meta);
+    char* ymp_data = yaml_get_area(manifest, "ymp");
+    char* data = yaml_get_area(ymp_data, "package");
+    // load virtual installed package
+    package_load_from_metadata(pkg, data, false);
+free_package_load_from_installed:
+    free(meta);
+    free(ymp_data);
+    free(manifest);
+    // dont free data beacuse of used as pkg->metadata;
+    return is_package;
+}
+
 visible bool package_is_installed(Package *pkg){
     char* destdir = variable_get_value(global->variables, "DESTDIR");
     char* meta = build_string("%s/%s/metadata/%s.yaml", destdir, STORAGE, pkg->name);

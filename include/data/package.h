@@ -134,5 +134,24 @@ void package_unref(Package *pkg);
  */
 bool package_is_installed(Package *pkg);
 
+/**
+ * @brief Loads a package from the installed packages.
+ *
+ * This function attempts to load a package specified by its name from the 
+ * list of installed packages. If the package is found and successfully loaded, 
+ * it populates the provided Package structure with the relevant information.
+ *
+ * @param pkg Pointer to a Package structure where the loaded package information 
+ *            will be stored. This structure must be allocated before calling 
+ *            this function.
+ * @param name The name of the package to be loaded. This should be a null-terminated 
+ *             string representing the exact name of the package as it appears in 
+ *             the installed packages list.
+ *
+ * @return bool Returns true if the package was successfully loaded, 
+ *              or false if the package could not be found or failed to load.
+ *
+ */
+bool package_load_from_installed(Package* pkg, const char* name);
 
 #endif
