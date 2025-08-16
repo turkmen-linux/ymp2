@@ -290,9 +290,9 @@ visible bool package_load_from_installed(Package* pkg, const char* name){
     }
     // load virtual installed package
     package_load_from_metadata(pkg, pkg->metadata, pkg->is_source);
+    free(manifest);
 free_package_load_from_installed:
     free(meta);
-    free(manifest);
     // dont free data beacuse of used as pkg->metadata;
     return is_package;
 }
