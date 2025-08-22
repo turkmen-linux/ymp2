@@ -130,8 +130,14 @@ visible void ymp_add(Ymp* ymp, const char* name, void* args) {
     queue->length++;
 }
 
+static void ymp_set_logger_status(){
+    logger_set_status(DEBUG, iseq(get_value("debug"), "true"));
+    logger_set_status(INFO, iseq(get_value("verbose"), "true"));
+}
+
 visible int ymp_run(Ymp* ymp){
     size_t begin_time = get_epoch();
+    ymp_set_logger_status();
     YmpPrivate *queue = (YmpPrivate*)ymp->priv_data;
     int rc = 0;
     for(size_t i=0; i< queue->length; i++){

@@ -43,6 +43,7 @@ typedef int (*callback)(void*, ...);
  */
 typedef struct {
     callback call;      /**< Pointer to the callback function for the operation. */
+    size_t min_args;    /**< Minimum argument length **/
     char* name;         /**< Name of the operation, used for identification. */
 } Operation;
 

@@ -27,17 +27,20 @@ int main(int argc, char** argv){
     // operation 1
     Operation op;
     op.name = "foo";
+    op.min_args = 1;
     op.call = (callback)my_print;
     operation_register(manager, op);
 
     // operation 2 (will generate an error)
     Operation op2;
     op2.name = "bar";
+    op2.min_args = 1;
     op2.call = (callback)gen_err;
     operation_register(manager, op2);
 
     // error handler
     Operation op3;
+    op3.min_args = 0;
     op3.call = (callback)err_handler;
     manager->on_error = op3;
 

@@ -60,15 +60,24 @@ int visible operation_main(OperationManager *manager, const char* name, void* ar
     if(name && strlen(name) <= 0){
         return 0;
     }
+    // calculate arg len
+    size_t len = 0;
+    for(len=0; ((char**)args)[len]; len++){}
     int status = 0;
     OperationManagerPriv* priv = (OperationManagerPriv*)manager->priv_data;
     for (size_t i = 0; i < manager->length; i++) {
         if (strcmp(manager->operations[i].name, name) == 0) {
+            if(len < manager->operations[i].min_args){
+                debug("Min arguments error\n");
+                status = 1;
+                goto operation_main_on_error;
+            }
             debug("Running:%s\n", name);
             priv->running = true;
             status = manager->operations[i].call(args);
             priv->running = false;
             if(status > 0){
+operation_main_on_error:
                 if (manager->on_error.call){
                     manager->on_error.call(NULL);
                 }
