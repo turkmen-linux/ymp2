@@ -30,7 +30,7 @@ int ymp_main(int argc, char** argv){
         if(isfile(argv[1])){
             return run_script(readfile(argv[1]));
         }
-        ymp_add(ymp, argv[1], argv+2);
+        ymp_add(ymp, argv[1], parse_args(argv+2));
     } else {
         error_add(build_string("No command given.\nRun %s for more information about usage.\n", colorize(RED, "ymp help")));
     }

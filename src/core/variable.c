@@ -59,6 +59,7 @@ static void variable_set_value_fn(VariableManager* variables, const char* name, 
         vars = new_vars; // Update local pointer
     }
 
+    debug("variable set: %s => %s\n", name, value);
     vars[variables->length].name = strdup(name); // Allocate memory for the name
     vars[variables->length].value = strdup(value); // Allocate memory for the value
     vars[variables->length].read_only = read_only;
@@ -79,6 +80,7 @@ visible char* variable_get_value(VariableManager* variables, const char* name) {
         return "";
     }
     YmpVariable* vars = (YmpVariable*)variables->priv_data;
+    debug("variable get: %s\n", name);
     for (size_t i = 0; i < variables->length; i++) {
         if (strcmp(name, vars[i].name) == 0) {
             return vars[i].value; // Return the value if found

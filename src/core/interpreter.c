@@ -6,7 +6,9 @@
 #include <utils/error.h>
 #include <core/logger.h>
 
+#include <utils/array.h>
 #include <utils/string.h>
+
 typedef struct {
     const char* name;
     size_t line;
@@ -16,10 +18,51 @@ static label *labels;
 size_t label_max = 32;
 size_t label_cur = 0;
 
-static char** parse_args(const char* line){
-    return split(strip((char*)line), " ");
+
+visible char** parse_args(char** args) {
+
+    size_t len = 0;
+    size_t offset = 0;
+
+    // find len
+    for(len=0; args[len];len++){}
+
+    for(size_t i=0; i<len;i++){
+        // check --
+        debug("parse: %s\n", args[i]);
+        if (strlen(args[i]) > 2 && args[i][0] == '-' && args[i][1] == '-'){
+            for(offset=0; args[i][offset] && args[i][offset]!='='; offset++){}
+            char var[offset-1];
+            strncpy(var, args[i]+2, offset-2);
+            var[offset-2]= '\0';
+            debug("offset=%lld len=%lld\n", offset, strlen(args[i]));
+            // if does not have =
+            if (offset >= strlen(args[i])){
+                set_value(var, "true");
+            } else {
+                char val[strlen(args[i]) - offset - 1];
+                strncpy(val, args[i]+offset+1, strlen(args[i]) - offset - 1);
+                val[strlen(args[i]) - offset -1] = '\0';
+                set_value(var, val);
+            }
+            args[i]=NULL;
+        }
+    }
+    // relocate memory
+    size_t removed = 0;
+    for(size_t i=0; i<len;i++){
+        if (args[i] == NULL){
+            removed++;
+            continue;
+        }
+        args[i-removed] = args[i];
+    }
+    return args;
 }
 
+static char** parse_line(const char* line){
+    return parse_args(split(strip((char*)line), " "));
+}
 visible int run_script(const char* script){
     char** lines = split(script, "\n");
     int rc = 0;
@@ -46,7 +89,7 @@ visible int run_script(const char* script){
             continue;
         }
         debug("script:%s\n", lines[i]);
-        char** args = parse_args(lines[i]);
+        char** args = parse_line(lines[i]);
         // handle if endif
         if (iseq(args[0], "if")){
             if(operation_main(global->manager, args[1], args+2) != 0){

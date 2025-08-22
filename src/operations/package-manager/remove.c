@@ -13,6 +13,7 @@
 #include <data/quarantine.h>
 
 #include <utils/string.h>
+#include <utils/array.h>
 #include <utils/file.h>
 #include <utils/jobs.h>
 
@@ -29,6 +30,7 @@ static int remove_package(Package* pi){
 
     FILE *files = fopen(files_path, "r");
     FILE *links = fopen(files_path, "r");
+    array *arr = array_new();
 
     char line[PATH_MAX + 41]; // line buffer
     char tmp[PATH_MAX + strlen(destdir)]; // temporary buffer
@@ -48,13 +50,7 @@ static int remove_package(Package* pi){
         if(!isfile(tmp)){
             continue;
         }
-        if(unlink(tmp) < 0){
-            char* err = build_string("Failed to remove %s", tmp);
-            perror(err);
-            free(err);
-            status = 1;
-            goto free_remove_package;
-        }
+        array_add(arr, strdup(tmp));
     }
     size_t offset = 0;
     // Read each line from the links
@@ -73,13 +69,19 @@ static int remove_package(Package* pi){
         if(!issymlink(tmp)){
             continue;
         }
-        if(unlink(tmp) < 0){
-            char* err = build_string("Failed to remove %s", tmp);
+        array_add(arr, strdup(tmp));
+    }
+    size_t len = 0;
+    char** items = array_get(arr, &len);
+    for (size_t i=0; i<len;i++){
+        if(unlink(items[i]) < 0){
+            char* err = build_string("Failed to remove %s", items[i]);
              perror(err);
              free(err);
              status = 1;
              goto free_remove_package;
        }
+
     }
     // remove files links metadata
     if(unlink(files_path) < 0){
@@ -92,6 +94,7 @@ static int remove_package(Package* pi){
         perror("Failed to remove metadata");
     }
 free_remove_package:
+    array_unref(arr);
     free(files_path);
     free(links_path);
     free(metadata_path);
