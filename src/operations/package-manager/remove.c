@@ -13,6 +13,7 @@
 #include <data/quarantine.h>
 
 #include <utils/string.h>
+#include <utils/file.h>
 #include <utils/jobs.h>
 
 #include <config.h>
@@ -35,31 +36,49 @@ static int remove_package(Package* pi){
 
     // Read each line from the files
     while (fgets(line, sizeof(line), files)) {
+        // remove line newline char
+        for(size_t i=strlen(line)-1; line[i] == '\n'; i--){
+            line[i] = '\0';
+        }
         // remove files
-       line[40]= '/';
-       strcpy(tmp, destdir);
-       strcat(tmp,line+40);
-       debug("Removing: %s\n", tmp);
-       if(unlink(tmp) < 0){
-           perror("Failed to remove file");
-           status = 1;
-           goto free_remove_package;
-       }
+        line[40]= '/';
+        strcpy(tmp, destdir);
+        strcat(tmp,line+40);
+        info("Removing: %s\n", tmp);
+        if(!isfile(tmp)){
+            continue;
+        }
+        if(unlink(tmp) < 0){
+            char* err = build_string("Failed to remove %s", tmp);
+            perror(err);
+            free(err);
+            status = 1;
+            goto free_remove_package;
+        }
     }
     size_t offset = 0;
     // Read each line from the links
     while (fgets(line, sizeof(line), links)) {
+        // remove line newline char
+        for(size_t i=strlen(line)-1; line[i] == '\n'; i--){
+            line[i] = '\0';
+        }
         // calculate offset
         for(offset=0; line[offset] && line[offset] == ' '; offset++){}
         // remove links
         line[offset]= '/';
         strcpy(tmp, destdir);
         strcat(tmp,line+offset);
-        debug("Removing: %s\n", tmp);
+        info("Removing: %s\n", tmp);
+        if(!issymlink(tmp)){
+            continue;
+        }
         if(unlink(tmp) < 0){
-           perror("Failed to remove symlink");
-           status = 1;
-           goto free_remove_package;
+            char* err = build_string("Failed to remove %s", tmp);
+             perror(err);
+             free(err);
+             status = 1;
+             goto free_remove_package;
        }
     }
     // remove files links metadata
