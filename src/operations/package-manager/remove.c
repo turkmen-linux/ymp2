@@ -127,13 +127,13 @@ static int remove_main(char** args){
             jobs_add(j, (callback) remove_package, (void*)pkgs[i], NULL);
         }
     }
+    int status = 0;
     jobs_run(j);
     if(j->failed){
-        jobs_unref(j);
-        return 1;
+        status = 1;
     }
     jobs_unref(j);
-    return 0;
+    return status;
 }
 
 void remove_init(OperationManager* manager){

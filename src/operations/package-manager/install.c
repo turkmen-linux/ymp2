@@ -47,6 +47,7 @@ static int install_main(char** args){
     Repository **repos = resolve_begin();
     jobs* download_jobs = jobs_new();
     jobs* install_jobs = jobs_new();
+    int status = 0;
 
     for(size_t r=0; args[r]; r++){
         // Resolve dependencies
@@ -62,16 +63,29 @@ static int install_main(char** args){
     }
     // Download packages
     jobs_run(download_jobs);
+    if(download_jobs->failed){
+        status = 1;
+        goto install_main_free;
+    }
+
     jobs_run(install_jobs);
+    if(install_jobs->failed){
+        status = 1;
+        goto install_main_free;
+    }
 
     // Quarantine validate and sync
-    quarantine_validate();
+    if(!quarantine_validate()){
+        status = 1;
+    }
+
+install_main_free:
 
     // Cleanup resolver and job managers
     resolve_end(repos);
     jobs_unref(download_jobs);
     jobs_unref(install_jobs);
-    return 0;
+    return status;
 }
 
 void install_init(OperationManager* manager){
