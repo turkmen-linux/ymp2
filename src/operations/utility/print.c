@@ -12,6 +12,7 @@ static int print(void** args) {
 void print_init(OperationManager* manager){
     Operation op;
     op.name = "print";
+    op.alias = "echo";
     op.min_args = 0;
     op.call = (callback)print;
     operation_register(manager, op);

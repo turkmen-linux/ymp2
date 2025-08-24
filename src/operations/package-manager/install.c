@@ -77,6 +77,7 @@ static int install_main(char** args){
 void install_init(OperationManager* manager){
     Operation op;
     op.name = "install";
+    op.alias = "it:add:merge";
     op.min_args = 1;
     op.call = (callback)install_main;
     operation_register(manager, op);

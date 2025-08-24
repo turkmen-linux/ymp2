@@ -8,6 +8,8 @@
 #include <core/logger.h>
 #include <core/operations.h>
 
+#include <utils/string.h>
+
 typedef struct {
     bool running;
 } OperationManagerPriv;
@@ -66,7 +68,16 @@ int visible operation_main(OperationManager *manager, const char* name, void* ar
     int status = 0;
     OperationManagerPriv* priv = (OperationManagerPriv*)manager->priv_data;
     for (size_t i = 0; i < manager->length; i++) {
+        if (manager->operations[i].alias) {
+            char** alias = split(manager->operations[i].alias, ":");
+            for(size_t a=0; alias[a]; a++){
+                if(strcmp(name, alias[a])){
+                    goto operation_main_no_call;
+                }
+            }
+        }
         if (strcmp(manager->operations[i].name, name) == 0) {
+operation_main_no_call:
             if(len < manager->operations[i].min_args){
                 debug("Min arguments error\n");
                 status = 1;

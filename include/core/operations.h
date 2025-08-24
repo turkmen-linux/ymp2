@@ -26,6 +26,7 @@
  *     OperationManager *manager = operation_manager_new();
  *     Operation op;
  *     op.call = (callback)test;
+ *     op.alias = "test:t:hmm";
  *     op.name = "test";
  *     operation_register(manager, op);
  *     return operation_main(manager, "test", NULL);
@@ -43,6 +44,7 @@ typedef int (*callback)(void*, ...);
  */
 typedef struct {
     callback call;      /**< Pointer to the callback function for the operation. */
+    char* alias;        /** Operation name alias. <*/
     size_t min_args;    /**< Minimum argument length **/
     char* name;         /**< Name of the operation, used for identification. */
 } Operation;

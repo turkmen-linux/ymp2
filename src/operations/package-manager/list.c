@@ -37,6 +37,7 @@ static int list(void** args){
 void list_init(OperationManager* manager){
     Operation op;
     op.name = "list";
+    op.alias = "ls";
     op.min_args = 0;
     op.call = (callback)list;
     operation_register(manager, op);

@@ -27,6 +27,7 @@ static int build(void** args) {
 void build_init(OperationManager* manager){
     Operation op;
     op.name = "build";
+    op.alias = NULL;
     op.call = (callback)build;
     op.min_args = 1;
     operation_register(manager, op);

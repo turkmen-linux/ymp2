@@ -122,7 +122,7 @@ free_remove_package:
 static int remove_main(char** args){
     jobs *j = jobs_new();
     for(size_t r=0; args[r]; r++){
-        Package **pkgs = resolve_reverse_dependency(res[0]);
+        Package **pkgs = resolve_reverse_dependency(args[r]);
         for(size_t i=0; pkgs[i]; i++){
             jobs_add(j, (callback) remove_package, (void*)pkgs[i], NULL);
         }
@@ -139,6 +139,7 @@ static int remove_main(char** args){
 void remove_init(OperationManager* manager){
     Operation op;
     op.name = "remove";
+    op.alias = "rm:del:unmerge";
     op.min_args = 1;
     op.call = (callback)remove_main;
     operation_register(manager, op);
