@@ -282,17 +282,15 @@ visible char** split(const char* data, const char* f) {
     size_t cur=0;
     size_t i=0;
     size_t s=strlen(f);
-    char *word;
     for (i=0; data[i];i++){
         if (strncmp(data+i, f,  s) == 0){
-            word = calloc(i - (cur+s) + 1, sizeof(char));
+            char word[i - (cur+s) + 1];
             strncpy(word, &data[cur], i-cur);
             array_add(a, word);
-            free(word);
             cur=i+s;
         }
     }
-    word = calloc(i - (cur+s) + 1, sizeof(char));
+    char word[i - (cur+s) + 1];
     strncpy(word, &data[cur], i-cur);
     array_add(a, word);
     return array_get(a, &i);
