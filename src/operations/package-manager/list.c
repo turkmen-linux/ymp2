@@ -34,7 +34,7 @@ static void list_available(){
     resolve_end(repos);
 }
 
-static void list_installed(){
+void list_installed(){
 
 }
 

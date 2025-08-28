@@ -12,6 +12,7 @@
  */
 typedef struct {
     const char* uri;         /**< The URI of the repository. */
+    const char* name;         /**< The name of the repository. */
     Package** packages;      /**< Array of pointers to packages in the repository. */
     size_t package_count;    /**< The number of packages in the repository. */
 } Repository;

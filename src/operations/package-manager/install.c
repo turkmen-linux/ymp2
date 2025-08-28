@@ -21,9 +21,9 @@ typedef struct {
 } proc;
 
 static int download_cb(Package* p, int num){
-    debug("download %d", num);
     print("%s: %s\n", colorize(YELLOW, "Downloading"), p->name);
     Repository *r = (Repository*)p->repo;
+    debug("download %d %s\n", num, r->uri);
     if(!package_download(p, r->uri)){
         print("%s: %s\n", colorize(RED, "Download Failed"), p->name);
         return 1;

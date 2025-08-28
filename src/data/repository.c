@@ -110,7 +110,9 @@ visible void repository_load_from_data(Repository* repo, const char* data) {
     }
     // Get URI
     char* inner = yaml_get_area(data, "index");
-    repo->uri = yaml_get_value(inner, "address");
+    repo->name = yaml_get_value(inner, "name");
+    char* repo_uri_file = build_string("%s/%s/sources.list.d/%s", get_value("DESTDIR"), STORAGE, repo->name);
+    repo->uri = strip(readfile(repo_uri_file));
     // Load packages
     repository_load_data(repo, inner, true);
     repository_load_data(repo, inner, false);

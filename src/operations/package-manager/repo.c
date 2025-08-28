@@ -17,8 +17,8 @@ static int repo_update_op(const char* uri, const char* repo_name){
     char* metadata = str_replace(uri, "$uri", "ymp-index.yaml");
     char* metadata_gpg = str_replace(uri, "$uri", "ymp-index.yaml.gpg");
     char* name = str_replace(metadata, "/","-");
-    char* target = build_string("%s/%s/index/%s", get_value("DESTDIR"), STORAGE, name);
-    char* target_gpg = build_string("%s/%s/index/%s.gpg", get_value("DESTDIR"), STORAGE, name);
+    char* target = build_string("%s/%s/index/%s.yaml", get_value("DESTDIR"), STORAGE, repo_name);
+    char* target_gpg = build_string("%s.gpg", target);
     char* keyring = build_string("%s/%s/gpg/%s.gpg", get_value("DESTDIR"), STORAGE, repo_name);
     debug("update: %s => %s\n", name, target);
     int status = 0;

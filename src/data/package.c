@@ -112,6 +112,7 @@ visible void package_load_from_metadata(Package* pkg, const char* metadata, bool
 
 visible bool package_download(Package* p, const char* repo_uri){
     // Generate download URI
+    debug("Download from repo: %s %s\n", repo_uri, p->name);
     char* uri = str_replace(repo_uri, "$uri", yaml_get_value(p->metadata, "uri"));
     // Download file into cache
     char* destdir = get_value("DESTDIR");
