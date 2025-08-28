@@ -48,13 +48,12 @@ visible char* which(char* cmd){
         sprintf(fullfilename, "%s/%s", token, fileOrDirectory);
         exists = stat( fullfilename, &buffer );
         if ( exists == 0 && ( S_IFREG & buffer.st_mode ) ) {
-            char ret[strlen(fullfilename)];
-            strcpy(ret,fullfilename);
             return (char*)fullfilename;
         }
 
         token = strtok(NULL, ":"); /* next token */
     }
+    free(fullfilename);
     return (char*)cmd;
 }
 

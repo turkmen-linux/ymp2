@@ -54,4 +54,23 @@ void single_instance();
  */
 int run_args(char *args[]);
 
+
+/**
+ * @brief Searches for the full path of a command in the system's PATH environment variable.
+ *
+ * This function takes a command name as input and searches for its executable file
+ * in the directories listed in the PATH environment variable. If the command is found,
+ * the full path to the executable is returned. If the command is not found, the original
+ * command name is returned.
+ *
+ * @param cmd A pointer to a string representing the command name to search for.
+ *            This should be a null-terminated string.
+ *
+ * @return A pointer to a string containing the full path of the command if found,
+ *         or the original command name if not found. The returned string is dynamically
+ *         allocated and should be freed by the caller to avoid memory leaks.
+ *
+ */
+char* which(char* cmd);
+
 #endif

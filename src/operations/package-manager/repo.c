@@ -23,14 +23,18 @@ static int repo_update_op(const char* uri, const char* repo_name){
     debug("update: %s => %s\n", name, target);
     int status = 0;
     if(!fetch(metadata, target)){
-        status += 1;
+        status = 1;
+        goto repo_update_op_free;
     }
     if(!fetch(metadata_gpg, target_gpg)){
-        status += 1;
+        status = 1;
+        goto repo_update_op_free;
     }
     if(!verify_file(target, keyring)){
-        status += 1;
+        status = 1;
+        goto repo_update_op_free;
     }
+repo_update_op_free:
     // free memory
     free(target);
     free(target_gpg);

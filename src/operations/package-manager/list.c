@@ -34,6 +34,10 @@ static void list_available(){
     resolve_end(repos);
 }
 
+static void list_installed(){
+
+}
+
 static int list(void** args){
     (void)args;
     if (iseq(get_value("available"), "true")){
