@@ -73,9 +73,52 @@ static int repo_update() {
     return status;
 }
 
+static int repo_add(const char* uri){
+    int status = 0;
+    // fetch repo name
+    char* name = get_value("name");
+    name = str_replace(name, "/", "-");
+    // create sources.list.d if does not exists
+    char* sources_path = build_string("%s/%s/sources.list.d/", get_value("DESTDIR"), STORAGE);
+    create_dir(sources_path);
+    // build file path
+    char* repo_path = build_string("%s/%s", sources_path, name);
+    FILE* f = fopen(repo_path, "w");
+    if(f == NULL){
+        status = 1;
+        goto repo_add_free;
+    }
+    fprintf(f, "%s\n", uri);
+    // free memory
+    fclose(f);
+repo_add_free:
+    free(repo_path);
+    free(sources_path);
+    return status;
+}
+
+static int repo_del(){
+    int status = 0;
+    char* name = get_value("name");
+    name = str_replace(name, "/", "-");
+    char* repo_path = build_string("%s/%s/sources.list.d/", get_value("DESTDIR"), STORAGE, name);
+    if(!isfile(repo_path)){
+        status = 1;
+        goto repo_del_free;
+    }
+    unlink(repo_path);
+repo_del_free:
+    free(repo_path);
+    return status;
+}
+
 static int repo_main(void** args) {
     if (strcmp(get_value("update"), "true")==0){
         return repo_update(args);
+    } else if (strcmp(get_value("add"), "true")==0){
+        return repo_add(((char**)args)[0]);
+    } else if (strcmp(get_value("remove"), "true")==0){
+        return repo_del();
     }
     return 0;
 }
