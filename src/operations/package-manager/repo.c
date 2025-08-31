@@ -176,6 +176,11 @@ static int repo_index(const char* path){
         fprintf(f, "    uri: %s\n", out[i].uri);
     }
     char* repicent = get_value("repicent");
+    if(strlen(repicent)<1){
+        printf("Failed to set gpg repicent!\n");
+        status = 1;
+        goto repo_index_free;
+    }
     set_gpg_repicent(repicent);
     gpg_sign_file(index_path);    
 repo_index_free:
