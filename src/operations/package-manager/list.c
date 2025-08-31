@@ -48,8 +48,15 @@ static void list_installed(){
         if(load){
             const char* desc = yaml_get_value(pi->metadata, "description");
             printf("%s %s\n", colorize(GREEN,pi->name), desc);
+        } else {
+            warning("Failed to read package metadata: %s\n", meta[i]);
         }
+        // free memory
+        package_unref(pi);
+        free(meta[i]);
     }
+    free(metadata);
+    free(meta);
 }
 
 static int list(void** args){
