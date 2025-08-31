@@ -139,4 +139,6 @@ void archive_extract_all(Archive *data);
  */
 void archive_extract(Archive *data, const char* path);
 
+
+void archive_unref(Archive *data);
 #endif

@@ -67,8 +67,10 @@ Package* package_new();
  * @warning This function may modify the contents of the Package structure
  *          if loading is successful. Ensure that the structure is in a valid
  *          state before calling this function.
+ *
+ * @return true if the extraction was successful, false otherwise.
  */
-void package_load_from_file(Package* pkg, const char* path);
+bool package_load_from_file(Package* pkg, const char* path);
 
 /*
  * @brief Loads a package from the provided metadata.
@@ -81,8 +83,10 @@ void package_load_from_file(Package* pkg, const char* path);
  * @param is_source A boolean flag indicating whether the package is a source package.
  *                  If true, the function treats the metadata as source package data;
  *                  otherwise, it treats it as binary package data.
+ *
+ * @return true if the extraction was successful, false otherwise.
  */
-void package_load_from_metadata(Package* pkg, const char* metadata, bool is_source);
+bool package_load_from_metadata(Package* pkg, const char* metadata, bool is_source);
 
 /**
  * @brief Download package from given uri

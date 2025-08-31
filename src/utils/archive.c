@@ -25,6 +25,12 @@ visible Archive* archive_new(){
     return data;
 }
 
+visible void archive_unref(Archive* data){
+    free(data->errors);
+    free(data->a);
+    free(data);
+}
+
 visible void archive_load(Archive *data, const char* path) {
     debug("archive load:  %s\n", path);
     data->archive_path = strdup(path);

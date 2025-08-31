@@ -2,10 +2,14 @@
 #include <core/variable.h>
 #include <core/logger.h>
 
+#include <data/package.h>
+
 #include <utils/string.h>
 #include <utils/file.h>
 #include <utils/fetcher.h>
 #include <utils/gpg.h>
+#include <utils/jobs.h>
+#include <utils/archive.h>
 
 #include <config.h>
 
@@ -97,6 +101,75 @@ repo_add_free:
     return status;
 }
 
+static int repo_index_op(char* file, char** out){
+    int status = 1;
+    Archive *a = archive_new();
+    archive_load(a, file);
+    char* metadata = archive_readfile(a, "metadata.yaml");
+    if(!metadata){
+        status = 1;
+        goto repo_index_op_free;
+    }
+    *out = metadata+5;
+repo_index_op_free:
+    archive_unref(a);
+    return status;
+}
+
+static int repo_index(const char* path){
+    char* name = get_value("name");
+    if(strlen(name) < 1){
+        printf("repo name is undefined. Use --name=xxx\n");
+        return 1;
+    }
+    //bool move = iseq(get_value("move"), "true");
+    int status = 0;
+    char** files = find(path);
+    jobs *j = jobs_new();
+    // calculate len
+    size_t len = 0;
+    for(len=0; files[len]; len++){}
+    char* out[len];
+    // scan all files
+    size_t cur = 0;
+    for(size_t i=0; files[i]; i++){
+        // filter non-ymp files
+        if(!endswith(files[i], ".ymp")){
+            continue;
+        }
+        jobs_add(j, (callback)repo_index_op, files[i], &out[cur]);
+        cur++;
+    }
+    jobs_run(j);
+    // write index to file
+    char index_path[PATH_MAX];
+    strcpy(index_path, path);
+    strcat(index_path, "/ymp-index.yaml");
+    FILE* f = fopen(index_path, "w");
+    if(!f){
+        perror("Failed to open file:");
+        goto repo_index_free;
+    }
+    fprintf(f, "index:\n");
+    fprintf(f, "  name: ");
+    fprintf(f, name);
+    fprintf(f, "\n");
+    for(size_t i=0; i<cur; i++){
+        fprintf(f, out[i]);
+    }
+repo_index_free:
+    fclose(f);
+    // cleanup memory
+    for(size_t i=0; i<cur; i++){
+        free(out[i]-5);
+    }
+    for(size_t i=0; files[i]; i++){
+        free(files[i]);
+    }
+    free(files);
+    return status;
+}
+
 static int repo_del(){
     int status = 0;
     char* name = get_value("name");
@@ -119,6 +192,8 @@ static int repo_main(void** args) {
         return repo_add(((char**)args)[0]);
     } else if (strcmp(get_value("remove"), "true")==0){
         return repo_del();
+    } else if (strcmp(get_value("index"), "true")==0){
+        return repo_index(((char**)args)[0]);
     }
     return 0;
 }
