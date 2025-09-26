@@ -50,7 +50,7 @@ VariableManager *variable_manager_new();
 void variable_set_value(VariableManager* variables, const char* name, const char* value);
 /** @cond **/
 invisible void set_value(const char* name, const char* value);
-#define set_bool(A, B) set_value(A, B : "true" ? "false")
+#define set_bool(A, B) set_value(A, B ? "true" : "false")
 /** @endcond */
 /**
  * @brief Set the value of a read-only variable.

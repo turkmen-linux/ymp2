@@ -38,7 +38,7 @@ visible char** parse_args(char** args) {
             debug("offset=%lld len=%lld\n", offset, strlen(args[i]));
             // if does not have =
             if (offset >= strlen(args[i])){
-                set_value(var, "true");
+                set_bool(var, true);
             } else {
                 char val[strlen(args[i]) - offset - 1];
                 strncpy(val, args[i]+offset+1, strlen(args[i]) - offset - 1);
