@@ -232,6 +232,7 @@ void repo_init(OperationManager* manager){
     op.alias = "";
     op.description = "Repository operations";
     op.min_args = 0;
+    op.help = NULL;
     op.call = (callback)repo_main;
     operation_register(manager, op);
 }

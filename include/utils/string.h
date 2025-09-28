@@ -29,7 +29,7 @@ char* readfile(const char *path);
  * @param B The second string to compare.
  * @return true if the strings are equal, false otherwise.
  */
-#define iseq(A, B) (strcmp(A, B) == 0)
+#define iseq(A, B) (strlen(A) == strlen(B) && (strcmp(A, B) == 0))
 
 /**
  * @brief Counts the number of tab characters in a given data string.

@@ -75,6 +75,7 @@ void list_init(OperationManager* manager){
     op.alias = "ls";
     op.description = "List packages, repos and more";
     op.min_args = 0;
+    op.help = NULL;
     op.call = (callback)list;
     operation_register(manager, op);
 }

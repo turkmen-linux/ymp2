@@ -18,6 +18,7 @@ void print_init(OperationManager* manager){
     op.alias = "echo";
     op.description = "Print message";
     op.min_args = 0;
+    op.help = NULL;
     op.call = (callback)print;
     operation_register(manager, op);
 }

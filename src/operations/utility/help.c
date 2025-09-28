@@ -10,9 +10,14 @@
 extern Ymp* global;
 
 static void help_print(Operation op){
-    print("%s:%s\n", colorize(GREEN,"Aliases"), op.alias);
+    if(op.alias != NULL){
+        print("%s:%s\n", colorize(GREEN,"Aliases"), op.alias);
+    }
     print("%s: ymp %s [OPTION]... [ARGS]...\n", colorize(GREEN,"Usage"), op.name);
     print("%s\n", op.description);
+    if(op.help == NULL){
+        return;
+    }
     print("%s:\n", colorize(GREEN, "Options"));
     for(size_t i=0; i < op.help->cur; i++){
         print("  %s\n", op.help->parameters[i]);
@@ -55,6 +60,7 @@ void help_init(OperationManager* manager){
     op.description = "Print help message";
     op.alias = "h";
     op.min_args = 0;
+    op.help = NULL;
     op.call = (callback)help_main;
     operation_register(manager, op);
 }

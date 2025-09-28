@@ -60,6 +60,7 @@ void key_init(OperationManager *manager){
     op.alias = "k";
     op.description = "Ymp key manager";
     op.min_args = 0;
+    op.help = NULL;
     op.call = (callback)key_main;
     operation_register(manager, op);
 }

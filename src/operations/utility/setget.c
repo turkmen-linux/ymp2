@@ -29,6 +29,7 @@ void setget_init(OperationManager* manager){
     Operation set;
     set.name = "set";
     set.alias = NULL;
+    set.help = NULL;
     set.description = "Set ymp variable";
     set.min_args = 2;
     set.call = (callback)set_fn;
@@ -39,6 +40,7 @@ void setget_init(OperationManager* manager){
     get.alias = NULL;
     get.description = "Get ymp variable";
     get.min_args = 1;
+    get.help = NULL;
     get.call = (callback) get_fn;
     operation_register(manager, get);
 
@@ -47,6 +49,7 @@ void setget_init(OperationManager* manager){
     eq.description = "Compare strings";
     eq.alias = NULL;
     eq.min_args = 2;
+    eq.help = NULL;
     eq.call = (callback) eq_fn;
     operation_register(manager, eq);
 
@@ -55,6 +58,7 @@ void setget_init(OperationManager* manager){
     dummy.description = "Do nothing";
     dummy.alias = NULL;
     dummy.min_args = 0;
+    dummy.help = NULL;
     dummy.call = (callback) dummy_fn;
     operation_register(manager, dummy);
 }
