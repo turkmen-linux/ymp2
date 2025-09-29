@@ -105,7 +105,8 @@ visible char** listdir(const char* path){
     }
     size_t len = 0;
     char** dirs = array_get(a, &len);
-    array_unref(a);
+    free(a->data);
+    free(a);
     return dirs;
 }
 
@@ -134,7 +135,8 @@ visible char** find(const char* path){
     find_operation(a, path);
     size_t len;
     char** list = array_get(a, &len);
-    array_unref(a);
+    free(a->data);
+    free(a);
     return list;
 }
 
