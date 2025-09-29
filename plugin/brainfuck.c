@@ -126,6 +126,7 @@ visible void plugin_init(Ymp* ymp){
     op.alias = "bf";
     op.description = "Brainfuck interpreter";
     op.min_args = 1;
+    op.help = NULL;
     op.call = (callback) brainfuck_op;
     operation_register(ymp->manager, op);
     y = ymp;

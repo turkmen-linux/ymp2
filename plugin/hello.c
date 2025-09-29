@@ -16,6 +16,7 @@ visible void plugin_init(Ymp* ymp){
         Operation op;
         op.name = "hello";
         op.alias = NULL;
+        op.help = NULL;
         op.min_args = 0;
         op.call = (callback) hello_fn;
         operation_register(ymp->manager, op);

@@ -96,9 +96,11 @@ visible Ymp* ymp_init(){
     while(plugins[i]){
         if(endswith(plugins[i], ".so")){
             load_plugin(ymp, plugins[i]);
+            free(plugins[i]);
         }
         i++;
     }
+    free(plugins);
     #endif
     debug("ymp init done in %ld µs\n", get_epoch() - begin_time);
 
