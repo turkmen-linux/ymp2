@@ -265,7 +265,6 @@ free_quarantine_sync:
 }
 
 static void calculate_leftovers(array* arr, const char* name){
-    (void)arr;
     char* destdir = variable_get_value(global->variables, "DESTDIR");
     array *list = array_new();
     char* files = build_string("%s/%s/files/%s", destdir, STORAGE, name);
@@ -345,9 +344,11 @@ visible bool quarantine_validate() {
     jobs_unref(j); // Unreference the job queue
 
 
+    // create leftover array
+    array *leftover = array_new();
+
     // Sync if validation sucessfully
     if(!status){
-        array *leftover = array_new();
         j = jobs_new();
         // Iterate through each metadata file
         for (size_t i = 0; metadatas[i]; i++) {
@@ -359,6 +360,21 @@ visible bool quarantine_validate() {
         status = j->failed;  // Capture the failure status
         jobs_unref(j); // Unreference the job queue
     }
+
+    // remove leftovers
+    size_t len;
+    char** left = array_get(leftover, &len);
+    char target[PATH_MAX];
+    for(size_t i=0; i < len; i++){
+        strcpy(target, destdir);
+        strcat(target,"/");
+        strcat(target, left[i]);
+        unlink(target);
+        free(left[i]);
+    }
+    free(left);
+    array_unref(leftover);
+
 
     // Reset after sync
     quarantine_reset();
