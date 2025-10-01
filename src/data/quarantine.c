@@ -264,6 +264,54 @@ free_quarantine_sync:
     return status;
 }
 
+static void calculate_leftovers(array* arr, const char* name){
+    (void)arr;
+    char* destdir = variable_get_value(global->variables, "DESTDIR");
+    array *list = array_new();
+    char* files = build_string("%s/%s/files/%s", destdir, STORAGE, name);
+    char* links = build_string("%s/%s/links/%s", destdir, STORAGE, name);
+    char* files_new = build_string("%s/%s/quarantine/files/%s", destdir, STORAGE, name);
+    char* links_new = build_string("%s/%s/quarantine/links/%s", destdir, STORAGE, name);
+
+    char line[PATH_MAX+41];
+    size_t offset = 0;
+    // read files
+    FILE *ffiles = fopen(files, "r");
+    while (fgets(line, sizeof(line), ffiles)) {
+        array_add(list, line+41);
+    }
+    fclose(ffiles);
+    // read links
+    FILE *flinks = fopen(links, "r");
+    while (fgets(line, sizeof(line), flinks)) {
+        for(offset=0; line[offset] && line[offset] != ' '; offset++);
+        array_add(list, line+offset+1);
+    }
+    fclose(flinks);
+    // read new files
+    FILE *ffiles_new = fopen(files_new, "r");
+    while (fgets(line, sizeof(line), ffiles_new)) {
+        array_remove(list, line+41);
+    }
+    fclose(ffiles_new);
+    // read links
+    FILE *flinks_new = fopen(links_new, "r");
+    while (fgets(line, sizeof(line), flinks_new)) {
+        for(offset=0; line[offset] && line[offset] != ' '; offset++);
+        array_remove(list, line+offset+1);
+    }
+    fclose(flinks_new);
+    // add leftovers
+    size_t len;
+    array_adds(arr, array_get(list, &len));
+    // free memory
+    free(files);
+    free(links);
+    free(files_new);
+    free(links_new);
+    array_unref(list);
+}
+
 // Function to validate all quarantine metadata files
 visible bool quarantine_validate() {
     debug("validate event");
@@ -296,11 +344,14 @@ visible bool quarantine_validate() {
     bool status = j->failed; // Capture the failure status
     jobs_unref(j); // Unreference the job queue
 
+
     // Sync if validation sucessfully
     if(!status){
+        array *leftover = array_new();
         j = jobs_new();
         // Iterate through each metadata file
         for (size_t i = 0; metadatas[i]; i++) {
+            calculate_leftovers(leftover, basename(metadatas[i]));
             jobs_add(j, (callback)quarantine_sync, basename(metadatas[i]), NULL);
         }
         // Run the jobs and check for failures
