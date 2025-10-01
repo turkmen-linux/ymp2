@@ -284,7 +284,8 @@ static void calculate_leftovers(array* arr, const char* name){
     FILE *flinks = fopen(links, "r");
     while (fgets(line, sizeof(line), flinks)) {
         for(offset=0; line[offset] && line[offset] != ' '; offset++);
-        array_add(list, line+offset+1);
+        line[offset] = '\n';
+        array_add(list, line);
     }
     fclose(flinks);
     // read new files
@@ -297,7 +298,8 @@ static void calculate_leftovers(array* arr, const char* name){
     FILE *flinks_new = fopen(links_new, "r");
     while (fgets(line, sizeof(line), flinks_new)) {
         for(offset=0; line[offset] && line[offset] != ' '; offset++);
-        array_remove(list, line+offset+1);
+        line[offset] = '\n';
+        array_remove(list, line);
     }
     fclose(flinks_new);
     // add leftovers
