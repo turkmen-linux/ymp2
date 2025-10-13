@@ -26,6 +26,8 @@
  */
 Package** resolve_dependency(char* name);
 
+char** get_group_packages (const char* name);
+
 Package** resolve_reverse_dependency(char* name);
 
 /**

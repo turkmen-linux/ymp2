@@ -23,7 +23,7 @@ size_t depth = 0; // Variable to track the depth of dependency resolution
 
 
 
-static char** get_group_packages (const char* name) {
+visible char** get_group_packages (const char* name) {
     info("reslove group: %s depth:%d\n", name, depth);
     array *res = array_new();
     Package *pi = package_new();
