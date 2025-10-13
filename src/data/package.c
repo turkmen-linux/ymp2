@@ -112,7 +112,7 @@ visible bool package_load_from_metadata(Package* pkg, const char* metadata, bool
     int dep_count = 0;
     int grp_count = 0;
     pkg->dependencies = yaml_get_array(pkg->metadata, "depends", &dep_count);
-    pkg->groups = yaml_get_array(pkg->metadata, "groups", &grp_count);
+    pkg->groups = yaml_get_array(pkg->metadata, "group", &grp_count);
     debug("package:%s - %s - %d - %d\n", pkg->name, pkg->version, dep_count, grp_count);
     return true;
 }

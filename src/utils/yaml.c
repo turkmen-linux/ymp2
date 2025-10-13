@@ -101,7 +101,6 @@ visible char **yaml_get_array(const char *data, const char *name, int *count) {
     if (!area_data) {
         return NULL;
     }
-
     FILE *stream = fmemopen(area_data, strlen(area_data), "r");
     while (fgets(line, sizeof(line), stream)) {
         if (line[0] == '-') {
@@ -115,7 +114,7 @@ visible char **yaml_get_array(const char *data, const char *name, int *count) {
     if (*count) {
         *count = len;
     }
-    array_unref(a);
+    free(a);
     return ret;
 }
 

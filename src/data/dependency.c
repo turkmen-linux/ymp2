@@ -47,10 +47,12 @@ visible char** get_group_packages (const char* name) {
                         continue;
                     } else if(l1 == l2 && strncmp(grp, name+1, l1) == 0){
                         // len(grp) == len(name)
+                        debug("grp: %s\n", grp);
                         array_add(res, repos[i]->packages[j]->name);
-                    } else if(strncmp(grp, name+1, l2) == 0 && grp[l1] == '.'){
+                    } else if(strncmp(grp, name+1, l1) == 0 && grp[l1] == '.'){
                         // len(grp) > len(name) and grp[len(name)] == '.'
                         array_add(res, repos[i]->packages[j]->name);
+                        debug("name: %s grp: %s l1:%ld l2:%ld\n", name, grp, l1, l2);
                     }
                 }
             }
