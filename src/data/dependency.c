@@ -21,6 +21,38 @@ static Repository** repos;
 static array *cache;
 size_t depth = 0; // Variable to track the depth of dependency resolution
 
+
+
+static char** get_group_packages (const char* name) {
+    info("reslove group: %s depth:%d\n", name, depth);
+    array *res = array_new();
+    Package *pi = package_new();
+    pi->is_virtual = true;
+    for (size_t i = 0; repos[i]; i++) {
+       for(size_t j=0; j< repos[i]->package_count;j++){
+            if(strcmp(name+1, "universe") == 0){
+               array_add(res, repos[i]->packages[j]->name);
+            }else if(strcmp(name+1, "world") == 0){
+                pi->name = repos[i]->packages[j]->name;
+                if(package_is_installed(pi)){
+                    array_add(res, repos[i]->packages[j]->name);
+                }
+            } else {
+                for(size_t g=0; repos[i]->packages[j]->groups[g];g++){
+                    const char* grp = repos[i]->packages[j]->groups[g];
+                    if(strlen(grp) == strlen(name)-1 && strcmp(grp, name+1) == 0){
+                        array_add(res, repos[i]->packages[j]->name);
+                    }
+                }
+            }
+       }
+    }
+    size_t len;
+    char** ret=array_get(res, &len);
+    free(res);
+    return ret;
+}
+
 // Recursive function to resolve dependencies for a given package name
 static void resolve_dependency_fn(char* name, bool emerge) {
     // If the package is already in the cache, return to avoid reprocessing
@@ -33,6 +65,14 @@ static void resolve_dependency_fn(char* name, bool emerge) {
 
     // Log the current package being searched and the depth level
     info("Search: %s depth:%d\n", name, depth);
+
+    if(name[0] == '@'){
+        char** grp_pkgs = get_group_packages(name);
+        for(size_t i=0; grp_pkgs[i]; i++){
+            resolve_dependency_fn(grp_pkgs[i], emerge);
+        }
+        return;
+    }
 
     // Iterate through the repositories to find the package
     for (size_t i = 0; repos[i]; i++) {
