@@ -319,7 +319,18 @@ visible bool package_is_installed(Package *pkg){
         pi->is_virtual = true;
         char* manifest = readfile(meta);
         char* ymp_data = yaml_get_area(manifest, "ymp");
-        char* data = yaml_get_area(ymp_data, "package");
+        char* data;
+        if(yaml_has_area(ymp_data, "package")){
+            data = yaml_get_area(ymp_data, "package");
+        } else if(yaml_has_area(ymp_data, "source")){
+            data = yaml_get_area(ymp_data, "source");
+        } else{
+            warning("Metadata is invalid: %s\n", pkg->name);
+            package_unref(pi);
+            free(ymp_data);
+            free(manifest);
+            return false;
+        }
         package_load_from_metadata(pi, data, false); // load virtual installed package
         is_package = (pi->release == pkg->release); // check installed release and package release are same
         // cleanup
