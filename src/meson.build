@@ -10,19 +10,25 @@ foreach ops : run_command('find', 'operations','-type','f',check:true).stdout().
     ctx_c += '  '+name+'_init(manager);\n'
 endforeach
 ctx_c += '}\n\n'
+run_command('sh', '-c', 'head -c 1 /dev/zero > '+meson.current_build_dir()+'/EOF')
+foreach data : run_command('find', '../data','-type','f', '-iname', '*.sh', '-o', '-iname', '*.txt' ,check:true).stdout().strip().split('\n')
+    name = data.substring(8).replace('.','_').replace('-','_')
+    run_command('install', '-Dm644', meson.current_build_dir()+'/EOF' , meson.current_build_dir()+'/eof/'+name+'.eof')
+    lib_l_args += ['-Wl,--format=binary', '-Wl,'+data, '-Wl,'+meson.current_build_dir()+'/eof/'+name+'.eof', '-Wl,--format=default']
+    ctx_c += 'extern char '+name+'_start[]  asm("_binary____data_'+name+'_start");\n'
+    ctx_c += 'extern char '+name+'_end[]  asm("_binary____data_'+name+'_end");\n'
+endforeach
+
 ctx_c += '#include <string.h>\n'
 ctx_c += '__attribute__((section(".resource"))) char* resource(const char* name){\n'
 foreach data : run_command('find', '../data','-type','f', '-iname', '*.sh', '-o', '-iname', '*.txt' ,check:true).stdout().strip().split('\n')
+    name = data.substring(8).replace('.','_').replace('-','_')
     data = data.substring(7)
-    fdata = run_command('cat', '../data/'+data ,check:true).stdout()
     ctx_c += '    if(strcmp(name, ":'+data+'") == 0) {\n'
-    ctx_c += '        return '
-    foreach line : fdata.split('\n')
-        ctx_c += '\n          "'+line.replace('\\', '\\\\').replace('"', '\\"')+'\\n"'
-    endforeach
-    ctx_c += ';\n    }\n'
+    ctx_c += '        return '+name+'_start;\n' 
+    ctx_c += '    }\n'
 endforeach
-ctx_c += '    return NULL;\n}\n\n'
+ctx_c += 'return "";\n}'
 
 configure_file(
   input: 'ctx.c.in',

@@ -17,6 +17,8 @@ else
 endif
 
 srcs = []
+l_args = []
+lib_l_args = []
 deps = [
     dependency('libarchive', required:true),
     dependency('libcurl', required:true),
@@ -37,15 +39,15 @@ if get_option('plugins')
     add_project_arguments('-DPLUGIN_SUPPORT', language: 'c')
 endif
 
-l_args =  ['-flto'] + nostdlib
+l_args +=  ['-flto'] + nostdlib
 
 if get_option('library')
     # Main library
-    libymp = library('ymp', srcs, dependencies: deps, c_args: ['-Dinvisible=extern'], link_args: l_args, install: true)
+    libymp = library('ymp', srcs, dependencies: deps, c_args: ['-Dinvisible=extern'], link_args: l_args + lib_l_args, install: true)
     executable('ymp-cli', ['src/core/cli.c']+start, c_args: ['-Dymp_main=main'], link_with: libymp, link_args: l_args, install: true)
 else
     # single binary
-    executable('ymp-cli', srcs+start, dependencies: deps, c_args: ['-Dymp_main=main', '-Dinvisible=extern'], link_args: l_args, install: true)
+    executable('ymp-cli', srcs+start, dependencies: deps, c_args: ['-Dymp_main=main', '-Dinvisible=extern'], link_args: l_args + lib_l_args, install: true)
 endif
 subdir('examples')
 subdir('plugin')
