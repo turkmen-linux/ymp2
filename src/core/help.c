@@ -65,5 +65,7 @@ visible void help_add_parameter(Help *h, const char* name, const char* descripti
     debug("name: %s, desc: %s\n", name, description);
 
     // Build a formatted string combining the name and description, and add it to the Help structure
-    help_add_string(h, build_string("%s : %s", colorize(RED, name), description));
+    char* string = build_string("%s : %s", colorize(RED, name), description);
+    help_add_string(h, (const char*)string);
+    free(string);
 }

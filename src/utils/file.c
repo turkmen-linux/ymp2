@@ -105,8 +105,7 @@ visible char** listdir(const char* path){
     }
     size_t len = 0;
     char** dirs = array_get(a, &len);
-    free(a->data);
-    free(a);
+    array_unref(a);
     return dirs;
 }
 
@@ -125,8 +124,10 @@ static void find_operation(array* array, const char* path){
         } else {
             array_add(array, inode);
         }
+        free(inode);
         i++;
     }
+    free(inodes);
 }
 
 visible char** find(const char* path){
@@ -135,8 +136,7 @@ visible char** find(const char* path){
     find_operation(a, path);
     size_t len;
     char** list = array_get(a, &len);
-    free(a->data);
-    free(a);
+    array_unref(a);
     return list;
 }
 

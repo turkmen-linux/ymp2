@@ -292,7 +292,7 @@ visible char** split(const char* data, const char* f) {
     word[i-cur] = '\0';
     array_add(a, word);
     char** ret = array_get(a, &i);
-    free(a); // unref will remove memory and we dont want it
+    array_unref(a);
     return ret;
 }
 

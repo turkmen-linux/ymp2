@@ -75,15 +75,9 @@ int visible operation_main(OperationManager *manager, const char* name, void* ar
             char** alias = split(manager->operations[i].alias, ":");
             for(size_t a=0; alias[a]; a++){
                 if(strcmp(alias[a], name) == 0){
-                    for(; alias[a]; a++){
-                        free(alias[a]);
-                    }
-                    free(alias);
                     goto operation_main_on_call;
                 }
-                free(alias[a]);
             }
-            free(alias);
         }
         debug("%s %s\n", manager->operations[i].name, name);
         if (strcmp(manager->operations[i].name, name) == 0) {

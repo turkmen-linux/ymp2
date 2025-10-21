@@ -114,7 +114,7 @@ visible char **yaml_get_array(const char *data, const char *name, int *count) {
     if (*count) {
         *count = len;
     }
-    free(a);
+    array_unref(a);
     return ret;
 }
 

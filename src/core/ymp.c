@@ -96,8 +96,8 @@ visible Ymp* ymp_init(){
     while(plugins[i]){
         if(endswith(plugins[i], ".so")){
             load_plugin(ymp, plugins[i]);
-            free(plugins[i]);
         }
+        free(plugins[i]);
         i++;
     }
     free(plugins);

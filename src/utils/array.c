@@ -233,7 +233,7 @@ visible char **array_get(array *arr, size_t* len) {
     size_t ret_index = 0; // Index for ret array
     while (start < arr->size) {
         if (arr->data[start] != NULL) {
-            ret[ret_index] = arr->data[start];
+            ret[ret_index] = strdup(arr->data[start]);
             debug("item: %s index: %ld len: %ld\n", ret[ret_index], ret_index, arr->size);
             if (!ret[ret_index]) {
                 // Handle strdup failure
