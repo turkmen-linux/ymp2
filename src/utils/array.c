@@ -223,7 +223,7 @@ visible char **array_get(array *arr, size_t* len) {
     
     
     // Allocate memory for the return array
-    char** ret = calloc(arr->size + 1, sizeof(char*));
+    char** ret = malloc((arr->size + 1)*sizeof(char*));
     if (!ret) {
         pthread_mutex_unlock(&arr->lock);
         return NULL; // Handle memory allocation failure

@@ -19,7 +19,9 @@ visible void error_fn(array* error, int status){
         if(errs[i] != NULL){
             print_fn("",ERROR,errs[i]);
         }
+        free(errs[i]);
     }
+    free(errs);
     if(i>0){
         array_unref(error);
         exit(status);
