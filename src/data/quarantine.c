@@ -31,6 +31,7 @@ static int quarantine_validate_files(const char* name) {
 
     // Check if the files_path is a valid file
     if (!isfile(files_path)) {
+        warning("package files not found!\n");
         free(files_path);
         free(rootfs_path);
         return 0;
@@ -98,6 +99,7 @@ static int quarantine_validate_links(const char* name){
 
     // Check if the files_path is a valid file
     if (!isfile(links_path)) {
+        warning("package links not found!\n");
         free(links_path);
         free(rootfs_path);
         return 0;
@@ -276,32 +278,40 @@ static void calculate_leftovers(array* arr, const char* name){
     size_t offset = 0;
     // read files
     FILE *ffiles = fopen(files, "r");
-    while (fgets(line, sizeof(line), ffiles)) {
-        array_add(list, line+41);
+    if(ffiles){
+        while (fgets(line, sizeof(line), ffiles)) {
+            array_add(list, line+41);
+        }
+        fclose(ffiles);
     }
-    fclose(ffiles);
     // read links
     FILE *flinks = fopen(links, "r");
-    while (fgets(line, sizeof(line), flinks)) {
-        for(offset=0; line[offset] && line[offset] != ' '; offset++);
-        line[offset] = '\n';
-        array_add(list, line);
+    if(flinks){
+        while (fgets(line, sizeof(line), flinks)) {
+            for(offset=0; line[offset] && line[offset] != ' '; offset++);
+            line[offset] = '\n';
+            array_add(list, line);
+        }
+        fclose(flinks);
     }
-    fclose(flinks);
     // read new files
     FILE *ffiles_new = fopen(files_new, "r");
-    while (fgets(line, sizeof(line), ffiles_new)) {
-        array_remove(list, line+41);
+    if(ffiles_new){
+        while (fgets(line, sizeof(line), ffiles_new)) {
+            array_remove(list, line+41);
+        }
+        fclose(ffiles_new);
     }
-    fclose(ffiles_new);
     // read links
     FILE *flinks_new = fopen(links_new, "r");
-    while (fgets(line, sizeof(line), flinks_new)) {
-        for(offset=0; line[offset] && line[offset] != ' '; offset++);
-        line[offset] = '\n';
-        array_remove(list, line);
+    if(flinks_new){
+        while (fgets(line, sizeof(line), flinks_new)) {
+            for(offset=0; line[offset] && line[offset] != ' '; offset++);
+            line[offset] = '\n';
+            array_remove(list, line);
+        }
+        fclose(flinks_new);
     }
-    fclose(flinks_new);
     // add leftovers
     size_t len;
     array_adds(arr, array_get(list, &len));
@@ -315,7 +325,7 @@ static void calculate_leftovers(array* arr, const char* name){
 
 // Function to validate all quarantine metadata files
 visible bool quarantine_validate() {
-    debug("validate event");
+    debug("validate event\n");
     // Get the destination directory from global variables
     char* destdir = variable_get_value(global->variables, "DESTDIR");
 
@@ -392,7 +402,7 @@ visible bool quarantine_validate() {
 
 
 visible void quarantine_reset(){
-    debug("reset event");
+    debug("reset event\n");
     // Build quarantine directory
     char* destdir = variable_get_value(global->variables, "DESTDIR");
     char* path = build_string("%s/%s/quarantine/", destdir, STORAGE);

@@ -175,8 +175,8 @@ visible bool package_extract(Package* pkg) {
     // Build the root filesystem path for quarantine
     char* rootfs = build_string("%s/%s/quarantine/rootfs", destdir, STORAGE);
     char* metadata_dir = build_string("%s/../metadata", rootfs);
-    char* files_dir = build_string("%s/../metadata", rootfs);
-    char* links_dir = build_string("%s/../metadata", rootfs);
+    char* files_dir = build_string("%s/../files", rootfs);
+    char* links_dir = build_string("%s/../links", rootfs);
 
     // If package is source, build instead of extract
     if(pkg->is_source){
@@ -196,7 +196,7 @@ visible bool package_extract(Package* pkg) {
     create_dir(rootfs);
     create_dir(metadata_dir);
     create_dir(files_dir);
-    create_dir(files_dir);
+    create_dir(links_dir);
     create_dir(tmpdir);
 
     // Set the target for the archive extraction to the temporary directory
@@ -210,17 +210,18 @@ visible bool package_extract(Package* pkg) {
 
     // Loop through the files in the temporary directory
     while(files[i]) {
+        // Build the full path for the data file
+        char* file = build_string("%s/%s", tmpdir, files[i]);
         // Skip if the current item is not a file
-        if(!isfile(files[i])) {
+        if(!isfile(file)) {
+            free(file);
             i++;
             continue;
         }
 
+        debug("package content: %s\n", files[i]);
         // Check if the file name starts with "data."
         if(startswith(files[i], "data.")) {
-            // Build the full path for the data file
-            char* file = build_string("%s/%s", tmpdir, files[i]);
-
             // Calculate the SHA1 hash of the data file
             char* hash = calculate_sha1(file);
 
@@ -247,10 +248,10 @@ visible bool package_extract(Package* pkg) {
 
             free(hash);
             free(yaml_hash);
-            free(file);
             free(data); // Free the archive object
             break; // Exit the loop after processing the data file
         }
+        free(file);
         i++; // Move to the next file
     }
 
