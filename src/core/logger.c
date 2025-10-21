@@ -15,24 +15,25 @@ typedef int (*logger)(const char*, ...);
 
 static logger print_functions[] = {(logger)vprintf, NULL, (logger)vprintf, NULL, (logger)vprintf};
 
-static char* colorize_fn(int color, const char* message){
-    return build_string("\x1b[;%dm%s\x1b[;0m", color, message);
+static const char* colorize_func(const char* colorized, const char* flat){
+    (void)flat;
+    return colorized;
 }
 
-static char* colorize_dummy(int color, const char* message){
-    (void)color;
-    return strdup(message);
+static const char* colorize_dummy(const char* colorized, const char* flat){
+    (void)colorized;
+    return flat;
 }
 
-visible Colorize colorize = (Colorize)colorize_fn;
+visible Colorize colorize_fn = (Colorize)colorize_func;
 
 
 visible void logger_set_status(int type, bool status){
     if(type == COLORIZE){
         if(status){
-            colorize = (Colorize)colorize_fn;
+            colorize_fn = (Colorize)colorize_func;
         } else {
-            colorize = (Colorize)colorize_dummy;
+            colorize_fn = (Colorize)colorize_dummy;
         }
     }
     if(type > (int)(sizeof(print_functions) / sizeof(logger))){
@@ -59,14 +60,10 @@ visible int print_fn(const char* caller, int type, const char* format, ...){
         if(cur_time == 0){
             cur_time = get_epoch();
         }
-        char* msg = colorize(BLUE, (char*)caller);
-        printf("[%s:%ld]: ", msg, get_epoch() - cur_time);
+        printf(colorize_fn("["colorized(BLUE,"%s")":%ld]: ", "[%s:%ld]: "), caller, get_epoch() - cur_time);
         cur_time = get_epoch();
-        free(msg);
     }else if(type == ERROR){
-        char* msg = colorize(RED, "ERROR");
-        printf("%s: ", msg);
-        free(msg);
+        printf("%s: ", colorize(RED, "ERROR"));
     }
 
     int status = print_functions[type](format, args);

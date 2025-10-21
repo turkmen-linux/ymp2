@@ -47,9 +47,7 @@ static int help_main(char** args){
     OperationManager *manager = global->manager;
     for(size_t i=0; i < manager->length; i++){
         Operation op = manager->operations[i];
-        char* name = colorize(GREEN, op.name);
-        printf("%s  :  %s\n",  name, op.description);
-        free(name);
+        printf(colorize_fn(colorized(GREEN, "%s")"  :  %s\n", "%s  :  %s\n"),  op.name, op.description);
     }
     return 0;
 }

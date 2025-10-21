@@ -139,9 +139,13 @@ int print_fn(const char* caller, int type, const char* format, ...);
  * @return A pointer to a dynamically allocated string containing the colorized message,
  *         or NULL if an error occurs (e.g., if memory allocation fails).
  */
-typedef char* (*Colorize)(int color, const char* message);
+typedef char* (*Colorize)(const char* colorized, const char* flat);
 
-extern Colorize colorize;
+extern Colorize colorize_fn;
+
+#define clr(A) #A
+#define colorized(A, B) "\033[" clr(A) "m" B "\033[;0m"
+#define colorize(A, B) colorize_fn(colorized(A, B), B)
 
 
 #endif
