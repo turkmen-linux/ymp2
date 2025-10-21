@@ -32,11 +32,15 @@ int ymp_main(int argc, char** argv){
         }
         ymp_add(ymp, argv[1], parse_args(argv+2));
     } else {
-        error_add(build_string("No command given.\nRun %s for more information about usage.\n", colorize(RED, "ymp help")));
+        char* err_msg = build_string("No command given.\nRun %s for more information about usage.\n", colorize(RED, "ymp help"));
+        error_add(err_msg);
+        free(err_msg);
     }
     if(getenv("DEBUG") != NULL){
         logger_set_status(DEBUG, true);
     }
     error(1);
-    return ymp_run(ymp);
+    int status = ymp_run(ymp);
+    ymp_unref(ymp);
+    return status;
 }

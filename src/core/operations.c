@@ -38,6 +38,17 @@ visible OperationManager* operation_manager_new() {
 }
 
 
+visible void operation_manager_unref(OperationManager* manager){
+    free(manager->priv_data);
+    for (size_t i = 0; i < manager->length; i++) {
+        if (manager->operations[i].help) {
+            help_unref(manager->operations[i].help);
+        }
+    }
+    free(manager->operations);
+    free(manager);
+}
+
 void visible operation_register(OperationManager *manager, Operation new_op) {
     // Check if we need to resize the array
     if (manager->length >= manager->capacity) {

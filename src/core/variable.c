@@ -28,6 +28,16 @@ visible VariableManager* variable_manager_new() {
     return variables;
 }
 
+visible void variable_manager_unref(VariableManager* variables){
+    YmpVariable* vars = (YmpVariable*)variables->priv_data;
+    for (size_t i = 0; i < variables->length; i++) {
+        free(vars[i].value);
+        free(vars[i].name);
+    }
+    free(vars);
+    free(variables);
+}
+
 static void variable_set_value_fn(VariableManager* variables, const char* name, const char* value, bool read_only) {
     if (!variables) {
         printf("Invalid VariableManager\n");

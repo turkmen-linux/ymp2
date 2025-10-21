@@ -36,6 +36,7 @@ typedef struct {
  *         the allocation fails.
  */
 VariableManager *variable_manager_new();
+void variable_manager_unref(VariableManager *variables);
 
 /**
  * @brief Set the value of a variable.

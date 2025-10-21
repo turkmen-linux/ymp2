@@ -31,6 +31,8 @@ typedef struct {
  */
 Help* help_new();
 
+void help_unref(Help* h);
+
 /**
  * @brief Adds a string to the Help structure.
  *

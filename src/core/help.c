@@ -32,6 +32,14 @@ visible Help* help_new() {
     return h; // Return the newly created Help structure
 }
 
+visible void help_unref(Help* h){
+    for(size_t i=0; i< h->cur; i++){
+        free(h->parameters[i]);
+    }
+    free(h->parameters);
+    free(h);
+}
+
 // Function to add a string to the Help structure
 visible void help_add_string(Help *h, const char* string) {
     // Check if the current count has reached the maximum capacity

@@ -103,6 +103,8 @@ void operation_register(OperationManager *manager, Operation new_op);
  */
 OperationManager *operation_manager_new();
 
+void operation_manager_unref(OperationManager* manager);
+
 /**
  * @brief Executes the main operation managed by the specified OperationManager.
  *

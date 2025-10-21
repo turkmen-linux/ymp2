@@ -108,10 +108,15 @@ visible Ymp* ymp_init(){
 }
 
 visible void ymp_unref(Ymp* ymp){
-    free(ymp->errors);
-    free(ymp->variables);
-    free(ymp->manager);
+    YmpPrivate *queue = (YmpPrivate*)ymp->priv_data;
+    for(size_t i=0; i< queue->length; i++){
+        free(queue->item[i].args);
+    }
+    free(queue->item);
     free(ymp->priv_data);
+    array_unref(ymp->errors);
+    variable_manager_unref(ymp->variables);
+    operation_manager_unref(ymp->manager);
     free(ymp);
 }
 
