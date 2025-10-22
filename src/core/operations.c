@@ -88,8 +88,8 @@ int visible operation_main(OperationManager *manager, const char* name, void* ar
                 if(strcmp(alias[a], name) == 0){
                     for(; alias[a]; a++){
                         free(alias[a]);
-                        free(alias);
                     }
+                    free(alias);
                     goto operation_main_on_call;
                 }
                 free(alias[a]);

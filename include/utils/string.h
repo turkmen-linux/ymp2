@@ -97,7 +97,7 @@ char* url_encode(const char *input);
  * @return 1 if data ends with f, 0 otherwise.
  */
 #define endswith(data, f) \
-    (strlen(f) <= strlen(data)) && (strncmp(data + strlen(data) - strlen(f), f, strlen(f)) == 0)
+    ((strlen(f) <= strlen(data)) && (strncmp(data + strlen(data) - strlen(f), f, strlen(f)) == 0))
 
 /**
  * @brief Checks if a string starts with a specified prefix.
@@ -107,7 +107,7 @@ char* url_encode(const char *input);
  * @return 1 if data starts with f, 0 otherwise.
  */
 #define startswith(data, f) \
-    (strlen(f) <= strlen(data)) && (strncmp(data, f, strlen(f)) == 0)
+    ((strlen(f) <= strlen(data)) && (strncmp(data, f, strlen(f)) == 0))
 
 /**
  * @brief Builds a formatted string using variable arguments.

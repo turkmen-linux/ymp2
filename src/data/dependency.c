@@ -136,6 +136,7 @@ static void resolve_reverse_dependency_fn(char* name) {
     }
     Package* pkg = package_new();
     if(!package_load_from_installed(pkg, name)){
+        warning("Package is not installed: %s\n", name);
         return;
     }
     // Add the resolved package to the list of resolved packages
@@ -152,7 +153,9 @@ static void resolve_reverse_dependency_fn(char* name) {
         }
         Package* pi = package_new();
         packages[i][strlen(packages[i])-5] = '\0';
-        package_load_from_installed(pi, packages[i]);
+        if(!package_load_from_installed(pi, packages[i])){
+            warning("Installed package is broken: %s\n", packages[i]);
+        }
         for(size_t j = 0; pi->dependencies[j];j++){
             if(iseq(name, pi->dependencies[j])){
                 resolve_reverse_dependency_fn(packages[i]);
