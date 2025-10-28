@@ -10,7 +10,7 @@
 
 #include <config.h>
 
-int ymp_main(int argc, char** argv){
+visible int ymp_main(int argc, char** argv){
     Ymp* ymp = ymp_init(); // Create ymp context
     if(argc > 1) {
         bool show_ver = false;
