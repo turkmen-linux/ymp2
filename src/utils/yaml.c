@@ -150,7 +150,9 @@ visible char** yaml_get_area_list(const char* fdata, const char* path, int* area
                 (*area_count)++;
                 array_clear(area);
                 area = array_new();
-                e = false;
+                char* name = strtok(line, ":");
+                e = (strcmp(name, path) == 0);
+                continue;
             } else if (strlen(line) > 0) {
                 array_add(area,line);
                 array_add(area,"\n");

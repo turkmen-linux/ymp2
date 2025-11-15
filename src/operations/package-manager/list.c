@@ -26,9 +26,9 @@ static void list_available(){
             const char* desc = yaml_get_value(repos[i]->packages[j]->metadata, "description");
             char* meta = build_string("%s/%s/metadata/%s.yaml", get_value("DESTDIR"), STORAGE, name);
             if(isfile(meta)){
-                printf(colorized(GREEN, "%s") "%s\n", name, desc);
+                printf(colorized(GREEN, "%s ") "%s\n", name, desc);
             } else {
-                printf(colorized(RED, "%s") "%s\n", name, desc);
+                printf(colorized(RED, "%s ") "%s\n", name, desc);
             }
             free(meta);
         }
