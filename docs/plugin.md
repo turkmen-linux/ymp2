@@ -67,7 +67,7 @@ Ensure that the `hello_fn` and any other callback functions you define are marke
 
 ### Compile and use Plugin
 1. compile:
-``bash
+```bash
 gcc -o libymp_hello.so hello.c $(pkg-config --cflags --libs libymp) -shared
 ```
 
