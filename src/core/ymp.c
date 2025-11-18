@@ -91,6 +91,7 @@ visible Ymp* ymp_init(){
     sigact.sa_flags = 0;
     sigaction(SIGSEGV, &sigact, NULL);
     #ifdef PLUGIN_SUPPORT
+    variable_set_value_read_only(ymp->variables, "plugindir", PLUGINDIR);
     char** plugins = find(PLUGINDIR);
     size_t i = 0;
     while(plugins[i]){
