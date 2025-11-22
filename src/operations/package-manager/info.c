@@ -34,7 +34,7 @@ static void dump_info(Package *pi){
         printf("  - %s\n", pi->dependencies[i]);
     }
     printf("groups:\n");
-    for(size_t i=0; pi->dependencies[i]; i++){
+    for(size_t i=0; pi->groups[i]; i++){
         printf("  - %s\n", pi->groups[i]);
     }
 
@@ -44,6 +44,9 @@ static bool print_info(Repository *repo, const char* arg){
     bool ret = false;
     for(size_t j=0; j< repo->package_count;j++){
         Package *pi = repo->packages[j];
+        if(pi==NULL){
+            continue;
+        }
         if(strcmp(pi->name, arg) == 0){
             dump_info(pi);
             ret = true;
@@ -64,7 +67,7 @@ static int info_main(char** args){
         goto info_installed;
     }
     for(size_t i=0; args[i]; i++){
-        for(size_t j=0; repos[j]; i++){
+        for(size_t j=0; repos[j]; j++){
             is_found[i] = print_info(repos[j], args[i]);
         }
     }
