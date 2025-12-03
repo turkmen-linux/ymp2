@@ -447,8 +447,8 @@ visible char *build_binary_from_path(const char* path) {
     ymp->ctx = readfile(ympfile);
 
     // Create a build path based on the MD5 hash of the ympfile
-    ymp->path = calculate_md5(ympfile);
-    ymp->path = build_string("%s/%s", BUILD_DIR, ymp->path);
+    char* build_id = calculate_md5(ympfile);
+    ymp->path = build_string("%s/%s", BUILD_DIR, build_id);
 
     // Create the directory for the build path
     if(isdir(ymp->path)){
@@ -502,7 +502,10 @@ visible char *build_binary_from_path(const char* path) {
     char* ret = strdup(ymp->path);
 
     // Cleanup: free allocated resources
+    free(ymp->ctx);
+    free(ymp->path);
     free(ymp);
+    free(build_id);
     free(ympfile);
 
     // Return the path of the built binary

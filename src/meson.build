@@ -14,7 +14,7 @@ run_command('sh', '-c', 'head -c 1 /dev/zero > '+meson.current_build_dir()+'/EOF
 foreach data : run_command('find', '../data','-type','f', '-iname', '*.sh', '-o', '-iname', '*.txt' ,check:true).stdout().strip().split('\n')
     name = data.substring(8).replace('.','_').replace('-','_')
     run_command('install', '-Dm644', meson.current_build_dir()+'/EOF' , meson.current_build_dir()+'/eof/'+name+'.eof')
-    lib_l_args += ['-Wl,--format=binary', '-Wl,'+data, '-Wl,'+meson.current_build_dir()+'/eof/'+name+'.eof', '-Wl,--format=default']
+    lib_l_args += ['-Wl,-z', 'noexecstack', '-Wl,--format=binary', '-Wl,'+data, '-Wl,'+meson.current_build_dir()+'/eof/'+name+'.eof', '-Wl,--format=default']
     ctx_c += 'extern char '+name+'_start[]  asm("_binary____data_'+name+'_start");\n'
     ctx_c += 'extern char '+name+'_end[]  asm("_binary____data_'+name+'_end");\n'
 endforeach
