@@ -1,5 +1,5 @@
 project(
-  'ymp', 'c', 'vala',
+  'ymp', 'c',
   version: run_command(
           ['bash', '-c', 'head -n 1 debian/changelog | sed "s/.*(//g;s/).*//g"']
           , check:true
@@ -50,7 +50,15 @@ else
     # single binary
     executable('ymp-cli', srcs+start, dependencies: deps, c_args: ['-Dymp_main=main', '-Dinvisible=extern'], link_args: l_args + lib_l_args, install: true)
 endif
-subdir('examples')
-subdir('plugin')
-subdir('docs')
+
+# Misc
+if get_option('examples')
+    subdir('examples')
+endif
+if get_option('plugins')
+    subdir('plugin')
+endif
+if get_option('docs')
+    subdir('docs')
+endif
 

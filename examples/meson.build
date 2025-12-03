@@ -4,17 +4,27 @@ if get_option('library')
         name = src.replace('./','')
         name = name.replace('.c','')
         name = name.replace('/','_')
-        executable(name, [src]+start, link_with: libymp, link_args: nostdlib)
+        executable(name,
+            [src]+start,
+            link_with: libymp,
+            link_args: nostdlib,
+        )
     endforeach
 endif
-
-valac = find_program('valac', required: false)
-if get_option('vala') and valac.found()
-    glib_dep = dependency('glib-2.0', required: true)
-    executable('ymp-vala', ['ymp.vala'], 
-        dependencies: [glib_dep],
-        link_with: [libymp],
-        c_args: ['-Wno-all', '-Wno-unused-parameter'],
-        vala_args: ['--pkg', 'ymp', '--vapidir=../include/']
+if get_option('vala')
+    vala_example = custom_target('ymp-vala',
+        input: 'ymp.vala',
+        output: 'ymp-vala',
+        build_by_default: true,
+        depends : [libymp],
+        command: ['valac', 
+            '--pkg', 'ymp', 
+            '--vapidir=../include/',
+            '-X', '-lymp',
+            '-X', '-L'+meson.current_build_dir()+'/../',
+            '-X', '-I../include',
+            '@INPUT@', 
+            '--output=@OUTPUT@'
+        ]
     )
 endif
