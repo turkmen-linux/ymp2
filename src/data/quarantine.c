@@ -15,6 +15,45 @@
 #include <utils/string.h>
 #include <utils/hash.h>
 #include <utils/jobs.h>
+#include <utils/yaml.h>
+
+// Function to validate metadata
+static int quarantine_validate_metadata(const char* name){
+    print("%s: %s (%s)\n", colorize(YELLOW, "Validate"), name, "metadata");
+    // Get the destination directory from global variables
+    char* destdir = variable_get_value(global->variables, "DESTDIR");
+
+    // Initialize status to indicate success or failure
+    int status = 0;
+
+    char* metadata_path = build_string("%s/%s/quarantine/metadata/%s.yaml", destdir, STORAGE, name);
+    char* data = readfile(metadata_path);
+    char *area_data = NULL;
+    // read package / source area
+    if(yaml_has_area(data, "package")){
+        area_data = yaml_get_area(data, "package");
+    } else if(yaml_has_area(data, "source")){
+        area_data = yaml_get_area(data, "source");
+    } else {
+        status = 1;
+        free(data);
+        free(metadata_path);
+        return 1;
+    }
+    // check package is unsafe
+    char *unsafe = yaml_get_value(data, "unsafe");
+    if(strcmp(unsafe, "true") == 0){
+        if(strcmp(get_value("allow-unsafe"), "true") != 0){
+            status = 1;
+        }
+    }
+    // cleanup memory
+    free(unsafe);
+    free(area_data);
+    free(data);
+    free(metadata_path);
+    return status;
+}
 
 // Function to validate files in the quarantine directory
 static int quarantine_validate_files(const char* name) {
@@ -345,8 +384,9 @@ visible bool quarantine_validate() {
             // Remove the .yaml extension for processing
             metadatas[i][strlen(metadatas[i]) - 5] = '\0';
             // Add a job to validate the corresponding files
-            jobs_add(j, (callback)quarantine_validate_files, basename(metadatas[i]), NULL);
-            jobs_add(j, (callback)quarantine_validate_links, basename(metadatas[i]), NULL);
+            jobs_add(j, (callback)quarantine_validate_metadata, basename(metadatas[i]), NULL);
+            jobs_add(j, (callback)quarantine_validate_files,    basename(metadatas[i]), NULL);
+            jobs_add(j, (callback)quarantine_validate_links,    basename(metadatas[i]), NULL);
         }
     }
 

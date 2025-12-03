@@ -5,7 +5,7 @@ This document outlines the steps to develop a plugin using the **libymp** librar
 ## Prerequisites
 Before compiling your source code with **libymp**, ensure that you have:
 
-- The **libymp** library installed on your system (refer to the [building documentation](#) for installation steps).
+- The **libymp** library installed on your system.
 - A compatible C compiler (e.g., **GCC**, **Clang**).
 - The development headers for **libymp** available in your include path.
 
