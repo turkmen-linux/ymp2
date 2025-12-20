@@ -274,6 +274,11 @@ visible char* str_replace(const char* str, const char* oldSub, const char* newSu
 }
 
 visible char** split(const char* data, const char* f) {
+    if (strlen(data) == 0) {
+        char** ret = malloc(sizeof(char*));
+        ret[0] = NULL;
+        return ret;
+    }
     array *a = array_new();
     size_t cur=0;
     size_t i=0;

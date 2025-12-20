@@ -1,7 +1,16 @@
+arch = run_command(['uname', '-m'], check:true).stdout().strip()
+debarch = arch
+if arch == 'x86_64'
+    debarch = 'amd64'
+elif arch == 'aarch64'
+    debarch = 'arm64'
+endif
 cfg = {
     'VERSION': meson.project_version(),
+    'ARCH': arch,
+    'DEBARCH': debarch,
     'BUILD_DIR': '/tmp/ymp-build/',
-    'DISTRODIR': '/lib/turkman',
+    'DISTRODIR': '/lib/turkmen',
     'PLUGINDIR': get_option('plugindir'),
     'PREFIX': get_option('prefix'),
     'STORAGE': '/var/lib/ymp/',

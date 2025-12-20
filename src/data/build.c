@@ -68,7 +68,7 @@ visible int ympbuild_run_function(ympbuild* ymp, const char* name) {
             return -1;
         }
         char* envs[] = {
-            build_string("PATH=/usr/bin:/usr/sbin:/bin:/sbin/%s", ymp->path),
+            build_string("PATH=%s:/usr/bin:/usr/sbin:/bin:/sbin/", ymp->path),
             build_string("HOME=%s", ymp->path),
             NULL
         };
@@ -87,6 +87,36 @@ visible int ympbuild_run_function(ympbuild* ymp, const char* name) {
         free(command);
         return status;
     }
+}
+
+static void binary_process(const char* path){
+    // Construct the root filesystem path by appending "/output" to the provided path
+    char* rootfs = build_string("%s/output", path);
+
+    // Find all inodes (files and symlinks) in the root filesystem
+    char** inodes = find(rootfs);
+    for(size_t i=0; inodes[i]; i++){
+        if (endswith(inodes[i], ".a")){
+            free(inodes[i]);
+            continue;
+        }
+        char *cmd[] = {
+            "objcopy", "-R", ".comment", "-R", ".note", "-R", ".debug_info",
+            "-R", ".debug_aranges", "-R", ".debug_pubnames", "-R", ".debug_pubtypes",
+            "-R", ".debug_abbrev", "-R", ".debug_line", "-R", ".debug_str",
+            "-R", ".debug_ranges", "-R", ".debug_loc", inodes[i]
+        };
+        pid_t pid = fork();
+        if(pid == 0){
+            execve(cmd[0], cmd, environ);
+        } else{
+            int status = 0;
+            (void)waitpid(pid, &status, 0);
+        }
+        free(inodes[i]);
+
+    }
+
 }
 
 static char* hash_types[] = {"sha512sums", "sha256sums", "sha1sums", "md5sums", NULL};
@@ -162,7 +192,8 @@ static char** get_uses(ympbuild *ymp) {
         // Remove "all" from the flag array
         array_remove(flag, "all");
         // Add the standard uses from the ympbuild structure to the flag array
-        array_adds(flag, ympbuild_get_array(ymp, "uses"));
+        char** uses = ympbuild_get_array(ymp, "uses");
+        array_adds(flag, uses);
     }
 
     // Check if the flag array contains "extra"
@@ -193,6 +224,8 @@ static void configure_header(ympbuild *ymp) {
     ymp->header = str_replace(ymp->header, "@CXXFLAGS@", variable_get_value(global->variables, "build:cxxflags"));
     ymp->header = str_replace(ymp->header, "@LDFLAGS@", variable_get_value(global->variables, "build:ldflags"));
     ymp->header = str_replace(ymp->header, "@APIKEY@", variable_get_value(global->variables, "build:token"));
+    ymp->header = str_replace(ymp->header, "@ARCH@", ARCH);
+    ymp->header = str_replace(ymp->header, "@DEBARCH@", DEBARCH);
     ymp->header = str_replace(ymp->header, "@DISTRODIR@", DISTRODIR);
     char** flag = get_uses(ymp);
     for(size_t i=0; flag[i];i++){
@@ -328,7 +361,7 @@ static void generate_metadata(ympbuild *ymp, bool is_source) {
 
         size_t len = 0;
         char** flags = array_get(uses, &len);
-        if (strlen(flags[0]) > 0) {
+        if (flags[0]) {
             array_add(a, "    use-flags:\n");
         }
         for (size_t i = 0; flags[i] && strlen(flags[i]) > 0; i++) {
@@ -396,7 +429,7 @@ visible char* build_source_from_path(const char* path) {
     size_t hash_type = 0;
     for (hash_type = 0; hash_types[hash_type]; hash_type++) {
         hashs = ympbuild_get_array(ymp, hash_types[hash_type]);
-        if (strlen(hashs[0]) > 0) {
+        if (hashs[0]) {
             break; // Break if a valid hash is found
         }
         free(hashs); // Free the hash array if not used
@@ -493,6 +526,7 @@ visible char *build_binary_from_path(const char* path) {
             return NULL; // Return NULL if any action fails
         }
     }
+    binary_process(ymp->path);
 
     // Generate links and metadata files for the build
     generate_links_files(ymp->path);
@@ -523,25 +557,22 @@ visible bool build_from_path(const char* path) {
     }
     // Build the binary from the created source
     char* build = build_binary_from_path(cache);
-    print("Binary created at: %s\n", build); // Print the location of the created binary
+    if(build){
+        print("Binary created at: %s\n", build); // Print the location of the created binary
+    } else {
+        warning("Failed to create package!");
+    }
 
     // Return true if both the binary and cache are successfully created, otherwise false
     return (build != NULL && cache != NULL);
 }
 
-static char* pwd(){
-   char cwd[1024]; // Buffer to store the directory path
-   if (getcwd(cwd, sizeof(cwd)) != NULL) {
-      debug("Current working directory: %s\n", cwd);
-   } else {
-      perror("getcwd() error"); // Prints error if getcwd() fails
-   }
-   return strdup(cwd);
-}
-
 visible char* create_package(const char* path) {
     // Get the current working directory
-    char* curdir = pwd();
+    char curdir[PATH_MAX];
+    if (getcwd(curdir, sizeof(curdir)) == NULL) {
+        perror("getcwd() error");
+    }
 
     // Construct the path for the metadata file and the output package
     char* metadata_file = build_string("%s/metadata.yaml", path);

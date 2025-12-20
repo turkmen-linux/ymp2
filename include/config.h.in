@@ -6,4 +6,6 @@
 #define BUILD_DIR "@BUILD_DIR@"
 #define DISTRODIR "@DISTRODIR@"
 #define PLUGINDIR "@PLUGINDIR@"
+#define ARCH "@ARCH@"
+#define DEBARCH "@DEBARCH@"
 #endif
