@@ -181,6 +181,7 @@ bool copy_file(const char *sourceFile, const char *destFile);
  */
 bool copy_directory(const char *sourceDir, const char *destDir);
 
+bool move_file(const char* src, const char* dest);
 /**
  * @brief Reads the target of a symbolic link.
  *

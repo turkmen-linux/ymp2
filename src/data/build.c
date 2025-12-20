@@ -51,6 +51,37 @@ visible char** ympbuild_get_array(ympbuild* ymp, const char* name){
 
 }
 
+visible char* ympbuild_package_filename(const char* path){
+    char* ympfile = build_string("%s/ympbuild", path);
+    // Allocate memory for a new ympbuild structure
+    ympbuild *ymp = malloc(sizeof(ympbuild));
+
+    // Read the contents of the ympbuild file into the context
+    ymp->ctx = readfile(ympfile);
+
+    // Define variables for name and version from the ympbuild context
+    char* name = ympbuild_get_value(ymp, "name");
+    char* version = ympbuild_get_value(ymp, "version");
+    char* release = ympbuild_get_value(ymp, "release");
+    char* ret = malloc(sizeof(char)*(strlen(name)+strlen(version)+strlen(ARCH)+8));
+    strcpy(ret, name);
+    strcat(ret,"_");
+    strcat(ret, version);
+    strcat(ret,"_");
+    strcat(ret, release);
+    strcat(ret,"_");
+    strcat(ret, ARCH);
+    strcat(ret, ".ymp");
+    // free memory
+    free(name);
+    free(version);
+    free(release);
+    free(ymp->ctx);
+    free(ymp);
+    free(ympfile);
+    return ret;
+}
+
 visible int ympbuild_run_function(ympbuild* ymp, const char* name) {
     char* command = build_string(
         "exec <&-\n"
@@ -108,7 +139,9 @@ static void binary_process(const char* path){
         };
         pid_t pid = fork();
         if(pid == 0){
-            execve(cmd[0], cmd, environ);
+            char* envs[] = {"PATH=/usr/bin:/usr/sbin:/bin:/sbin", NULL};
+            execve(cmd[0], cmd, envs);
+            exit(1);
         } else{
             int status = 0;
             (void)waitpid(pid, &status, 0);
@@ -568,6 +601,7 @@ visible bool build_from_path(const char* path) {
 }
 
 visible char* create_package(const char* path) {
+    print("Create binary package from: %s\n", path);
     // Get the current working directory
     char curdir[PATH_MAX];
     if (getcwd(curdir, sizeof(curdir)) == NULL) {

@@ -3,8 +3,11 @@
 #include <core/logger.h>
 #include <data/build.h>
 #include <utils/file.h>
+#include <utils/string.h>
 
 #include <stdio.h>
+#include <string.h>
+
 static int build(void** args) {
     char* cache;
     for(size_t i=0; args[i]; i++){
@@ -13,17 +16,28 @@ static int build(void** args) {
         if(!isdir(cache)){
             return 1;
         }
-        char* pkg = create_package(cache);
-        (void)pkg;
-        debug("Output package %s\n",pkg);
         char* build = build_binary_from_path(cache);
-        if(build){
-            create_package(build);
-            free(build);
-        } else {
+        if(build == NULL){
             free(cache);
             return 1;
         }
+        char* pkg = create_package(cache);
+        debug("Output package %s %s %d\n",pkg, args[i], i);
+
+        char* fname = ympbuild_package_filename(args[i]);
+        // move binary package file to output
+        char* target = strdup(get_value("output"));
+        if(strlen(target) == 0){
+            target = strdup(args[i]);
+        }
+        char* target_file = build_string("%s/%s", target, fname);
+        create_dir(target);
+        (void)move_file(pkg, target_file);
+        // free memory
+        free(pkg);
+        free(target);
+        free(target_file);
+        free(fname);
         free(cache);
     }
     return 0;

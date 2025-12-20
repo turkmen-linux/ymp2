@@ -56,6 +56,8 @@ char* ympbuild_get_value(ympbuild* ymp, const char* name);
  */
 char** ympbuild_get_array(ympbuild* ymp, const char* name);
 
+char* ympbuild_package_filename(const char* path);
+
 /**
  * @brief Builds a YMP context from a specified file path.
  *

@@ -14,6 +14,7 @@
 #include <fcntl.h>
 #include <libgen.h>
 #include <sched.h>
+#include <errno.h>
 
 #include <utils/array.h>
 #include <utils/string.h>
@@ -354,6 +355,19 @@ visible bool copy_directory(const char *sourceDir, const char *destDir) {
     }
 
     closedir(dir);
+    return true;
+}
+
+visible bool move_file(const char* src, const char* dest){
+    int status = rename(src, dest);
+    if(status < 0){
+        if(copy_file(src, dest)){
+            unlink(src);
+        } else {
+            perror("Failed to move file!");
+            return false;
+        }
+    }
     return true;
 }
 
