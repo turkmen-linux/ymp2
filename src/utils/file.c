@@ -359,6 +359,7 @@ visible bool copy_directory(const char *sourceDir, const char *destDir) {
 }
 
 visible bool move_file(const char* src, const char* dest){
+    debug("Move file: %s -> %s\n", src, dest);
     int status = rename(src, dest);
     if(status < 0){
         if(copy_file(src, dest)){

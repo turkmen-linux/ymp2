@@ -260,7 +260,7 @@ visible bool package_extract(Package* pkg) {
     free(files); // Free the list of files
 
     // Rename and move the metadata, files, and links to their respective directories
-    #define rename_free(A,B) {char *a=A; char *b=B; rename(a,b) ; free(a) ; free(b);}
+    #define rename_free(A,B) {char *a=A; char *b=B; move_file(a,b) ; free(a) ; free(b);}
     rename_free(build_string("%s/metadata.yaml", tmpdir), build_string("%s/../metadata/%s.yaml", rootfs, pkg->name));
     rename_free(build_string("%s/files", tmpdir), build_string("%s/../files/%s", rootfs, pkg->name));
     rename_free(build_string("%s/links", tmpdir), build_string("%s/../links/%s", rootfs, pkg->name));

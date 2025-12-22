@@ -232,7 +232,7 @@ visible int quarantine_sync(const char* name){
         (void)dirname(tmp);
         create_dir(tmp);
         // move file
-        status = rename(source, target);
+        status = move_file(source, target);
         // set permission
         status += chmod(target, 0755);
         status += chown(target, 0,0);
@@ -263,7 +263,7 @@ visible int quarantine_sync(const char* name){
         (void)dirname(tmp);
         create_dir(tmp);
         // move symlink
-        status = rename(source, target);
+        status = move_file(source, target);
         if(status != 0){
             goto free_quarantine_sync;
         }
@@ -275,7 +275,7 @@ visible int quarantine_sync(const char* name){
     strcat(target, STORAGE);
     strcat(target, "/files/");
     strcat(target, name);
-    status += rename(files_path, target);
+    status += move_file(files_path, target);
 
     // Move files
     strcpy(target, destdir);
@@ -283,7 +283,7 @@ visible int quarantine_sync(const char* name){
     strcat(target, STORAGE);
     strcat(target, "/links/");
     strcat(target, name);
-    status += rename(links_path, target);
+    status += move_file(links_path, target);
 
     // Move files
     strcpy(target, destdir);
@@ -292,7 +292,7 @@ visible int quarantine_sync(const char* name){
     strcat(target, "/metadata/");
     strcat(target, name);
     strcat(target, ".yaml");
-    status += rename(metadata_path, target);
+    status += move_file(metadata_path, target);
 
     // Cleanup: free memory
 free_quarantine_sync:

@@ -36,7 +36,7 @@ endif
 subdir('src')
 subdir('data')
 
-if get_option('plugins')
+if get_option('build_plugins')
     add_project_arguments('-DPLUGIN_SUPPORT', language: 'c')
 endif
 
