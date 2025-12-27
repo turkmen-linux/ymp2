@@ -10,8 +10,20 @@
 
 static int build(void** args) {
     char* cache;
+
     for(size_t i=0; args[i]; i++){
+        char* target = strdup(get_value("output"));
+
+        if(strlen(target) == 0){
+            target = strdup(args[i]);
+        }
         cache = build_source_from_path(args[i]);
+        // create source package
+        char* spkg = create_package(cache);
+        char* sname = ympbuild_source_filename(args[i]);
+        char* target_sfile = build_string("%s/%s", target, sname);
+        (void)move_file(spkg, target_sfile);
+
         debug("Bulid cache %s\n",cache);
         if(!isdir(cache)){
             return 1;
@@ -24,20 +36,18 @@ static int build(void** args) {
         char* pkg = create_package(cache);
         debug("Output package %s %s %d\n",pkg, args[i], i);
 
-        char* fname = ympbuild_package_filename(args[i]);
+        char* pname = ympbuild_package_filename(args[i]);
         // move binary package file to output
-        char* target = strdup(get_value("output"));
-        if(strlen(target) == 0){
-            target = strdup(args[i]);
-        }
-        char* target_file = build_string("%s/%s", target, fname);
+        char* target_pfile = build_string("%s/%s", target, pname);
         create_dir(target);
-        (void)move_file(pkg, target_file);
+        (void)move_file(pkg, target_pfile);
         // free memory
         free(pkg);
         free(target);
-        free(target_file);
-        free(fname);
+        free(target_pfile);
+        free(target_sfile);
+        free(pname);
+        free(sname);
         free(cache);
     }
     return 0;
