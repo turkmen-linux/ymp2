@@ -150,6 +150,7 @@ visible int ympbuild_run_function(ympbuild* ymp, const char* name) {
 }
 
 static void binary_process(const char* path){
+    debug("Binary process: %s\n", path);
     // Construct the root filesystem path by appending "/output" to the provided path
     char* rootfs = build_string("%s/output", path);
 
@@ -160,6 +161,11 @@ static void binary_process(const char* path){
             free(inodes[i]);
             continue;
         }
+        if(!is_elf(inodes[i])){
+            free(inodes[i]);
+            continue;
+        }
+        print("Binary process: %s\n", inodes[i]+strlen(path)+7);
         char *cmd[] = {
             "objcopy", "-R", ".comment", "-R", ".note", "-R", ".debug_info",
             "-R", ".debug_aranges", "-R", ".debug_pubnames", "-R", ".debug_pubtypes",

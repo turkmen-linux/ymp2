@@ -444,6 +444,7 @@ visible	bool remove_all(const char *path) {
 }
 
 visible bool is_elf(const char* path){
+    debug("is elf: %s\n", path);
     FILE *f = fopen(path,"r");
     if (f == NULL){
         return false;
@@ -451,7 +452,7 @@ visible bool is_elf(const char* path){
     char buf[4];
     fread(&buf, sizeof(char), 4, f);
 
-    bool ret = (buf[0] == '.' && buf[1] =='e'&& buf[2] == 'l'&& buf[3] == 'f');
+    bool ret = (buf[0] == '\x7f' && buf[1] =='E' && buf[2] == 'L' && buf[3] == 'F');
     fclose(f);
     return ret;
 
