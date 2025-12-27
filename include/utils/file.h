@@ -229,4 +229,21 @@ void writefile(const char* path, const char* data);
 bool remove_all(const char* path);
 
 
+/**
+ * @brief Checks if a file is an ELF (Executable and Linkable Format) file.
+ *
+ * This function examines the file specified by the given path to determine
+ * whether it is in the ELF format. The ELF format is commonly used for
+ * executable files, object code, shared libraries, and core dumps in UNIX-like
+ * operating systems.
+ *
+ * @param path A pointer to a null-terminated string containing the path to
+ *             the file to be checked.
+ *
+ * @return Returns true (non-zero) if the file is an ELF file, otherwise
+ *         returns false (zero).
+ *
+ */
+bool is_elf(const char* path);
+
 #endif

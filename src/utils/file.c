@@ -442,3 +442,17 @@ visible	bool remove_all(const char *path) {
     return true;
 
 }
+
+visible bool is_elf(const char* path){
+    FILE *f = fopen(path,"r");
+    if (f == NULL){
+        return false;
+    }
+    char buf[4];
+    fread(&buf, sizeof(char), 4, f);
+
+    bool ret = (buf[0] == '.' && buf[1] =='e'&& buf[2] == 'l'&& buf[3] == 'f');
+    fclose(f);
+    return ret;
+
+}

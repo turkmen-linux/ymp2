@@ -1,7 +1,7 @@
 option('startfiles', type: 'boolean', value: true)
 option('library', type: 'boolean', value: true)
 option('plugins', type: 'boolean', value: true)
-option('vala', type: 'boolean', value: true)
+option('misc-langs', type: 'boolean', value: true)
 option('docs', type: 'boolean', value: true)
 option('examples', type: 'boolean', value: true)
 option('build_plugins', type: 'boolean', value: true)
