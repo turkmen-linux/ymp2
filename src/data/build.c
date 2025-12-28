@@ -385,6 +385,10 @@ static void generate_metadata(ympbuild *ymp, bool is_source) {
         array_add(a, build_string("    %s: %s\n", metadata_vars[i], ympbuild_get_value(ymp, metadata_vars[i])));
     }
 
+    if(strlen(ympbuild_get_value(ymp,"unsafe")) > 0){
+        array_add(a, build_string("    unsafe: true\n"));
+    }
+
     // If not a source, add package-specific metadata
     if (!is_source) {
         array_add(a, build_string("    arch: %s\n", getArch()));
