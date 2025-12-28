@@ -598,7 +598,11 @@ visible char *build_binary_from_path(const char* path) {
             return NULL; // Return NULL if any action fails
         }
     }
-    binary_process(ymp->path);
+
+    // Strip binary files if needed
+    if(strlen(ympbuild_get_value(ymp, "dontstrip"))== 0){
+        binary_process(ymp->path);
+    }
 
     // Generate links and metadata files for the build
     generate_links_files(ymp->path);

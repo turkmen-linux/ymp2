@@ -4,6 +4,6 @@ includedir=${prefix}/include
 Name: Ymp
 Description: Package manager for Turkish
 Version: @VERSION@
-Cflags: -DTURKMAN -I${includedir}/ymp
+Cflags: -DTURKMEN -I${includedir}/ymp -Dvisible=__attribute__((visibility("default")))
 Libs: -L@PLUGINDIR@ -lymp
 

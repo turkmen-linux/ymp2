@@ -171,6 +171,13 @@ visible bool package_extract(Package* pkg) {
     }
     info("Package extract: %s\n", pkg->name);
 
+    if (strlen(yaml_get_value(pkg->metadata,"unsafe"))> 0){
+        warning("Package %s is unsafe!\n", pkg->name);
+        if(strcmp(get_value("unsafe"), "true") != 0){
+             return false;
+        }
+    }
+
     // Get the destination directory from global variables
     char* destdir = variable_get_value(global->variables, "DESTDIR");
 
