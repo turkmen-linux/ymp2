@@ -450,7 +450,8 @@ visible bool is_elf(const char* path){
         return false;
     }
     char buf[4];
-    fread(&buf, sizeof(char), 4, f);
+    int rc = fread(&buf, sizeof(char), 4, f);
+    (void)rc;
 
     bool ret = (buf[0] == '\x7f' && buf[1] =='E' && buf[2] == 'L' && buf[3] == 'F');
     fclose(f);

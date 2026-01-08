@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include <utils/file.h>
 #include <utils/string.h>
@@ -45,11 +46,30 @@ static int key_remove(char** args){
     return status;
 }
 
+static int key_list(char** args){
+    (void) args;
+    char* destdir = get_value("DESTDIR");
+    char* dest = build_string("%s/%s/gpg/", destdir, STORAGE);
+    char** keys = listdir(dest);
+    for(size_t i=0; keys[i]; i++){
+        if(endswith(keys[i], ".gpg")){
+            keys[i][strlen(keys[i])-4] = '\0';
+            printf("%s\n", keys[i]);
+            free(keys[i]);
+        }
+    }
+    free(keys);
+    free(dest);
+    return 0;
+}
+
 static int key_main(char** args){
     if(get_bool("add")){
         return key_add(args);
     } else if(get_bool("remove")){
         return key_remove(args);
+    } else if(get_bool("list")){
+        return key_list(args);
     }
     return 0;
 }

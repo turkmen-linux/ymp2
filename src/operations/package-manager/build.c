@@ -12,10 +12,10 @@ static int build(void** args) {
     char* cache;
 
     for(size_t i=0; args[i]; i++){
-        char* target = strdup(get_value("output"));
+        char* target = get_value("output");
 
         if(strlen(target) == 0){
-            target = strdup(args[i]);
+            target = args[i];
         }
         cache = build_source_from_path(args[i]);
         // create source package
@@ -43,12 +43,21 @@ static int build(void** args) {
         (void)move_file(pkg, target_pfile);
         // free memory
         free(pkg);
-        free(target);
-        free(target_pfile);
-        free(target_sfile);
         free(pname);
         free(sname);
         free(cache);
+        // install package
+        if(get_bool("install")){
+            char* iargs[] = {target_pfile, NULL};
+            int status = operation_main(global->manager, "install", iargs);
+            if(status != 0){
+                free(target_pfile);
+                free(target_sfile);
+                return status;
+            }
+        }
+        free(target_pfile);
+        free(target_sfile);
     }
     return 0;
 }
@@ -57,8 +66,9 @@ void build_init(OperationManager* manager){
     Operation op;
     op.name = "build";
     op.description = "Build package";
-    op.help = NULL;
-    op.alias = NULL;
+    op.alias = "bi:make";
+    op.help = help_new();
+    help_add_parameter(op.help, "--install", "install after build");
     op.call = (callback)build;
     op.min_args = 1;
     operation_register(manager, op);
