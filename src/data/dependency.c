@@ -234,9 +234,6 @@ visible void resolve_end(Repository** repos) {
 // Public function to resolve dependencies for a given package name
 visible Package** resolve_dependency(char* name) {
     size_t begin_time = get_epoch();
-    if(resolved != NULL){
-        free(resolved);
-    }
     if(repos == NULL){
         print("Dependencies resolve failed\n");
         return NULL; // Dont resolve package if repository list is empty
