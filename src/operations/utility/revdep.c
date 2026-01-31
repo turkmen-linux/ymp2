@@ -1,11 +1,29 @@
 #include <core/ymp.h>
 
+#include <sys/types.h>
+#include <sys/wait.h>
+
 #include <utils/string.h>
 #include <utils/file.h>
+#include <utils/jobs.h>
+#include <utils/process.h>
 
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+static int pkgconf_callback(void* args){
+    char* name = (char*)args;
+    pid_t pid = fork();
+    if(pid == 0){
+        freopen("/dev/null", "w", stdout);
+        char* cmd[] = {which("pkgconf"), name, "--libs", "--cflags", NULL};
+        exit(run_args(cmd));
+    }
+    int status;
+    waitpid(pid, &status, 0);
+    return status;
+}
 
 static int pkgconf_check(){
     char *dirs[] = {
@@ -16,11 +34,20 @@ static int pkgconf_check(){
     };
     for(size_t i=0; dirs[i]; i++){
         char** files = listdir(dirs[i]);
+        jobs* job = jobs_new();
         for(size_t j=0; files[j]; j++){
+            if(files[j][0] == '.'){
+                continue;
+            }
             files[j][strlen(files[j])-3] = '\0';
-            printf("%s\n", files[j]);
+            jobs_add(job, (callback)pkgconf_callback, files[j], NULL);
+        }
+        jobs_run(job);
+        jobs_unref(job);
+        for(size_t j=0; files[j]; j++){
             free(files[j]);
         }
+        free(files);
     }
     return 0;
 }
