@@ -14,11 +14,11 @@
 
 static int sysconf_main(char** args){
     (void)args;
-    pid_t pid = fork();
     int rc = 0;
     const char* destdir = get_value("DESTDIR");
-    char* sysconfdir= build_string("%s/etc/sysconf.d/", destdir);
+    pid_t pid = fork();
     if(pid == 0){
+        char* sysconfdir= build_string("%s/etc/sysconf.d/", destdir);
         clear_env();
         setenv("PATH", "/sbin:/bin:/usr/sbin:/usr/bin", 1);
         setenv("OPERATION", get_value ("OPERATION"), 1);
