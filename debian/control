@@ -4,6 +4,8 @@ Priority: optional
 Maintainer: Ali Riza KESKIN <parduscix@yandex.ru>
 Build-Depends: libarchive-dev,
                libcurl4-openssl-dev,
+               pkgconf,
+               ncurses-dev,
                meson, gcc
 Standards-Version: 4.3.0
 Homepage: https://turkman.gitlab.io
