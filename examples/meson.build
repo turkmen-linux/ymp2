@@ -33,11 +33,11 @@ if get_option('misc-langs')
         build_by_default: true,
         depends : [libymp],
         command: ['g++',
-            '-lymp',
-            '-L'+meson.current_build_dir()+'/../',
             '-I../include',
             '@INPUT@',
-            '--output=@OUTPUT@'
+            '-L./',
+            '-lymp',
+            '-o', '@OUTPUT@'
         ]
     )
 endif
