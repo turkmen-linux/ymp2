@@ -95,6 +95,7 @@ function use_opt(){
     fi
 }
 readonly -f use_opt
+alias use_arg=use_opt
 
 function eapply(){
     for aa in $* ; do
