@@ -234,7 +234,7 @@ visible char* getoutput_unshare(char* argv[], int flags) {
 }
 
 visible bool copy_file(const char *sourceFile, const char *destFile) {
-    debug("Copy file: %s -> %s", sourceFile, destFile);
+    debug("Copy file: %s -> %s\n", sourceFile, destFile);
     int source, dest;
     char buffer[1024 * 1024]; // Buffer to hold data (1MB)
     ssize_t bytesRead;

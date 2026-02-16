@@ -138,9 +138,6 @@ visible int ympbuild_run_function(ympbuild* ymp, const char* name) {
         if(sethostname("sandbox",7) < 0){
             exit(1);
         }
-        if(setuid(65534)){
-            exit(1);
-        }
         execve(args[0], args, envs);
         free(command);
         exit(1);

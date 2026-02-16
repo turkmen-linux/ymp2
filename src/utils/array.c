@@ -313,7 +313,7 @@ visible void array_clear(array* arr){
         return; // Nothing to free
     }
     // Free each string in the array
-    for (size_t i = 0; i < arr->capacity; i++) {
+    for (size_t i = 0; i < arr->size; i++) {
         if(arr->data[i]){
             free(arr->data[i]); // Free each string
         }
