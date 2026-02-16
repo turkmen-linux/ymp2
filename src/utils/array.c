@@ -49,11 +49,6 @@ visible void array_add(array *arr, const char *value) {
         }
     }
 
-    // Free the previous value if it exists
-    if (arr->data[arr->size]) {
-        free(arr->data[arr->size]);
-    }
-
     // Add the new value
     arr->data[arr->size] = strdup(value);
     arr->size++;
