@@ -138,10 +138,12 @@ visible int ympbuild_run_function(ympbuild* ymp, const char* name) {
         if(sethostname("sandbox",7) < 0){
             exit(1);
         }
-        setuid(65534);
+        if(setuid(65534)){
+            exit(1);
+        }
         execve(args[0], args, envs);
         free(command);
-        return -1;
+        exit(1);
     } else {
         int status = 0;
         (void)waitpid(pid, &status, 0);

@@ -16,7 +16,11 @@ static int pkgconf_callback(void* args){
     char* name = (char*)args;
     pid_t pid = fork();
     if(pid == 0){
-        freopen("/dev/null", "w", stdout);
+        FILE *fp = freopen("/dev/null", "w", stdout);
+        if (fp == NULL) {
+           perror("freopen");
+           exit(1);
+        }
         char* cmd[] = {which("pkgconf"), name, "--libs", "--cflags", NULL};
         exit(run_args(cmd));
     }
