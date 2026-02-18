@@ -18,10 +18,19 @@
 
 static Ymp* y;
 
+
+typedef struct {
+    size_t start;
+    size_t end;
+} Range;
+
+
 #define swrite(A, B) write(A, B, strlen(B))
 
 #define BUFFER_SIZE 1024*1024
-static void serve_file(int client_fd, const char* path){
+
+static void serve_file(int client_fd, const char* path, Range r){
+    (void)r;
     FILE *file = fopen(path, "rb");
     if (file == NULL) {
         printf("Failed to open file: %s\n", path);
@@ -70,7 +79,7 @@ static void list_directory(int client_fd, const char* dir_path, const char* serv
     }
 
     // Start HTML response
-    char* msg = build_string("<html><body><h1>Directory Listing for /%s</h1><ul>", dir_path+strlen(serve));
+    char* msg = build_string("<html><body><h1>Directory Listing for /%s</h1><ul>\n", dir_path+strlen(serve));
     if(swrite(client_fd, msg) < 0){
         return;
     }
@@ -79,21 +88,19 @@ static void list_directory(int client_fd, const char* dir_path, const char* serv
     // Read directory entries
     struct dirent *entry;
     while ((entry = readdir(dir)) != NULL) {
-        if(strcmp(entry->d_name,".") == 0 || strcmp(entry->d_name,"..") == 0){
-            continue;
-        }
         const char* em = "&#x1F4C1;";
         char* file_path = build_string("%s/%s", dir_path, entry->d_name);
+        char* file_link = build_string("/%s/%s", dir_path+strlen(serve), entry->d_name);
         if(isfile(file_path)){
             em = "&#x1F4C4;";
         }
         free(file_path);
-        char* msg;
-        if(strlen(dir_path) == strlen(serve)){
-            msg = build_string("<br>%s<a href=\"/%s\">%s</a></li>", em, entry->d_name, entry->d_name);
-        } else {
-            msg = build_string("<br>%s<a href=\"%s/%s\">%s</a></li>", em, dir_path+strlen(serve), entry->d_name, entry->d_name);
+        size_t skip = 0;
+        if(strlen(file_link) > 2){
+            for(skip=0; file_link[skip+1] && file_link[skip] == '/' && file_link[skip+1] == '/'; skip++){}
         }
+        char* msg = build_string("<br>%s<a href=\"%s\">%s</a></li>\n", em, file_link+skip, entry->d_name);
+        free(file_link);
         if(swrite(client_fd, msg) < 0){
             return;
         }
@@ -101,7 +108,7 @@ static void list_directory(int client_fd, const char* dir_path, const char* serv
     }
 
     // Close the unordered list and HTML tags
-    msg = strdup("</ul></body></html>");
+    msg = strdup("</ul></body></html>\n");
     if(swrite(client_fd, msg) < 0){
         return;
     }
@@ -126,6 +133,9 @@ static void* handle_client(void* arg){
     }
     // parse request body
     char** lines = split(buffer, "\n");
+    Range r;
+    r.start = 0;
+    r.end = -1;
     for(size_t i=0; lines[i]; i++){
         debug("fd: %d line: %ld data: %s\n", client_fd, i, lines[i]);
         // fetch get request url
@@ -139,6 +149,9 @@ static void* handle_client(void* arg){
                 }
             }
         }
+        if(strncmp(lines[i], "Range: bytes=", 13) == 0){
+            //TODO: range parser
+        }
         free(lines[i]);
     }
     path = build_string("%s/%s", serve, path);
@@ -151,7 +164,7 @@ static void* handle_client(void* arg){
     // check path is valid
     printf("GET: %s\n", path);
     if(isfile(path)){
-        serve_file(client_fd, path);
+        serve_file(client_fd, path, r);
         goto free_handle_client;
     } else if(isdir(path)){
         list_directory(client_fd, path, serve);
