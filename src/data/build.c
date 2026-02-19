@@ -19,12 +19,10 @@
 #include <utils/fetcher.h>
 #include <utils/archive.h>
 #include <utils/yaml.h>
+#include <utils/sandbox.h>
 
 #include <data/build.h>
 #include <config.h>
-
-#define UNSHARE_FLAGS (CLONE_NEWNS | CLONE_NEWUTS | CLONE_NEWUSER | CLONE_NEWNET)
-
 
 visible char* ympbuild_get_value(ympbuild* ymp, const char* name) {
     char* command = build_string(
@@ -132,12 +130,7 @@ visible int ympbuild_run_function(ympbuild* ymp, const char* name) {
             build_string("HOME=%s", ymp->path),
             NULL
         };
-        if (unshare(UNSHARE_FLAGS) < 0) {
-            exit(1);
-        }
-        if(sethostname("sandbox",7) < 0){
-            exit(1);
-        }
+        sandbox();
         execve(args[0], args, envs);
         free(command);
         exit(1);
