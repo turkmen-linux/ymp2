@@ -115,9 +115,12 @@ visible int ympbuild_run_function(ympbuild* ymp, const char* name) {
         "set +e ; %s\n"
         "%s\n"
         "set -e \n"
+        "declare -r ACTION=%s\n"
         "if declare -F %s ; then\n"
-        "    %s\n"
-        "fi", ymp->header, ymp->ctx, name, name);
+        "    for $BUILDTYPE in ${buildtypes[@]} main; do"
+        "        %s\n"
+        "    done"
+        "fi", ymp->header, ymp->ctx, name, name, name);
     char* args[] = {"/bin/bash", "-c", command, NULL};
     pid_t pid = fork();
     if(pid == 0){
