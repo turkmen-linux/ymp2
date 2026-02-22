@@ -29,16 +29,10 @@ typedef struct {
 
 #define BUFFER_SIZE 1024*1024
 
-static void serve_file(int client_fd, const char* path, Range r){
-    (void)r;
-    FILE *file = fopen(path, "rb");
-    if (file == NULL) {
-        printf("Failed to open file: %s\n", path);
-        return;
-    }
+static void serve_file(int client_fd, FILE* file, size_t fsize, size_t start, size_t end){
+    (void)end;
     char buffer[BUFFER_SIZE]; //1mb buffer
     int bytesRead = 0;
-    size_t fsize = filesize(path);
     // send header
     const char* header = "HTTP/1.1 200 OK\n" \
         "Content-Type: text/plain\n" ;
@@ -55,6 +49,10 @@ static void serve_file(int client_fd, const char* path, Range r){
         return;
     }
     free(msg);
+    // go start bit
+    if(fsize > start){
+        fseek(file, start, SEEK_SET);
+    }
     // send content
     while ((bytesRead = fread(buffer, 1, BUFFER_SIZE, file)) > 0) {
         if(write(client_fd, buffer, bytesRead) < 0){
@@ -135,7 +133,7 @@ static void* handle_client(void* arg){
     char** lines = split(buffer, "\n");
     Range r;
     r.start = 0;
-    r.end = -1;
+    r.end = 0;
     for(size_t i=0; lines[i]; i++){
         debug("fd: %d line: %ld data: %s\n", client_fd, i, lines[i]);
         // fetch get request url
@@ -150,7 +148,21 @@ static void* handle_client(void* arg){
             }
         }
         if(strncmp(lines[i], "Range: bytes=", 13) == 0){
-            //TODO: range parser
+            char* range_str = lines[i]+13;
+            int k;
+            // find - char
+            for(k=0; range_str[k] != '-'; k++){}
+            // start bits
+            if(k >= 0){
+                range_str[k] = '\0';
+                r.start = atoi(range_str);
+                range_str += k+1;
+            }
+            // end bits
+            if(strlen(range_str) > 0){
+                r.end = atoi(range_str);
+            }
+
         }
         free(lines[i]);
     }
@@ -164,25 +176,32 @@ static void* handle_client(void* arg){
     // check path is valid
     printf("GET: %s\n", path);
     if(isfile(path)){
-        serve_file(client_fd, path, r);
+        FILE *file = fopen(path, "rb");
+        if (file == NULL) {
+            printf("Failed to open file: %s\n", path);
+        } else {
+            size_t fsize = filesize(path);
+            serve_file(client_fd, file, fsize, r.start, r.end);
+            fclose(file);
+        }
         goto free_handle_client;
     } else if(isdir(path)){
         list_directory(client_fd, path, serve);
         goto free_handle_client;
     }
     res = "HTTP/1.1 200 OK\n" \
-        "Content-Type: text/plain\n\n" \
-        "Hello World";
+    "Content-Type: text/plain\n\n" \
+    "Hello World";
     goto write_response;
 
-write_response:
+    write_response:
 
     if(swrite(client_fd, res) < 0){
         goto free_handle_client;
     }
 
 
-free_handle_client:
+    free_handle_client:
 
     // free memory
     free(path);
