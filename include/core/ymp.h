@@ -163,3 +163,11 @@ invisible Ymp *global;
 void load_plugin(Ymp *ymp, const char* path);
 #endif
 #endif
+
+/* @cond */
+#define  incbin(A, B) \
+    __asm__(B ":") ; \
+    __asm__(".incbin \"" A "\"");
+    __asm__(".byte 0x00");
+
+/* @uncond */
