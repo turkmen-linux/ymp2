@@ -10,14 +10,10 @@ foreach ops : run_command('find', 'operations','-type','f',check:true).stdout().
     ctx_c += '  '+name+'_init(manager);\n'
 endforeach
 ctx_c += '}\n\n'
+run_command('cc', '../data/urcc.c', '-o', meson.current_build_dir()+'/urcc', check:true)
 foreach data : run_command('find', '../data','-type','f', '-iname', '*.sh', '-o', '-iname', '*.txt' ,check:true).stdout().strip().split('\n')
     name = data.substring(8).replace('.','_').replace('-','_')
-    run_command('sh', '-c', 'head -c 1 /dev/zero > '+meson.current_build_dir()+'/'+name+'.eof', check:true)
-    run_command('ld', '-z', 'noexecstack', '-r', '-b', 'binary', meson.current_build_dir()+'/'+name+'.eof', '-o', meson.current_build_dir()+'/'+name+'.eof.o', check:true)
-    run_command('ld', '-z', 'noexecstack','-r', '-b', 'binary', data, '-o', meson.current_build_dir()+'/'+name+'.o', check:true)
-    lib_l_args += [meson.current_build_dir()+'/'+name+'.o', meson.current_build_dir()+'/'+name+'.eof.o']
-    ctx_c += 'extern char '+name+'_start[]  asm("_binary____data_'+name+'_start");\n'
-    ctx_c += 'extern char '+name+'_end[]  asm("_binary____data_'+name+'_end");\n'
+    ctx_c += run_command(meson.current_build_dir()+'/urcc', data, name).stdout().strip()+'\n'
 endforeach
 
 ctx_c += '#include <string.h>\n'
@@ -26,7 +22,7 @@ foreach data : run_command('find', '../data','-type','f', '-iname', '*.sh', '-o'
     name = data.substring(8).replace('.','_').replace('-','_')
     data = data.substring(7)
     ctx_c += '    if(strcmp(name, ":'+data+'") == 0) {\n'
-    ctx_c += '        return '+name+'_start;\n' 
+    ctx_c += '        return (char*)'+name+';\n' 
     ctx_c += '    }\n'
 endforeach
 ctx_c += 'return "";\n}'
