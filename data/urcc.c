@@ -6,8 +6,8 @@ void main(int argc, char **argv){
     if(f == NULL){
         return;
     }
-    printf("/* %s => %s\n */", argv[1], argv[2]);
-    printf("unsigned char %s[] = {\n    ", argv[2]);
+    printf("/* %s => %s */\n", argv[1], argv[2]);
+    printf("static unsigned char %s[] = {\n    ", argv[2]);
     while((c = getc(f)) != EOF){
         printf("%d, ", c);
         i++;
