@@ -5,6 +5,7 @@
 #include <data/package.h>
 
 #include <utils/string.h>
+#include <utils/yaml.h>
 #include <utils/process.h>
 #include <utils/file.h>
 #include <utils/fetcher.h>
@@ -113,7 +114,7 @@ typedef struct {
 } PkgIndex;
 
 static int repo_index_op(char* file, PkgIndex* i){
-    int status = 1;
+    int status = 0;
     Archive *a = archive_new();
     archive_load(a, file);
     char* metadata = archive_readfile(a, "metadata.yaml");
@@ -130,13 +131,48 @@ repo_index_op_free:
     return status;
 }
 
+static void move_packages(const char* path){
+    char** files = find(path);
+    for(size_t i=0; files[i]; i++){
+        if(endswith(files[i], ".ymp")){
+            free(files[i]);
+            continue;
+        }
+        debug("%s\n", files[i]);
+        // load package
+        Package* pkg = package_new();
+        bool status = package_load_from_file(pkg, files[i]);
+        if(!status){
+            package_unref(pkg);
+            free(files[i]);
+            continue;
+        }
+        // build target filename
+        char c = pkg->name[0];
+        char* arch = "source";
+        if(!pkg->is_source){
+            arch = yaml_get_value(pkg->metadata, "arch");
+        }
+        char* target = build_string("%s/%c/%s/%s_%s_%s.ymp", path, c, pkg->name, pkg->name, pkg->version, arch);
+        //move file
+        move_file(files[i], target);
+        // free memory
+        free(target);
+        package_unref(pkg);
+        free(files[i]);
+    }
+    free(files);
+}
+
 static int repo_index(const char* path){
     char* name = get_value("name");
     if(strlen(name) < 1){
         printf("repo name is undefined. Use --name=xxx\n");
         return 1;
     }
-    // TODO: add move parameter
+    if (get_bool("move")){
+        move_packages(path);
+    }
     int status = 0;
     char** files = find(path);
     jobs *j = jobs_new();
@@ -169,11 +205,13 @@ static int repo_index(const char* path){
     fprintf(f, "  name: %s\n", name);
     fprintf(f, "  date: %ld\n", get_epoch());
     for(size_t i=0; i<cur; i++){
-        fprintf(f, "%s", out[i].metadata);
-        fprintf(f, "    md5: %s\n", out[i].md5);
-        fprintf(f, "    sha256: %s\n", out[i].sha256);
-        fprintf(f, "    size: %ld\n", out[i].size);
-        fprintf(f, "    uri: %s\n", out[i].uri);
+        if(out[i].metadata){
+            fprintf(f, "%s", out[i].metadata);
+            fprintf(f, "    md5: %s\n", out[i].md5);
+            fprintf(f, "    sha256: %s\n", out[i].sha256);
+            fprintf(f, "    size: %ld\n", out[i].size);
+            fprintf(f, "    uri: %s\n", out[i].uri);
+        }
     }
     char* repicent = get_value("repicent");
     if(strlen(repicent)<1){
@@ -182,7 +220,7 @@ static int repo_index(const char* path){
         goto repo_index_free;
     }
     set_gpg_repicent(repicent);
-    gpg_sign_file(index_path);    
+    gpg_sign_file(index_path);
 repo_index_free:
     fclose(f);
     // cleanup memory
