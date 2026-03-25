@@ -122,6 +122,7 @@ static int repo_index_op(char* file, PkgIndex* i){
         status = 1;
         goto repo_index_op_free;
     }
+    info("%s: %s\n", colorize(YELLOW, "Index"), file);
     i->md5 = calculate_md5(file);
     i->sha256 = calculate_sha256(file);
     i->metadata = metadata+5;
@@ -153,7 +154,7 @@ static void move_packages(const char* path){
         if(!pkg->is_source){
             arch = yaml_get_value(pkg->metadata, "arch");
         }
-        char* target = build_string("%s/%c/%s/%s_%s_%s.ymp", path, c, pkg->name, pkg->name, pkg->version, arch);
+        char* target = build_string("%s/%c/%s/%s_%s_%d_%s.ymp", path, c, pkg->name, pkg->name, pkg->version, pkg->release, arch);
         //move file
         move_file(files[i], target);
         // free memory
