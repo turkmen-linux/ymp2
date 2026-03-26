@@ -106,7 +106,10 @@ static void resolve_dependency_fn(char* name, bool emerge) {
         // Check list length reallocate if needed
         if(resolved_count+1 <= resolved_total) {
             resolved_total += 1024;
-            resolved = realloc(resolved, sizeof(Package*)*resolved_total);
+            Package** tmp = realloc(resolved, sizeof(Package*)*resolved_total);
+            if(tmp){
+                resolved = tmp;
+            }
         }
         // Add the resolved package to the list of resolved packages
         resolved[resolved_count] = p;
@@ -132,7 +135,10 @@ static void resolve_reverse_dependency_fn(char* name) {
     // Check list length reallocate if needed
     if(resolved_count+1 <= resolved_total) {
         resolved_total += 1024;
-        resolved = realloc(resolved, sizeof(Package*)*resolved_total);
+        Package** tmp = realloc(resolved, sizeof(Package*)*resolved_total);
+        if(tmp){
+            resolved = tmp;
+        }
     }
     Package* pkg = package_new();
     if(!package_load_from_installed(pkg, name)){

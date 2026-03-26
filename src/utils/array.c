@@ -218,10 +218,9 @@ visible char **array_get(array *arr, size_t* len) {
     if (!arr) {
         return NULL;
     }
-    
+
     pthread_mutex_lock(&arr->lock);
-    
-    
+
     // Allocate memory for the return array
     char** ret = malloc((arr->size - arr->removed +1)*sizeof(char*));
     if (!ret) {
@@ -253,7 +252,7 @@ visible char **array_get(array *arr, size_t* len) {
     if (len) {
         *len = ret_index;
     }
-    ret[*len]=NULL;
+    ret[ret_index]=NULL;
     pthread_mutex_unlock(&arr->lock);
     return ret; // Caller is responsible for freeing this memory
 }
@@ -274,8 +273,8 @@ visible void array_reverse(array *arr) {
     size_t tot = arr->size + arr->removed;
     while (start < tot/2) {
         /* Swap elements at start and end indices */
-        char *temp = arr->data[start];
-        char* temp2 = arr->data[tot-start-1];
+        const char *temp = arr->data[start];
+        const char* temp2 = arr->data[tot-start-1];
         if(temp2 != NULL){
             arr->data[start] = strdup(temp2);
         }

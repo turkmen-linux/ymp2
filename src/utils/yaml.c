@@ -159,7 +159,7 @@ visible char** yaml_get_area_list(const char* fdata, const char* path, int* area
                 (*area_count)++;
                 array_clear(area);
                 area = array_new();
-                char* name = strtok(line, ":");
+                const char* name = strtok(line, ":");
                 e = (strcmp(name, path) == 0);
                 continue;
             } else if (strlen(line) > 0) {
@@ -170,7 +170,7 @@ visible char** yaml_get_area_list(const char* fdata, const char* path, int* area
             if(line[0] == ' ' || !strstr(line, ":")){
                 continue;
             }
-            char* name = strtok(line, ":");
+            const char* name = strtok(line, ":");
             e = (strcmp(name, path) == 0);
             continue;
         }

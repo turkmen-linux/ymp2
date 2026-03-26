@@ -16,7 +16,7 @@ static int pkgconf_callback(void* args){
     char* name = (char*)args;
     pid_t pid = fork();
     if(pid == 0){
-        FILE *fp = freopen("/dev/null", "w", stdout);
+        const FILE *fp = freopen("/dev/null", "w", stdout);
         if (fp == NULL) {
            perror("freopen");
            exit(1);

@@ -329,7 +329,7 @@ visible bool copy_directory(const char *sourceDir, const char *destDir) {
         return false;
     }
 
-    struct dirent *entry;
+    const struct dirent *entry;
     while ((entry = readdir(dir)) != NULL) {
         // Skip the "." and ".." entries
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
@@ -414,7 +414,7 @@ visible	bool remove_all(const char *path) {
 
         // Look for sub directories
         char buf[4096];
-        struct dirent *e;
+        const struct dirent *e;
         while ((e = readdir(dir))) {
             // Skip ./ and ../
             if (!strcmp(e->d_name, ".") || !strcmp(e->d_name, "..")) {

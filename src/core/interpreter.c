@@ -77,7 +77,10 @@ visible int run_script(const char* script){
             // reallocate if needed
             if(label_cur >= label_max){
                 label_max+= 32;
-                labels = realloc(labels, sizeof(label)* label_max);
+                label* tmp = realloc(labels, sizeof(label)* label_max);
+                if(tmp){
+                    labels = tmp;
+                }
             }
             labels[label_cur].name = strdup(lines[i]+7);
             labels[label_cur].line = i;

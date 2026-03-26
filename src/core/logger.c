@@ -60,7 +60,7 @@ visible int print_fn(const char* caller, int type, const char* format, ...){
         if(cur_time == 0){
             cur_time = get_epoch();
         }
-        printf(colorize_fn("["colorized(BLUE,"%s")":%ld]: ", "[%s:%ld]: "), caller, get_epoch() - cur_time);
+        printf(colorize_fn(colorized(BLUE,"[%s:%ld]: "), "[%s:%ld]: "), caller, get_epoch() - cur_time);
         cur_time = get_epoch();
     }else if(type == WARNING){
         printf("%s: ", colorize(YELLOW, "Warning"));

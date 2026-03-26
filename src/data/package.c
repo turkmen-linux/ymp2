@@ -197,7 +197,7 @@ visible bool package_extract(Package* pkg) {
         archive_set_target(pkg->archive, cache);
         archive_extract_all(pkg->archive);
         // Build source package
-        char* build = build_binary_from_path(cache);
+        const char* build = build_binary_from_path(cache);
         return package_import_from_build(pkg, build);
     }
 

@@ -166,7 +166,7 @@ static void move_packages(const char* path){
 }
 
 static int repo_index(const char* path){
-    char* name = get_value("name");
+    const char* name = get_value("name");
     if(strlen(name) < 1){
         printf("repo name is undefined. Use --name=xxx\n");
         return 1;

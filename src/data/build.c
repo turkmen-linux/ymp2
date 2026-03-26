@@ -53,6 +53,10 @@ visible char* ympbuild_package_filename(const char* path){
     char* ympfile = build_string("%s/ympbuild", path);
     // Allocate memory for a new ympbuild structure
     ympbuild *ymp = malloc(sizeof(ympbuild));
+    if(!ymp){
+        free(ympfile);
+        return NULL;
+    }
 
     // Read the contents of the ympbuild file into the context
     ymp->ctx = readfile(ympfile);
@@ -62,6 +66,10 @@ visible char* ympbuild_package_filename(const char* path){
     char* version = ympbuild_get_value(ymp, "version");
     char* release = ympbuild_get_value(ymp, "release");
     char* ret = malloc(sizeof(char)*(strlen(name)+strlen(version)+strlen(ARCH)+8));
+    if(!ret){
+        ret = NULL;
+        goto ympbuild_package_filename_free;
+    }
     strcpy(ret, name);
     strcat(ret,"_");
     strcat(ret, version);
@@ -70,6 +78,7 @@ visible char* ympbuild_package_filename(const char* path){
     strcat(ret,"_");
     strcat(ret, ARCH);
     strcat(ret, ".ymp");
+ympbuild_package_filename_free:
     // free memory
     free(name);
     free(version);
@@ -84,6 +93,10 @@ visible char* ympbuild_source_filename(const char* path){
     char* ympfile = build_string("%s/ympbuild", path);
     // Allocate memory for a new ympbuild structure
     ympbuild *ymp = malloc(sizeof(ympbuild));
+    if(!ymp){
+        free(ympfile);
+        return NULL;
+    }
 
     // Read the contents of the ympbuild file into the context
     ymp->ctx = readfile(ympfile);
@@ -93,12 +106,17 @@ visible char* ympbuild_source_filename(const char* path){
     char* version = ympbuild_get_value(ymp, "version");
     char* release = ympbuild_get_value(ymp, "release");
     char* ret = malloc(sizeof(char)*(strlen(name)+strlen(version)+14));
+    if(!ret){
+        ret = NULL;
+        goto ympbuild_source_filename_free;
+    }
     strcpy(ret, name);
     strcat(ret,"_");
     strcat(ret, version);
     strcat(ret,"_");
     strcat(ret, release);
     strcat(ret,"_source.ymp");
+ympbuild_source_filename_free:
     // free memory
     free(name);
     free(version);
@@ -463,7 +481,7 @@ visible char* build_source_from_path(const char* path) {
     // Check if the global context is initialized
     if (!global) {
         print("Error: ymp global missing!\n");
-        return NULL; // Return NULL if global context is missing
+        return NULL;
     }
 
     // Construct the path to the ympbuild file
@@ -471,12 +489,16 @@ visible char* build_source_from_path(const char* path) {
 
     // Check if the ympbuild file exists
     if (!isfile(ympfile)) {
-        free(ympfile); // Free the allocated string if the file does not exist
-        return NULL; // Return NULL if the file is not found
+        free(ympfile);
+        return NULL;
     }
 
     // Allocate memory for a new ympbuild structure
     ympbuild *ymp = malloc(sizeof(ympbuild));
+    if(!ymp){
+        free(ympfile);
+        return NULL;
+    }
 
     // Read the contents of the ympbuild file into the context
     ymp->ctx = readfile(ympfile);
@@ -544,6 +566,9 @@ visible char *build_binary_from_path(const char* path) {
 
     // Allocate memory for a new ympbuild structure
     ympbuild *ymp = malloc(sizeof(ympbuild));
+    if(!ymp){
+        return NULL;
+    }
 
     // Read the contents of the ympbuild file into the context
     ymp->ctx = readfile(ympfile);

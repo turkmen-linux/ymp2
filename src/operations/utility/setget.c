@@ -8,7 +8,7 @@ static int set_fn(char** args){
     return 0;
 }
 static int get_fn(char** args){
-    char* value = get_value(args[0]);
+    const char* value = get_value(args[0]);
     printf("%s\n", value);
     return 0;
 }

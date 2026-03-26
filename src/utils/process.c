@@ -40,10 +40,13 @@ visible char* which(char* cmd){
 
     struct stat buffer;
     int exists;
-    char* fileOrDirectory = cmd;
+    const char* fileOrDirectory = cmd;
     char *fullfilename = calloc(1024, sizeof(char));
+    if(!fullfilename){
+        return NULL;
+    }
 
-    char *token = strtok(fullPath, ":");
+    const char *token = strtok(fullPath, ":");
 
     /* walk through other tokens */
     while( token != NULL ){

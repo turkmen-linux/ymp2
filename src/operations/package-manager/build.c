@@ -28,7 +28,7 @@ static int build(void** args) {
         if(!isdir(cache)){
             return 1;
         }
-        char* build = build_binary_from_path(cache);
+        const char* build = build_binary_from_path(cache);
         if(build == NULL){
             free(cache);
             return 1;

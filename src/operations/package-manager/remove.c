@@ -45,6 +45,12 @@ static int remove_package(Package* pi){
 
     FILE *files = fopen(files_path, "r");
     FILE *links = fopen(files_path, "r");
+    if(!files || !links){
+        free(files_path);
+        free(links_path);
+        free(metadata_path);
+        return 1;
+    }
     array *arr = array_new();
 
     char line[PATH_MAX + 41]; // line buffer

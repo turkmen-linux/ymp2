@@ -97,7 +97,7 @@ visible Package* repository_get(Repository *repo, const char* name, bool is_sour
 visible void repository_load_from_index(Repository* repo, const char* index) {
     debug("Load from index: %s\n", index);
     // Read index
-    char* data = readfile(index);
+    const char* data = readfile(index);
     if (data) {
         repository_load_from_data(repo, data);
     }
