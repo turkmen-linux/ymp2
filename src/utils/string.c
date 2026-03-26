@@ -32,15 +32,22 @@ visible char* readfile(const char *path) {
     long length = ftell(file);
     fseek(file, 0, SEEK_SET);
 
-    char* data = malloc(length + 1);
+    char* data = malloc(sizeof(char)*(length + 1));
+    if(!data){
+        goto readfile_err;
+    }
     long read_items = fread(data, 1, length, file);
     if (read_items != length) {
         perror("Failed to read the complete file");
         free(data);
+        goto readfile_err;
     }
     data[length] = '\0';
     fclose(file);
     return data;
+readfile_err:
+    fclose(file);
+    return NULL;
 }
 
 visible long count_tab(char* data){
@@ -62,6 +69,9 @@ visible char* join(const char* f, char** array){
     }
     /* allocate memory */
     char* ret = calloc(len+1, sizeof(char));
+    if(!ret){
+        return NULL;
+    }
     strcpy(ret,"");
     /* copy item len and reset value */
     int cnt = i;
@@ -79,6 +89,9 @@ visible char* join(const char* f, char** array){
 
 visible char* str_add(char* str1, char* str2){
     char* ret = calloc( (strlen(str1)+strlen(str2)+1),sizeof(char) );
+    if(!ret){
+        return NULL;
+    }
     strcpy(ret,str1);
     strcat(ret,str2);
     return ret;
@@ -276,6 +289,9 @@ visible char* str_replace(const char* str, const char* oldSub, const char* newSu
 visible char** split(const char* data, const char* f) {
     if (strlen(data) == 0) {
         char** ret = malloc(sizeof(char*));
+        if(!ret){
+            return NULL;
+        }
         ret[0] = NULL;
         return ret;
     }

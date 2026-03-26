@@ -17,7 +17,7 @@ visible char *calculate_hash(int type, const char *path) {
     unsigned char buffer[BUFFER_SIZE];
     unsigned char digest[EVP_MAX_MD_SIZE];
     unsigned int md_len;
-    char hashstring[EVP_MAX_MD_SIZE*2+1];
+    char hashstring[EVP_MAX_MD_SIZE*2+1] = "";
 
     // https://pragmaticjoe.gitlab.io/posts/2015-02-09-how-to-generate-a-sha1-hash-in-c
     EVP_MD_CTX *mdctx;

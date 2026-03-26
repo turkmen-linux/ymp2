@@ -23,6 +23,9 @@ visible void save_env(){
         len++;
     }
     char **ret = malloc((len+1)*sizeof(char*));
+    if(!ret){
+        return;
+    }
     len = 0;
     while(environ[len]){
         ret[len] = strdup(environ[len]);

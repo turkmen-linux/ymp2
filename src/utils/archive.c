@@ -19,6 +19,9 @@
 
 visible Archive* archive_new(){
     Archive *data = calloc(1, sizeof(Archive));
+    if(!data){
+        return NULL;
+    }
     data->add_list_size = 0;
     data->errors = array_new();
     data->a = array_new();

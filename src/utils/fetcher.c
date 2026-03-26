@@ -30,9 +30,10 @@ static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
 visible bool fetch(const char* url, const char* path) {
     debug("Fetch: %s -> %s\n", url, path);
     fetcher* fetch = malloc(sizeof(fetcher));
-    
+
     if(!fetch) {
         perror("malloc");
+        return false;
     }
 
     CURL *curl = curl_easy_init();
@@ -77,6 +78,7 @@ visible bool fetch(const char* url, const char* path) {
         return true; // Return true if the download is successful
     }
 
+    free(fetch);
     return false; // Return false if curl initialization fails
 }
 

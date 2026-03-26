@@ -32,8 +32,10 @@ visible array *array_new() {
 }
 
 visible void array_add(array *arr, const char *value) {
+    if(!arr){
+        return;
+    }
     pthread_mutex_lock(&arr->lock);
-    
     // Check if we need to increase capacity
     if (arr->size >= arr->capacity) {
         arr->capacity += 1024;
@@ -193,6 +195,9 @@ visible void array_insert(array* arr, const char* value, size_t index){
 visible void array_sort(array* arr){
     pthread_mutex_lock(&arr->lock);
     char** new_data = (char**)calloc(arr->capacity,sizeof(char*));
+    if(!new_data){
+        return;
+    }
     size_t start = 0;
     size_t skip = 0;
     while(start < arr->size+arr->removed+1){

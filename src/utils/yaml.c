@@ -146,7 +146,10 @@ visible char** yaml_get_area_list(const char* fdata, const char* path, int* area
                // Check if we need to resize the array
                 if (*area_count >= max) {
                     max += 32; // Increase size by 32
-                    ret = realloc(ret, max * sizeof(char*));
+                    char**tmp = realloc(ret, max * sizeof(char*));
+                    if(tmp){
+                        ret = tmp;
+                    }
                     if (ret == NULL) {
                         fprintf(stderr, "Memory allocation failed\n");
                         return NULL; // Handle allocation failure

@@ -57,6 +57,9 @@ visible void jobs_add(jobs* j, callback call, void* ctx, void* args, ...) {
 
 visible void jobs_run(jobs* j) {
     pthread_t* threads = (pthread_t*)calloc(j->parallel, sizeof(pthread_t));
+    if(!threads){
+        return;
+    }
     worker_job *jb[j->parallel];
     int i;
     for (i = 0; i < j->parallel; ++i) {
@@ -76,6 +79,9 @@ visible void jobs_run(jobs* j) {
 
 visible jobs* jobs_new() {
     jobs* j = (jobs*)malloc(sizeof(jobs));
+    if(!j){
+        return NULL;
+    }
     j->max = 32;
     j->current = 0;
     j->finished = 0;

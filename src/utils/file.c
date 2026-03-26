@@ -210,7 +210,10 @@ visible char* getoutput_unshare(char* argv[], int flags) {
             if (len > bufsize) {
                 // Resize buffer if needed
                 bufsize = len * 2;
-                ret = realloc(ret, bufsize);
+                char* tmp = realloc(ret, bufsize);
+                if(tmp){
+                    ret = tmp;
+                }
                 if (!ret) {
                     perror("Memory reallocation error");
                     return "";
