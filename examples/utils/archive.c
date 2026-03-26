@@ -12,18 +12,27 @@ int main() {
     (void)ymp_init();
     // Write some content to the file
     FILE *file = fopen("file1.txt", "w");
+    if(!file){
+        return 1;
+    }
     fprintf(file, "This is the content of file1.txt.\n");
     fprintf(file, "It contains some sample text for the archive example.\n");
     fclose(file);
 
     // Write some content to the file
     file = fopen("file2.txt", "w");
+    if(!file){
+        return 1;
+    }
     fprintf(file, "This is the content of file2.txt.\n");
     fprintf(file, "It contains some sample text for the archive example.\n");
     fclose(file);
 
     // Write some content to the file
     file = fopen("file3.txt", "w");
+    if(!file){
+        return 1;
+    }
     fprintf(file, "This is the content of file3.txt.\n");
     fprintf(file, "It contains some sample text for the archive example.\n");
     fclose(file);

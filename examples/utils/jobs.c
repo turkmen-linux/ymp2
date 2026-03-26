@@ -22,6 +22,9 @@ int main() {
     // Add jobs to the job manager
     for (int i = 0; i < 10; i++) {
         int* arg = malloc(sizeof(int));
+        if(!arg){
+            return EXIT_FAILURE;
+        }
         *arg = i; // Set the argument for the job
         jobs_add(job_manager, (callback)example_callback, arg, NULL);
     }
