@@ -37,6 +37,9 @@ Ymp* global;
 
 static YmpPrivate* queue_init(){
     YmpPrivate *queue = (YmpPrivate*) malloc(sizeof(YmpPrivate));
+    if(!queue){
+        return NULL;
+    }
     queue->length = 0;
     queue->capacity = 32;
     queue->item = malloc(sizeof(OperationJob)*32);
