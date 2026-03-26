@@ -23,6 +23,9 @@
 visible Package* package_new() {
     // Allocate memory for a new Package structure
     Package *pkg = malloc(sizeof(Package));
+    if(!pkg){
+        return NULL;
+    }
 
     // Initialize the archive member of the Package with a new archive
     pkg->archive = archive_new();

@@ -78,6 +78,12 @@ static int quarantine_validate_files(const char* name) {
 
     // Open the files for reading
     FILE *files = fopen(files_path, "r");
+    if(!files){
+        warning("failed to open package files!\n");
+        free(files_path);
+        free(rootfs_path);
+        return 0;
+    }
     char line[PATH_MAX + 41]; // Buffer for reading lines (max file name length is PATH_MAX)
     char actual_file[PATH_MAX +	strlen(rootfs_path)]; // Buffer for actual file path (max file name length is PATH_MAX)
 
@@ -148,6 +154,12 @@ static int quarantine_validate_links(const char* name){
     FILE *links = fopen(links_path, "r");
     char line[PATH_MAX]; // Buffer for reading lines (max file name length is PATH_MAX)
     char actual_link[PATH_MAX + strlen(rootfs_path)]; // Buffer for actual file path (max file name length is PATH_MAX)
+    if(!links){
+        warning("failed to open package links!\n");
+        free(links_path);
+        free(rootfs_path);
+        return 0;
+    }
 
     // Read each line from the files
     while (fgets(line, sizeof(line), links)) {
@@ -214,6 +226,12 @@ visible int quarantine_sync(const char* name){
 
 
     char tmp[PATH_MAX + strlen(rootfs_path)]; // Temporary buffer
+
+    if(!links || !files){
+        status = 0;
+        goto free_quarantine_sync;
+    }
+
     // Read each line from the files
     while (fgets(line, sizeof(line), files)) {
         // Trim newline characters from the end of the line
