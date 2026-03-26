@@ -74,10 +74,14 @@ visible char *yaml_get_value(const char *data, const char *name) {
     char line[MAX_LINE_LENGTH];
     bool in_value = false;
     char *value = malloc(MAX_LINE_LENGTH);
+    if(!value){
+        return NULL;
+    }
     value[0] = '\0';
 
     FILE *stream = fmemopen((void *)data, strlen(data), "r");
     if(!stream){
+        free(value);
         return NULL;
     }
     while (fgets(line, sizeof(line), stream)) {
