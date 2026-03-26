@@ -139,6 +139,9 @@ static void* handle_client(void* arg){
         // fetch get request url
         if(strncmp(lines[i], "GET ", 4) == 0){
             path = strdup(lines[i]+4);
+            if(!path){
+                break;
+            }
             // use first word before space
             for(size_t j=0; path[j]; j++){
                 if(path[j] == ' '){
