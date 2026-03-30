@@ -127,5 +127,14 @@ char *create_package(const char* path);
  */
 int ympbuild_run_function(ympbuild* ymp, const char* name);
 
+/**
+ * @brief Check syntax error from given ympbuild file path
+ *
+ * This function checks ympbuild file syntax errors.
+ *
+ * @param ympfile The path of ympbuild file.
+ * @return  int Returns 0 on success, or an error code on failure.
+ */
+int ympbuild_check(char* ympfile);
 
 #endif

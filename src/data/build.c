@@ -127,6 +127,20 @@ ympbuild_source_filename_free:
     return ret;
 }
 
+visible int ympbuild_check(char* ympfile){
+    char* args[] = {"/bin/bash", "-n", ympfile, NULL};
+    pid_t pid = fork();
+    if(pid == 0){
+        char* envs[] = { "PATH=/usr/bin:/usr/sbin:/bin:/sbin/", NULL};
+        execve(args[0], args, envs);
+        exit(1);
+    }else {
+        int status = 0;
+        (void)waitpid(pid, &status, 0);
+        return status;
+    }
+}
+
 visible int ympbuild_run_function(ympbuild* ymp, const char* name) {
     char* command = build_string(
         "exec <&-\n"
@@ -567,6 +581,12 @@ visible char *build_binary_from_path(const char* path) {
     // Allocate memory for a new ympbuild structure
     ympbuild *ymp = malloc(sizeof(ympbuild));
     if(!ymp){
+        return NULL;
+    }
+
+    // Syntax check before read
+    if(ympbuild_check(ympfile) != 0){
+        print("Error: syntax error!\n");
         return NULL;
     }
 
