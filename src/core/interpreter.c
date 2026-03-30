@@ -61,7 +61,11 @@ visible char** parse_args(char** args) {
 }
 
 static char** parse_line(const char* line){
-    return parse_args(split(strip((char*)line), " "));
+    char* tmp = strip((char*)line);
+    char** stmp = split(tmp, " ");
+    char** ret = parse_args(stmp);
+    free(tmp);
+    return ret;
 }
 visible int run_script(const char* script){
     char** lines = split(script, "\n");
@@ -72,7 +76,9 @@ visible int run_script(const char* script){
     }
     // search for labels
     for(size_t i=0; lines[i]; i++){
-        lines[i] = strip(lines[i]);
+        char* ltmp = strip(lines[i]);
+        free(lines[i]);
+        lines[i] = ltmp;
         if(startswith(lines[i], "label: ")){
             // reallocate if needed
             if(label_cur >= label_max){

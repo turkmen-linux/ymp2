@@ -112,7 +112,9 @@ visible void repository_load_from_data(Repository* repo, const char* data) {
     char* inner = yaml_get_area(data, "index");
     repo->name = yaml_get_value(inner, "name");
     char* repo_uri_file = build_string("%s/%s/sources.list.d/%s", get_value("DESTDIR"), STORAGE, repo->name);
-    repo->uri = strip(readfile(repo_uri_file));
+    char *tmp = readfile(repo_uri_file);
+    repo->uri = strip(tmp);
+    free(tmp);
     // Load packages
     repository_load_data(repo, inner, true);
     repository_load_data(repo, inner, false);
