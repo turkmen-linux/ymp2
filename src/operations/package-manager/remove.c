@@ -119,6 +119,8 @@ static int remove_package(Package* pi){
     }
 free_remove_package:
     array_unref(arr);
+    fclose(files);
+    fclose(links);
     free(files_path);
     free(links_path);
     free(metadata_path);
