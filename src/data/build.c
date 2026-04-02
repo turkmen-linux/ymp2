@@ -587,6 +587,8 @@ visible char *build_binary_from_path(const char* path) {
     // Syntax check before read
     if(ympbuild_check(ympfile) != 0){
         print("Error: syntax error!\n");
+        free(ympfile);
+        free(ymp);
         return NULL;
     }
 

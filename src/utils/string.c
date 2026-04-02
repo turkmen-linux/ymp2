@@ -236,7 +236,7 @@ visible char* build_string(char* format, ...) {
     /* Allocate memory for the string */
     char* result = (char*)malloc(size);
     if (result == NULL) {
-        return "";
+        return NULL;
     }
 
     /* Format the string */
