@@ -19,27 +19,27 @@ static void dump_info(Package *pi){
         return;
     }
     printf(
-        "name: %s\n"
-        "version: %s\n"
-        "release %d\n"
-        "description; %s\n",
+        "  name: %s\n"
+        "  version: %s\n"
+        "  release %d\n"
+        "  description; %s\n",
         pi->name,
         pi->version,
         pi->release,
         desc
     );
     if(package_is_installed(pi)){
-        printf("installed: true\n");
+        printf("  installed: true\n");
     } else {
-        printf("installed: false\n");
+        printf("  installed: false\n");
     }
-    printf("dependencies:\n");
+    printf("  dependencies:\n");
     for(size_t i=0; pi->dependencies[i]; i++){
-        printf("  - %s\n", pi->dependencies[i]);
+        printf("    - %s\n", pi->dependencies[i]);
     }
-    printf("groups:\n");
+    printf("  groups:\n");
     for(size_t i=0; pi->groups[i]; i++){
-        printf("  - %s\n", pi->groups[i]);
+        printf("    - %s\n", pi->groups[i]);
     }
 
 }
