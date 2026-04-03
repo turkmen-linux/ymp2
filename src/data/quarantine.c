@@ -27,7 +27,13 @@ static int quarantine_validate_metadata(const char* name){
     int status = 0;
 
     char* metadata_path = build_string("%s/%s/quarantine/metadata/%s.yaml", destdir, STORAGE, name);
-    char* data = readfile(metadata_path);
+    char* metadata = readfile(metadata_path);
+    char *data = yaml_get_area(metadata, "ymp");
+    if(!data){
+        warning("Inwalid metadata: %s\n", metadata_path);
+        status = 1;
+        free(metadata);
+    }
     char *area_data = NULL;
     // read package / source area
     if(yaml_has_area(data, "package")){
@@ -35,10 +41,12 @@ static int quarantine_validate_metadata(const char* name){
     } else if(yaml_has_area(data, "source")){
         area_data = yaml_get_area(data, "source");
     } else {
+        warning("unsupported package format: %s\n", metadata_path);
         status = 1;
         free(data);
         free(metadata_path);
-        return 1;
+        free(metadata);
+        return status;
     }
     // check package is unsafe
     char *unsafe = yaml_get_value(data, "unsafe");
@@ -51,6 +59,7 @@ static int quarantine_validate_metadata(const char* name){
     // cleanup memory
     free(area_data);
     free(data);
+    free(metadata);
     free(metadata_path);
     return status;
 }
@@ -105,8 +114,14 @@ static int quarantine_validate_files(const char* name) {
         strncat(actual_file, line + 41, strlen(actual_file));
 
         debug("Validate file: %s\n", actual_file+strlen(rootfs_path));
+
+        if(strlen(actual_file) == 0){
+            continue;
+        }
+
         // Check if the actual file exists
         if (!isfile(actual_file)) {
+            warning("file not found: %s\n", actual_file);
             status = 1;
         } else {
             // Calculate the SHA1 hash of the actual file
@@ -179,7 +194,7 @@ static int quarantine_validate_links(const char* name){
         line[offset+1]='\0';
         ssize_t rc = readlink(actual_link, line+offset+2, PATH_MAX-(offset+2));
         if(rc <0){
-            perror("Error reading symlink");
+            warning("Error reading symlink: %s\n", actual_link);
             status = 1;
             goto free_quarantine_validate_links;
         }
