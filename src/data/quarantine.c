@@ -482,7 +482,9 @@ visible bool quarantine_validate() {
 
 
     // Reset after sync
-    quarantine_reset();
+    if(strcmp(variable_get_value(global->variables, "no-reset"), "true") != 0){
+        quarantine_reset();
+    }
 
     // Cleanup: free allocated memory for metadata file names
     for (size_t i = 0; metadatas[i]; i++) {
