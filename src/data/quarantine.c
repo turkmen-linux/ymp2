@@ -189,13 +189,13 @@ static int quarantine_validate_links(const char* name){
         while(line[offset] && line[offset] != ' ') {
             offset++;
         }
+        memset(actual_link, 0, sizeof(actual_link));
+        memset(link_target, 0, sizeof(link_target));
         // Build link target
-        line[offset+1]='\0';
+        line[offset]='\0';
         // Build actual_link
         strcpy(actual_link, rootfs_path);
         strcat(actual_link, line);
-        realpath(actual_link, link_target);
-        strcpy(actual_link, link_target);
         ssize_t rc = readlink(actual_link, link_target, PATH_MAX);
         if(rc <0){
             warning("Error reading symlink: %s\n", actual_link);
@@ -203,15 +203,17 @@ static int quarantine_validate_links(const char* name){
             status = 1;
             goto free_quarantine_validate_links;
         }
-        debug("Validate link: %s => %s\n", line, actual_link+strlen(rootfs_path));
+        debug("Validate link: %s => %s %s\n", line, link_target, line+offset+1);
         // check links are same
-        status = strcmp(link_target, line+offset+2);
+        status = strcmp(link_target, line+offset+1);
         if (status){
+            warning("link check failed %s\n", actual_link);
             goto free_quarantine_validate_links;
         }
         // check link is absolute path
-        if(line[offset+2] == '/'){
+        if(line[offset+1] == '/'){
             status = 1;
+            warning("absolute path symlink found %s\n", actual_link);
             goto free_quarantine_validate_links;
         }
     }
@@ -269,10 +271,14 @@ visible int quarantine_sync(const char* name){
         (void)dirname(tmp);
         create_dir(tmp);
         // move file
-        int stat = move_file(source, target);
+        int stat = ! move_file(source, target);
         // set permission
-        stat += chmod(target, 0755);
-        stat += chown(target, 0,0);
+        if(chmod(target, 0755)){
+            stat += 1;
+        }
+        if(chown(target, 0,0)){
+            stat += 1;
+        }
         if(stat != 0){
             warning("failed to sync: %s => %s\n", source, target);
             status = stat;
@@ -291,18 +297,18 @@ visible int quarantine_sync(const char* name){
         while(line[offset] && line[offset] != ' ') {
             offset++;
         }
-        line[offset]='/';
+        line[offset]='\0';
         strcpy(source, rootfs_path);
-        strcat(source, line+offset+1);
+        strcat(source, line);
         strcpy(target, destdir);
-        strcat(target, line+offset);
+        strcat(target, line);
         debug("file: %s -> %s\n", source, target);
         // create parent directory if not exists
         strcpy(tmp, target);
         (void)dirname(tmp);
         create_dir(tmp);
         // move symlink
-        status = move_file(source, target);
+        status = ! move_file(source, target);
         if(status != 0){
             warning("failed to sync: %s => %s\n", source, target);
             goto free_quarantine_sync;
@@ -315,7 +321,7 @@ visible int quarantine_sync(const char* name){
     strcat(target, STORAGE);
     strcat(target, "/files/");
     strcat(target, name);
-    int stat = move_file(files_path, target);
+    int stat = ! move_file(files_path, target);
     if(stat){
         warning("failed to sync: %s\n", files_path);
         status += stat;
@@ -327,7 +333,7 @@ visible int quarantine_sync(const char* name){
     strcat(target, STORAGE);
     strcat(target, "/links/");
     strcat(target, name);
-    stat = move_file(links_path, target);
+    stat = ! move_file(links_path, target);
     if(stat){
         warning("failed to sync: %s\n", links_path);
         status += stat;
@@ -340,7 +346,7 @@ visible int quarantine_sync(const char* name){
     strcat(target, "/metadata/");
     strcat(target, name);
     strcat(target, ".yaml");
-    stat = move_file(metadata_path, target);
+    stat = ! move_file(metadata_path, target);
     if(stat){
         warning("failed to sync: %s\n", metadata_path);
         status += stat;
