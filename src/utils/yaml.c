@@ -28,13 +28,12 @@ visible char *yaml_get_area(const char *data, const char *path) {
     char line[MAX_LINE_LENGTH];
     bool in_area = false;
     size_t area_data_size = strlen(data) + 1;
-    char *area_data = malloc(area_data_size);
-    if (!area_data) return NULL; // Check for allocation failure
-    area_data[0] = '\0'; // Initialize the area_data buffer
+    char area_data[area_data_size];
+
+    area_data[0] = '\0';
 
     FILE *stream = fmemopen((void *)data, strlen(data), "r");
     if (!stream) {
-        free(area_data);
         return NULL; // Check for stream creation failure
     }
 
@@ -61,10 +60,9 @@ visible char *yaml_get_area(const char *data, const char *path) {
         }
     }
     fclose(stream);
-    
+
     // Trim the area_data and return a duplicate
     char *area = strdup(trim(area_data));
-    free(area_data);
     return area;
 }
 
