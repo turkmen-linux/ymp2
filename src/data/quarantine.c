@@ -33,6 +33,7 @@ static int quarantine_validate_metadata(const char* name){
         warning("Inwalid metadata: %s\n", metadata_path);
         status = 1;
         free(metadata);
+        return status;
     }
     char *area_data = NULL;
     // read package / source area
@@ -265,11 +266,13 @@ visible int quarantine_sync(const char* name){
         (void)dirname(tmp);
         create_dir(tmp);
         // move file
-        status = move_file(source, target);
+        int stat = move_file(source, target);
         // set permission
-        status += chmod(target, 0755);
-        status += chown(target, 0,0);
-        if(status != 0){
+        stat += chmod(target, 0755);
+        stat += chown(target, 0,0);
+        if(stat != 0){
+            warning("failed to sync: %s => %s\n", source, target);
+            status = stat;
             goto free_quarantine_sync;
         }
     }
@@ -298,6 +301,7 @@ visible int quarantine_sync(const char* name){
         // move symlink
         status = move_file(source, target);
         if(status != 0){
+            warning("failed to sync: %s => %s\n", source, target);
             goto free_quarantine_sync;
         }
     }
@@ -308,7 +312,11 @@ visible int quarantine_sync(const char* name){
     strcat(target, STORAGE);
     strcat(target, "/files/");
     strcat(target, name);
-    status += move_file(files_path, target);
+    int stat = move_file(files_path, target);
+    if(stat){
+        warning("failed to sync: %s\n", files_path);
+        status += stat;
+    }
 
     // Move files
     strcpy(target, destdir);
@@ -316,7 +324,11 @@ visible int quarantine_sync(const char* name){
     strcat(target, STORAGE);
     strcat(target, "/links/");
     strcat(target, name);
-    status += move_file(links_path, target);
+    stat = move_file(links_path, target);
+    if(stat){
+        warning("failed to sync: %s\n", links_path);
+        status += stat;
+    }
 
     // Move files
     strcpy(target, destdir);
@@ -325,7 +337,12 @@ visible int quarantine_sync(const char* name){
     strcat(target, "/metadata/");
     strcat(target, name);
     strcat(target, ".yaml");
-    status += move_file(metadata_path, target);
+    stat = move_file(metadata_path, target);
+    if(stat){
+        warning("failed to sync: %s\n", metadata_path);
+        status += stat;
+    }
+
 
     // Cleanup: free memory
 free_quarantine_sync:
