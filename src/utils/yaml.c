@@ -71,15 +71,12 @@ visible char *yaml_get_value(const char *data, const char *name) {
     debug("%s\n",name);
     char line[MAX_LINE_LENGTH];
     bool in_value = false;
-    char *value = malloc(MAX_LINE_LENGTH);
-    if(!value){
-        return NULL;
-    }
+    char value[MAX_LINE_LENGTH];
+
     value[0] = '\0';
 
     FILE *stream = fmemopen((void *)data, strlen(data), "r");
     if(!stream){
-        free(value);
         return NULL;
     }
     while (fgets(line, sizeof(line), stream)) {
@@ -92,7 +89,6 @@ visible char *yaml_get_value(const char *data, const char *name) {
     }
     fclose(stream);
     char* ret = in_value ? strip(value) : NULL;
-    free(value);
     return ret;
 }
 
