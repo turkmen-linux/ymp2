@@ -170,6 +170,7 @@ static int quarantine_validate_links(const char* name){
     FILE *links = fopen(links_path, "r");
     char line[PATH_MAX]; // Buffer for reading lines (max file name length is PATH_MAX)
     char actual_link[PATH_MAX + strlen(rootfs_path)]; // Buffer for actual file path (max file name length is PATH_MAX)
+    char link_target[PATH_MAX]; // Buffer for actual file path (max file name length is PATH_MAX)
     if(!links){
         warning("failed to open package links!\n");
         free(links_path);
@@ -188,26 +189,28 @@ static int quarantine_validate_links(const char* name){
         while(line[offset] && line[offset] != ' ') {
             offset++;
         }
-        // Build actual_link
-        strcpy(actual_link, rootfs_path);
-        strcat(actual_link, line+offset+1);
         // Build link target
         line[offset+1]='\0';
-        ssize_t rc = readlink(actual_link, line+offset+2, PATH_MAX-(offset+2));
+        // Build actual_link
+        strcpy(actual_link, rootfs_path);
+        strcat(actual_link, line);
+        realpath(actual_link, link_target);
+        strcpy(actual_link, link_target);
+        ssize_t rc = readlink(actual_link, link_target, PATH_MAX);
         if(rc <0){
             warning("Error reading symlink: %s\n", actual_link);
+            perror(link_target);
             status = 1;
             goto free_quarantine_validate_links;
         }
-        line[offset+rc+2] = '\0';
         debug("Validate link: %s => %s\n", line, actual_link+strlen(rootfs_path));
         // check links are same
-        status = strncmp(line, line+offset+2, offset);
+        status = strcmp(link_target, line+offset+2);
         if (status){
             goto free_quarantine_validate_links;
         }
         // check link is absolute path
-        if(line[0] == '/'){
+        if(line[offset+2] == '/'){
             status = 1;
             goto free_quarantine_validate_links;
         }

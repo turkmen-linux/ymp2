@@ -152,7 +152,7 @@ static void archive_extract_fn(Archive *data, const char *path, bool all) {
             fclose(file);
             chmod(target_file, 0755);
         } else {
-            printf("Skip unsupported archive entry: %s", entry_path);
+            printf("Skip unsupported archive entry: %s\n", entry_path);
         }
     }
     archive_read_close(data->archive);
