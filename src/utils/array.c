@@ -164,16 +164,16 @@ visible void array_pop(array* arr, size_t index){
 visible void array_insert(array* arr, const char* value, size_t index){
     pthread_mutex_lock(&arr->lock);
     if (arr->size >= arr->capacity) {
-        array_add(arr,NULL);
+        array_add(arr, NULL);
     }
     if (arr->data[index] == NULL){
-        arr->data[index] = (char*)value;
+        arr->data[index] = strdup(value);
         arr->size++;
         pthread_mutex_unlock(&arr->lock);
         return;
     }
-    char* tmp = strdup(arr->data[index]);
-    char* tmp2;
+    char* tmp = arr->data[index];
+    char* tmp2 = NULL;
     arr->data[index] = strdup(value);
     size_t start = index+1;
     while(start < arr->capacity){
@@ -183,9 +183,10 @@ visible void array_insert(array* arr, const char* value, size_t index){
             pthread_mutex_unlock(&arr->lock);
             return;
         }
-        tmp2 = strdup(arr->data[start]);
-        arr->data[start] = strdup(tmp);
-        tmp = strdup(tmp2);
+        tmp2 = arr->data[start];
+        arr->data[start] = tmp;
+        tmp = tmp2;
+        tmp2 = NULL;
         start++;
     }
     arr->size += 1;
