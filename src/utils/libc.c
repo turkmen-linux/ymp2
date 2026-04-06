@@ -15,10 +15,9 @@ visible ssize_t write(int fd, const void *buf, size_t count) {
     /* Splitting the buffer into 5MB chunks */
     #define max_chunk_size (100 * 1024 * 1024) /* 5MB */
     size_t bytes_written = 0;
-    ssize_t result;
     while (count > 0) {
         size_t chunk_size = (count > max_chunk_size) ? max_chunk_size : count;
-        result = original_write(fd, buf + bytes_written, chunk_size);
+        ssize_t result = original_write(fd, buf + bytes_written, chunk_size);
         if (result < 0) {
             /* Error occurred, return immediately */
             return result;

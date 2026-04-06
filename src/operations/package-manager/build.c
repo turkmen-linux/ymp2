@@ -9,15 +9,13 @@
 #include <string.h>
 
 static int build(void** args) {
-    char* cache;
-
     for(size_t i=0; args[i]; i++){
         char* target = get_value("output");
 
         if(strlen(target) == 0){
             target = args[i];
         }
-        cache = build_source_from_path(args[i]);
+        char* cache = build_source_from_path(args[i]);
         // create source package
         char* spkg = create_package(cache);
         char* sname = ympbuild_source_filename(args[i]);
@@ -28,8 +26,8 @@ static int build(void** args) {
         if(!isdir(cache)){
             return 1;
         }
-        const char* build = build_binary_from_path(cache);
-        if(build == NULL){
+        const char* fbuild = build_binary_from_path(cache);
+        if(fbuild == NULL){
             free(cache);
             return 1;
         }

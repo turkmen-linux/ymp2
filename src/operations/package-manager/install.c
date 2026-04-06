@@ -15,10 +15,6 @@
 #include <utils/file.h>
 #include <utils/jobs.h>
 
-typedef struct {
-    int cur;
-    int total;
-} proc;
 
 static int download_cb(Package* p, int num){
     print("%s: %s\n", colorize(YELLOW, "Downloading"), p->name);
@@ -70,8 +66,8 @@ static int install_main(char** args){
             if(package_is_installed(res[i])){
                 continue;
             }
-            jobs_add(download_jobs, (callback)download_cb, res[i], (void*)i+1);
-            jobs_add(install_jobs, (callback)install_cb, res[i], (void*)i+1);
+            jobs_add(download_jobs, (callback)download_cb, res[i], (void*)(i+1));
+            jobs_add(install_jobs, (callback)install_cb, res[i], (void*)(i+1));
         }
     }
     // Download packages

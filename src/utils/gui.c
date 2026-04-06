@@ -39,10 +39,9 @@ bool yes_no_dialog(const char* ftitle, const char *fmessage) {
     draw_yes_no_dialog();
 
     // Main input loop
-    char choice = 'n';
     bool ret = false;
     while (1) {
-        choice = getch();
+        char choice = getch();
 
         if (choice == 'y' || choice == 'Y') {
             ret = true;

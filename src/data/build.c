@@ -128,9 +128,9 @@ ympbuild_source_filename_free:
 }
 
 visible int ympbuild_check(char* ympfile){
-    char* args[] = {"/bin/bash", "-n", ympfile, NULL};
     pid_t pid = fork();
     if(pid == 0){
+        char* args[] = {"/bin/bash", "-n", ympfile, NULL};
         char* envs[] = { "PATH=/usr/bin:/usr/sbin:/bin:/sbin/", NULL};
         execve(args[0], args, envs);
         exit(1);
@@ -142,21 +142,22 @@ visible int ympbuild_check(char* ympfile){
 }
 
 visible int ympbuild_run_function(ympbuild* ymp, const char* name) {
-    char* command = build_string(
-        "exec <&-\n"
-        "set +e ; %s\n"
-        "%s\n"
-        "set -e \n"
-        "declare -r ACTION=%s\n"
-        "if declare -F %s ; then\n"
-        "    for type in ${buildtypes[@]} main; do\n"
-        "        export BUILDTYLPE=$type\n"
-        "        %s\n"
-        "    done\n"
-        "fi", ymp->header, ymp->ctx, name, name, name);
-    char* args[] = {"/bin/bash", "-c", command, NULL};
     pid_t pid = fork();
     if(pid == 0){
+        char* command = build_string(
+            "exec <&-\n"
+            "set +e ; %s\n"
+            "%s\n"
+            "set -e \n"
+            "declare -r ACTION=%s\n"
+            "if declare -F %s ; then\n"
+            "    for type in ${buildtypes[@]} main; do\n"
+            "        export BUILDTYLPE=$type\n"
+            "        %s\n"
+            "    done\n"
+            "fi", ymp->header, ymp->ctx, name, name, name
+        );
+        char* args[] = {"/bin/bash", "-c", command, NULL};
         if(chdir(ymp->path) < 0){
             free(command);
             return -1;
@@ -173,7 +174,6 @@ visible int ympbuild_run_function(ympbuild* ymp, const char* name) {
     } else {
         int status = 0;
         (void)waitpid(pid, &status, 0);
-        free(command);
         return status;
     }
 }
@@ -195,14 +195,14 @@ static void binary_process(const char* path){
             continue;
         }
         print("Binary process: %s\n", inodes[i]+strlen(path)+7);
-        char *cmd[] = {
-            "objcopy", "-R", ".comment", "-R", ".note", "-R", ".debug_info",
-            "-R", ".debug_aranges", "-R", ".debug_pubnames", "-R", ".debug_pubtypes",
-            "-R", ".debug_abbrev", "-R", ".debug_line", "-R", ".debug_str",
-            "-R", ".debug_ranges", "-R", ".debug_loc", inodes[i]
-        };
         pid_t pid = fork();
         if(pid == 0){
+            char *cmd[] = {
+                "objcopy", "-R", ".comment", "-R", ".note", "-R", ".debug_info",
+                "-R", ".debug_aranges", "-R", ".debug_pubnames", "-R", ".debug_pubtypes",
+                "-R", ".debug_abbrev", "-R", ".debug_line", "-R", ".debug_str",
+                "-R", ".debug_ranges", "-R", ".debug_loc", inodes[i]
+            };
             char* envs[] = {"PATH=/usr/bin:/usr/sbin:/bin:/sbin", NULL};
             execve(cmd[0], cmd, envs);
             exit(1);
@@ -289,8 +289,8 @@ static char** get_uses(ympbuild *ymp) {
         // Remove "all" from the flag array
         array_remove(flag, "all");
         // Add the standard uses from the ympbuild structure to the flag array
-        char** uses = ympbuild_get_array(ymp, "uses");
-        array_adds(flag, uses);
+        char** fuses = ympbuild_get_array(ymp, "uses");
+        array_adds(flag, fuses);
     }
 
     // Check if the flag array contains "extra"
@@ -634,9 +634,8 @@ visible char *build_binary_from_path(const char* path) {
     }
 
     // Execute actions defined in the actions array
-    int status = 0;
     for (size_t i = 0; actions[i]; i++) {
-        status = ympbuild_run_function(ymp, actions[i]);
+        int status = ympbuild_run_function(ymp, actions[i]);
         if (status != 0) {
             free(ympfile); // Free the ympfile string on error
             return NULL; // Return NULL if any action fails

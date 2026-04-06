@@ -373,7 +373,6 @@ static void calculate_leftovers(array* arr, const char* name){
     char* links_new = build_string("%s/%s/quarantine/links/%s", destdir, STORAGE, name);
 
     char line[PATH_MAX+41];
-    size_t offset = 0;
     // read files
     FILE *ffiles = fopen(files, "r");
     if(ffiles){
@@ -386,6 +385,7 @@ static void calculate_leftovers(array* arr, const char* name){
     FILE *flinks = fopen(links, "r");
     if(flinks){
         while (fgets(line, sizeof(line), flinks)) {
+            size_t offset = 0;
             for(offset=0; line[offset] && line[offset] != ' '; offset++);
             line[offset] = '\n';
             array_add(list, line);
@@ -404,6 +404,7 @@ static void calculate_leftovers(array* arr, const char* name){
     FILE *flinks_new = fopen(links_new, "r");
     if(flinks_new){
         while (fgets(line, sizeof(line), flinks_new)) {
+            size_t offset=0;
             for(offset=0; line[offset] && line[offset] != ' '; offset++);
             line[offset] = '\n';
             array_remove(list, line);

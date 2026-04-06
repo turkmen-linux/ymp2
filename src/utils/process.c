@@ -39,7 +39,6 @@ visible char* which(char* cmd){
     char* fullPath = getenv("PATH");
 
     struct stat buffer;
-    int exists;
     const char* fileOrDirectory = cmd;
     char *fullfilename = calloc(1024, sizeof(char));
     if(!fullfilename){
@@ -51,7 +50,7 @@ visible char* which(char* cmd){
     /* walk through other tokens */
     while( token != NULL ){
         sprintf(fullfilename, "%s/%s", token, fileOrDirectory);
-        exists = stat( fullfilename, &buffer );
+        int exists = stat( fullfilename, &buffer );
         if ( exists == 0 && ( S_IFREG & buffer.st_mode ) ) {
             return (char*)fullfilename;
         }

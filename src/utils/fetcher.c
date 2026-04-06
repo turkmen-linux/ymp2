@@ -20,7 +20,7 @@ typedef struct {
 } fetcher;
 
 // Callback function to write data to a file
-static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
+static size_t write_data(const void *ptr, size_t size, size_t nmemb, void *stream) {
     size_t copy = fwrite(ptr, size, nmemb, ((fetcher*)stream)->fp);
     ((fetcher*)stream)->cur_size += copy;
     return copy;

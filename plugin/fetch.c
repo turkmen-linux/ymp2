@@ -15,8 +15,8 @@ static int fetch_fn(void** args){
     const char* target = variable_get_value(vars, "target");
     char **links = (char**)args;
 
+    char curdir[PATH_MAX];
     if(!target){
-        char curdir[PATH_MAX];
         if (getcwd(curdir, sizeof(curdir)) == NULL) {
             perror("getcwd() error");
             return 1;

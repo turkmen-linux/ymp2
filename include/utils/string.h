@@ -37,7 +37,7 @@ char* readfile(const char *path);
  * @param data The string to search for tab characters.
  * @return The count of tab characters in the string.
  */
-long count_tab(char* data);
+long count_tab(const char* data);
 
 /**
  * @brief Joins an array of strings into a single string with a specified delimiter.
@@ -55,7 +55,7 @@ char* join(const char* f, char** array);
  * @param str2 The second string.
  * @return A new string that is the concatenation of str1 and str2.
  */
-char* str_add(char* str1, char* str2);
+char* str_add(const char* str1, const char* str2);
 
 /**
  * @brief Trims whitespace from the beginning and end of a string.

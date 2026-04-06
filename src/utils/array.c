@@ -258,7 +258,7 @@ visible char **array_get(array *arr, size_t* len) {
     return ret; // Caller is responsible for freeing this memory
 }
 
-visible size_t array_length(array *arr) {
+visible size_t array_length(const array *arr) {
     return arr->size-arr->removed;
 }
 

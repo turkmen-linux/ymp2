@@ -95,10 +95,10 @@ visible void create_dir(const char *dir) {
 visible char** listdir(const char* path){
     debug("list directory: %s\n", path);
     DIR *dp;
-    struct dirent *ep;
     dp = opendir (path);
     array *a = array_new();
     if (dp != NULL) {
+        struct dirent *ep;
         while ((ep = readdir (dp))) {
             array_add(a,ep->d_name);
         }

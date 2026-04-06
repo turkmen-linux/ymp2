@@ -220,7 +220,7 @@ visible void archive_set_type(Archive *data, const char* form, const char* filt)
         data->afilter=filter_xz;
 }
 
-visible void archive_write(Archive *data, const char *outname, char **filename) {
+visible void archive_write(const Archive *data, const char *outname, char **filename) {
   struct archive *a;
   struct archive_entry *entry;
   struct stat st;

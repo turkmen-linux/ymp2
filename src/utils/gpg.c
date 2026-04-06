@@ -33,7 +33,6 @@ visible bool gpg_export_file(const char *path) {
     }
     char *args[] =  {"gpg", "--armor", "--export", "-o", gpg_repicent, (char*)path, NULL};
     return 0 == run_args(args);
-    run_args(args);
 }
 
 visible bool verify_file(const char *path, const char* keyring) {

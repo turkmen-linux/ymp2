@@ -77,7 +77,7 @@ void visible operation_register(OperationManager *manager, Operation new_op) {
 }
 
 int visible operation_main(OperationManager *manager, const char* name, void* args){
-    if(name && strlen(name) <= 0){
+    if(!name){
         return 0;
     }
     // calculate arg len

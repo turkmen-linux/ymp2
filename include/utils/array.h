@@ -91,7 +91,7 @@ char *array_get_string(array *arr);
  * @param arr Pointer to the dynamic array.
  * @return The number of elements in the array.
  */
-size_t array_length(array *arr);
+size_t array_length(const array *arr);
 
 /**
  * @brief Reverse the order of elements in the dynamic array.

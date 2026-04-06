@@ -122,7 +122,7 @@ void archive_set_type(Archive *data, const char* form, const char* filt);
  * @param outname Name of the output archive file.
  * @param filename Array of file names to include in the archive.
  */
-void archive_write(Archive *data, const char *outname, char **filename);
+void archive_write(const Archive *data, const char *outname, char **filename);
 
 /**
  * @brief Extracts all files from the archive.

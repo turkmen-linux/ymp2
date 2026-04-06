@@ -50,7 +50,7 @@ readfile_err:
     return NULL;
 }
 
-visible long count_tab(char* data){
+visible long count_tab(const char* data){
     int cnt = 0;
     while (*data == ' ') {
         cnt++;
@@ -87,7 +87,7 @@ visible char* join(const char* f, char** array){
     return ret;
 }
 
-visible char* str_add(char* str1, char* str2){
+visible char* str_add(const char* str1, const char* str2){
     char* ret = calloc( (strlen(str1)+strlen(str2)+1),sizeof(char) );
     if(!ret){
         return NULL;
@@ -171,7 +171,7 @@ visible char* url_decode(const char *input) {
         if (input[i] == '%') {
             if (isHexDigit(input[i + 1])){
                 if (isHexDigit(input[i + 2])) {
-                    char hex[3] = {input[i + 1], input[i + 2], '\0'};
+                    const char hex[3] = {input[i + 1], input[i + 2], '\0'};
                     output[j++] = (char)strtol(hex, NULL, 16);
                     /* Skip '%', and the next two characters */
                     i += 2;

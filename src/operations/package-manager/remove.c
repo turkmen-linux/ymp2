@@ -73,7 +73,6 @@ static int remove_package(Package* pi){
         }
         array_add(arr, strdup(tmp));
     }
-    size_t offset = 0;
     // Read each line from the links
     while (fgets(line, sizeof(line), links)) {
         // remove line newline char
@@ -81,7 +80,8 @@ static int remove_package(Package* pi){
             line[i] = '\0';
         }
         // calculate offset
-        for(offset=0; line[offset] && line[offset] == ' '; offset++){}
+        size_t offset = 0;
+        for(offset=0; line[offset] == ' '; offset++){}
         // remove links
         line[offset]= '/';
         strcpy(tmp, destdir);

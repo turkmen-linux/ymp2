@@ -14,7 +14,6 @@
 
 static int sysconf_main(char** args){
     (void)args;
-    int rc = 0;
     const char* destdir = get_value("DESTDIR");
     pid_t pid = fork();
     if(pid == 0){
@@ -24,7 +23,7 @@ static int sysconf_main(char** args){
         setenv("OPERATION", get_value ("OPERATION"), 1);
         char** sc = listdir(sysconfdir);
         if(strlen(destdir) > 0 && strcmp(destdir, "/") != 0){
-            rc = chroot(destdir);
+            int rc = chroot(destdir);
             if(rc < 0){
                 warning("Failed to chroot: %s\n", destdir);
                 exit(1);
@@ -35,8 +34,8 @@ static int sysconf_main(char** args){
             strcpy(trigger, "/etc/sysconf.d/");
             strcat(trigger, sc[i]);
             debug("%s\n", trigger);
-            char* args[] = {"/bin/sh", trigger, NULL};
-            rc = run_args(args);
+            char* fargs[] = {"/bin/sh", trigger, NULL};
+            int rc = run_args(fargs);
             if(rc != 0){
                 exit(rc);
             }
