@@ -18,6 +18,17 @@ static label *labels;
 size_t label_max = 32;
 size_t label_cur = 0;
 
+static void labels_unref() {
+    if (!labels) {
+        return;
+    }
+    for (size_t i=0; i < label_cur; i++) {
+        free((char*)labels[i].name);
+    }
+    free(labels);
+    label_cur = 0;
+}
+
 
 visible char** parse_args(char** args) {
 
@@ -130,6 +141,7 @@ visible int run_script(const char* script){
         rc = operation_main(global->manager, args[0], args+1);
     }
     // cleanup
+    labels_unref();
     for(size_t i=0; lines[i]; i++){
         free(lines[i]);
     }

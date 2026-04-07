@@ -29,13 +29,19 @@ visible Archive* archive_new(){
 }
 
 visible void archive_unref(Archive* data){
-    free(data->errors);
-    free(data->a);
+    array_unref(data->errors);
+    array_unref(data->a);
+    free(data->archive_path);
+    free(data->target_path);
+    if (data->archive) {
+        archive_read_free(data->archive);
+    }
     free(data);
 }
 
 visible void archive_load(Archive *data, const char* path) {
     debug("archive load:  %s\n", path);
+    free(data->archive_path);
     data->archive_path = strdup(path);
     archive_set_type(data, "zip", "none");
 }
@@ -52,6 +58,7 @@ static void archive_load_archive(Archive *data) {
 
 visible void archive_set_target(Archive *data, const char* target){
     debug("set archive target:  %s\n", target);
+    free(data->target_path);
     data->target_path = strdup(target);
 }
 

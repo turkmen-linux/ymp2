@@ -60,6 +60,12 @@ visible void array_add(array *arr, const char *value) {
 
 visible void array_set(array *arr, char** new_data){
     pthread_mutex_lock(&arr->lock);
+    for (size_t i = 0; i < arr->size; i++) {
+        if(arr->data[i]){
+            free(arr->data[i]);
+        }
+    }
+    free(arr->data);
     arr->data = calloc(arr->capacity, sizeof(char*));
     arr->size = 0;
     arr->removed = 0;
@@ -211,6 +217,12 @@ visible void array_sort(array* arr){
         start++;
     }
     csort(new_data, arr->size);
+    for (size_t i = 0; i < arr->size; i++) {
+        if(arr->data[i]){
+            free(arr->data[i]);
+        }
+    }
+    free(arr->data);
     arr->data = new_data;
     pthread_mutex_unlock(&arr->lock);
 }
