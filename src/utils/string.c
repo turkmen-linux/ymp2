@@ -248,6 +248,9 @@ visible char* build_string(char* format, ...) {
 }
 
 visible char* str_replace(const char* str, const char* oldSub, const char* newSub) {
+    if(!str || !oldSub || !newSub){
+        return NULL;
+    }
     // Calculate lengths
     size_t strLen = strlen(str);
     size_t oldSubLen = strlen(oldSub);
