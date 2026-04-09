@@ -2,8 +2,10 @@ SHELL=/bin/bash -e
 all: clean build
 
 build:
-	CFLAGS="-g3 -O2" meson setup build $(ARGS) \
+	CFLAGS='-g3 -O3' meson setup build $(ARGS) \
 	    --buildtype=debug \
+	    --prefix="/" \
+	    -Dlocaledir=`pwd`/po \
 	    -Dplugindir=`pwd`/build \
 	    && \
 	ninja -C build -v

@@ -42,9 +42,7 @@ endif
 
 l_args +=  ['-flto'] + nostdlib
 
-if get_option('gettext')
-    add_project_arguments('-DYMP_GETTEXT', language: 'c')
-endif
+subdir('po')
 
 if get_option('library')
     # Main library
