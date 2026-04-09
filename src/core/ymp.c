@@ -65,8 +65,18 @@ static void sigsegv_event(int signal){
 #endif
     longjmp(exception.buf, signal);
 }
+#ifdef YMP_GETTEXT
+static void gettext_init(){
+    setlocale(LC_ALL,"");
+    bindtextdomain("ymp",LOCALEDIR);
+    textdomain("ymp");
+}
+#endif
 
 visible Ymp* ymp_init(){
+#ifdef YMP_GETTEXT
+    gettext_init();
+#endif
     // Allocate memory for Ymp instance
     size_t begin_time = get_epoch();
     Ymp* ymp = (Ymp*)malloc(sizeof(Ymp));
@@ -179,4 +189,7 @@ visible void load_plugin(Ymp* ymp, const char* path){
     plugin_func(ymp);
     #endif
 }
+
+
+
 

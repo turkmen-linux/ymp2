@@ -42,6 +42,10 @@ endif
 
 l_args +=  ['-flto'] + nostdlib
 
+if get_option('gettext')
+    add_project_arguments('-DYMP_GETTEXT', language: 'c')
+endif
+
 if get_option('library')
     # Main library
     libymp = library('ymp', srcs, dependencies: deps, c_args: ['-Dinvisible=extern'], link_args: l_args + lib_l_args, install: true)

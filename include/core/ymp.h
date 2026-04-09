@@ -65,6 +65,19 @@ typedef struct {
 /** @endcond */
 } Ymp;
 
+/** @cond */
+#ifdef YMP_GETTEXT
+    #include <libintl.h>
+    #include <locale.h>
+    #include <stdio.h>
+    #define _(String) gettext(String)
+    #ifndef LOCALEDIR
+        #define LOCALEDIR "/usr/share/locale"
+    #endif
+#else
+    #define _(String) String
+#endif
+/** @endcond */
 
 /**
  * @brief Initializes a Ymp structure.

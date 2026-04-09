@@ -18,7 +18,7 @@ visible int ymp_main(int argc, char** argv){
             if(iseq(argv[i], "--version")){
                 print("YMP    : %serli ve %silli %sackage manager\n",
                     colorize(RED,"Y"), colorize(RED,"M"), colorize(RED,"P"));
-                print("Version: %s\n", VERSION);
+                print(_("Version: %s\n"), VERSION);
                 show_ver = true;
             } else if(show_ver && iseq(argv[i], "--flag")) {
                 print("\n%s\n", readfile(":/flag.txt"));

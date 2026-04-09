@@ -8,6 +8,20 @@ build:
 	    && \
 	ninja -C build -v
 
+
+pot:
+	xgettext --language=C++ -v --keyword=_\
+	     -o po/ymp.pot --from-code="utf-8" \
+	     `find src -type f -iname "*.c"` 2>/dev/null
+	for file in `ls po/*.po`; do \
+	    msgmerge $$file po/ymp.pot -o $$file.new ; \
+	    echo POT: $$file; \
+	    rm -f $$file ; \
+	    mv $$file.new $$file ; \
+	done
+	sed -f data/fix-turkish.sed -i po/tr.po
+
+
 test:
 	@mkdir -p build/test ; \
 	for example in $(wildcard build/examples/*) ; do \
