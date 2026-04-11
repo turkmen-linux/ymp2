@@ -12,6 +12,11 @@
 static WINDOW *win = NULL;
 static int win_w = 0, win_h = 0;
 static bool initialized = false;
+static gui_progress_bar_t progress_bars[GUI_MAX_BARS];
+static int progress_bar_count = 0;
+
+static bool init_ncurses(void);
+static void format_size(char *buf, size_t buf_len, size_t bytes);
 
 static void cleanup(void) {
     if (win) {
@@ -22,15 +27,25 @@ static void cleanup(void) {
         endwin();
         initialized = false;
     }
+    for (int i = 0; i < GUI_MAX_BARS; i++) {
+        progress_bars[i].active = false;
+        progress_bars[i].id = NULL;
+    }
+    progress_bar_count = 0;
 }
 
 static void handle_resize(int sig) {
     (void)sig;
     if (win) {
         delwin(win);
+        win = NULL;
+    }
+    if (initialized) {
         endwin();
         initialized = false;
     }
+    init_ncurses();
+    gui_progress_draw();
 }
 
 static bool init_ncurses(void) {
@@ -38,6 +53,16 @@ static bool init_ncurses(void) {
         return true;
 
     signal(SIGWINCH, handle_resize);
+
+    for (int i = 0; i < GUI_MAX_BARS; i++) {
+        progress_bars[i].active = false;
+        progress_bars[i].id = NULL;
+        progress_bars[i].title = NULL;
+        progress_bars[i].msg = NULL;
+        progress_bars[i].done = 0;
+        progress_bars[i].total = 0;
+    }
+    progress_bar_count = 0;
 
     initscr();
     cbreak();
@@ -262,16 +287,151 @@ visible bool gui_yes_no(const char *title, const char *msg, bool def) {
     return ret;
 }
 
-visible void gui_progress(const char *title, const char *msg, int done, int total) {
+visible void gui_progress(const char *title, const char *msg, size_t done, size_t total) {
+    gui_progress_draw();
+
+    if (progress_bar_count == 0) {
+        gui_progress_add("default", title, msg, total);
+    }
+
+    gui_progress_update("default", done, total);
+    gui_progress_draw();
+}
+
+static void draw_progress_bar(WINDOW *w, int y, const char *title, const char *msg, size_t done, size_t total) {
+    int w_w, w_h;
+    getmaxyx(w, w_h, w_w);
+    (void)w_h;
+
+    if (title) {
+        wattron(w, A_BOLD);
+        mvwprintw(w, y, 2, "%s", title);
+        wattroff(w, A_BOLD);
+    }
+
+    if (msg) {
+        mvwprintw(w, y + 1, 2, "%s", msg);
+    }
+
+    int bar_w = w_w - 28;
+    int filled = 0;
+    int pct = 0;
+    if (total > 0) {
+        pct = (done * 100) / total;
+        filled = (pct * bar_w) / 100;
+        if (filled > bar_w)
+            filled = bar_w;
+    }
+
+    mvwprintw(w, y + 2, 2, "[");
+    for (int i = 0; i < bar_w; i++) {
+        if (i < filled) {
+            waddch(w, '=' | A_BOLD | COLOR_PAIR(4));
+        } else if (i == filled) {
+            waddch(w, '>' | A_BOLD);
+        } else {
+            waddch(w, '-');
+        }
+    }
+    waddstr(w, "]");
+
+    char done_str[16], total_str[16];
+    format_size(done_str, sizeof(done_str), done);
+    format_size(total_str, sizeof(total_str), total);
+    mvwprintw(w, y + 2, w_w - 26, "%s/%s", done_str, total_str);
+
+    if (total > 0) {
+        mvwprintw(w, y + 2, w_w - 9, "%3d%%", pct);
+    } else {
+        mvwprintw(w, y + 2, w_w - 9, "   ?");
+    }
+}
+
+visible int gui_progress_add(const char *id, const char *title, const char *msg, size_t total) {
+    if (!id || progress_bar_count >= GUI_MAX_BARS)
+        return -1;
+
+    if (total == 0)
+        total = 100;
+
+    for (int i = 0; i < GUI_MAX_BARS; i++) {
+        if (!progress_bars[i].active) {
+            progress_bars[i].id = id;
+            progress_bars[i].title = title;
+            progress_bars[i].msg = msg;
+            progress_bars[i].done = 0;
+            progress_bars[i].total = total;
+            progress_bars[i].active = true;
+            progress_bar_count++;
+            return i;
+        }
+    }
+    return -1;
+}
+
+visible void gui_progress_update(const char *id, size_t done, size_t total) {
+    if (!id)
+        return;
+
+    for (int i = 0; i < GUI_MAX_BARS; i++) {
+        if (progress_bars[i].active && progress_bars[i].id && strcmp(progress_bars[i].id, id) == 0) {
+            progress_bars[i].done = done;
+            progress_bars[i].total = total;
+            return;
+        }
+    }
+}
+
+static void format_size(char *buf, size_t buf_len, size_t bytes) {
+    if (bytes >= 1024 * 1024 * 1024) {
+        snprintf(buf, buf_len, "%zu.%zuGB", bytes / (1024 * 1024 * 1024),
+                (bytes % (1024 * 1024 * 1024)) / (1024 * 1024 * 102));
+    } else if (bytes >= 1024 * 1024) {
+        snprintf(buf, buf_len, "%zu.%zuMB", bytes / (1024 * 1024),
+                (bytes % (1024 * 1024)) / (1024 * 102));
+    } else if (bytes >= 1024) {
+        snprintf(buf, buf_len, "%zu.%zuKB", bytes / 1024,
+                (bytes % 1024) / 102);
+    } else {
+        snprintf(buf, buf_len, "%zuB", bytes);
+    }
+}
+
+visible void gui_progress_remove(const char *id) {
+    if (!id)
+        return;
+
+    for (int i = 0; i < GUI_MAX_BARS; i++) {
+        if (progress_bars[i].active && progress_bars[i].id && strcmp(progress_bars[i].id, id) == 0) {
+            progress_bars[i].active = false;
+            progress_bars[i].id = NULL;
+            progress_bar_count--;
+            return;
+        }
+    }
+}
+
+visible void gui_progress_draw(void) {
     if (!initialized) {
         if (!init_ncurses())
             return;
     }
 
-    clear();
+    //clear();
     refresh();
 
-    int w = 50, h = 8;
+    int active_count = 0;
+    for (int i = 0; i < GUI_MAX_BARS; i++) {
+        if (progress_bars[i].active)
+            active_count++;
+    }
+
+    if (active_count == 0)
+        return;
+
+    int bar_h = 4;
+    int h = active_count * bar_h + 4;
+    int w = 60;
 
     int screen_w, screen_h;
     getmaxyx(stdscr, screen_h, screen_w);
@@ -286,41 +446,13 @@ visible void gui_progress(const char *title, const char *msg, int done, int tota
         wbkgd(win, COLOR_PAIR(2));
         box(win, 0, 0);
 
-        if (title) {
-            wattron(win, A_BOLD);
-            mvwprintw(win, 1, 2, "%s", title);
-            wattroff(win, A_BOLD);
-        }
-
-        if (msg) {
-            mvwprintw(win, 3, 2, "%s", msg);
-        }
-
-        int bar_w = win_w - 8;
-        int filled = 0;
-        if (total > 0) {
-            filled = (done * bar_w) / total;
-            if (filled > bar_w)
-                filled = bar_w;
-        }
-
-        mvwprintw(win, 5, 2, "[");
-        for (int i = 0; i < bar_w; i++) {
-            if (i < filled) {
-                waddch(win, '=' | A_BOLD | COLOR_PAIR(4));
-            } else if (i == filled) {
-                waddch(win, '>' | A_BOLD);
-            } else {
-                waddch(win, '-');
+        int y = 1;
+        for (int i = 0; i < GUI_MAX_BARS; i++) {
+            if (progress_bars[i].active) {
+                draw_progress_bar(win, y, progress_bars[i].title, progress_bars[i].msg,
+                               progress_bars[i].done, progress_bars[i].total);
+                y += bar_h;
             }
-        }
-        waddstr(win, "]");
-
-        if (total > 0) {
-            int pct = (done * 100) / total;
-            mvwprintw(win, 5, win_w - 10, "%3d%%", pct);
-        } else {
-            mvwprintw(win, 5, win_w - 10, "   0%%");
         }
 
         wrefresh(win);

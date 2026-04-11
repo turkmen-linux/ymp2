@@ -71,6 +71,9 @@ visible char** parse_args(char** args, bool free_strings) {
         }
         args[i-removed] = args[i];
     }
+    for (size_t i=len-removed;args[i]; i++){
+        args[i] = NULL;
+    }
     return args;
 }
 

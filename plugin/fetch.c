@@ -8,8 +8,17 @@
 #include <core/operations.h>
 
 #include <utils/fetcher.h>
+#include <utils/gui.h>
 
 static VariableManager* vars;
+
+static void fetch_progress_cb(const char* url, size_t downloaded, size_t total, void* userdata) {
+    (void)url;
+    char* id = (char*)userdata;
+
+    gui_progress_update(id, downloaded, total);
+    gui_progress_draw();
+}
 
 static int fetch_fn(void** args){
     const char* target = variable_get_value(vars, "target");
@@ -23,15 +32,31 @@ static int fetch_fn(void** args){
         }
         target = curdir;
     }
+
+    gui_init();
+
     for(size_t i=0; links[i]; i++){
         char target_file[PATH_MAX+strlen(links[i])+1];
         strcpy(target_file, target);
         strcat(target_file, "/");
         strcat(target_file, basename(links[i]));
-        if(!fetch(links[i], target_file)){
-            return 1;
-        }
+
+        char id[32];
+        snprintf(id, sizeof(id), "fetch_%zu", i);
+
+        char title[PATH_MAX];
+        snprintf(title, PATH_MAX, "%s : %s", _("Download"), basename(links[i]));
+
+        gui_progress_add(id, title, basename(links[i]), 0);
+
+        char* id_copy = strdup(id);
+        fetch_with_progress(links[i], target_file, fetch_progress_cb, id_copy);
+
+        gui_progress_remove(id);
+        free(id_copy);
     }
+
+    gui_end();
     return 0;
 
 }
