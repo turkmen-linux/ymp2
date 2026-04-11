@@ -36,11 +36,6 @@ static int fetch_fn(void** args){
     gui_init();
 
     for(size_t i=0; links[i]; i++){
-        char target_file[PATH_MAX+strlen(links[i])+1];
-        strcpy(target_file, target);
-        strcat(target_file, "/");
-        strcat(target_file, basename(links[i]));
-
         char id[32];
         snprintf(id, sizeof(id), "fetch_%zu", i);
 
@@ -49,11 +44,19 @@ static int fetch_fn(void** args){
 
         gui_progress_add(id, title, basename(links[i]), 0);
 
-        char* id_copy = strdup(id);
-        fetch_with_progress(links[i], target_file, fetch_progress_cb, id_copy);
+    }
+    for(size_t i=0; links[i]; i++){
+        char target_file[PATH_MAX+strlen(links[i])+1];
+        strcpy(target_file, target);
+        strcat(target_file, "/");
+        strcat(target_file, basename(links[i]));
+
+        char id[32];
+        snprintf(id, sizeof(id), "fetch_%zu", i);
+
+        fetch_with_progress(links[i], target_file, fetch_progress_cb, id);
 
         gui_progress_remove(id);
-        free(id_copy);
     }
 
     gui_end();

@@ -28,8 +28,13 @@ static void cleanup(void) {
         initialized = false;
     }
     for (int i = 0; i < GUI_MAX_BARS; i++) {
+        free((void *)progress_bars[i].id);
+        free((void *)progress_bars[i].title);
+        free((void *)progress_bars[i].msg);
         progress_bars[i].active = false;
         progress_bars[i].id = NULL;
+        progress_bars[i].title = NULL;
+        progress_bars[i].msg = NULL;
     }
     progress_bar_count = 0;
 }
@@ -356,9 +361,9 @@ visible int gui_progress_add(const char *id, const char *title, const char *msg,
 
     for (int i = 0; i < GUI_MAX_BARS; i++) {
         if (!progress_bars[i].active) {
-            progress_bars[i].id = id;
-            progress_bars[i].title = title;
-            progress_bars[i].msg = msg;
+            progress_bars[i].id = id ? strdup(id) : NULL;
+            progress_bars[i].title = title ? strdup(title) : NULL;
+            progress_bars[i].msg = msg ? strdup(msg) : NULL;
             progress_bars[i].done = 0;
             progress_bars[i].total = total;
             progress_bars[i].active = true;
@@ -403,9 +408,16 @@ visible void gui_progress_remove(const char *id) {
 
     for (int i = 0; i < GUI_MAX_BARS; i++) {
         if (progress_bars[i].active && progress_bars[i].id && strcmp(progress_bars[i].id, id) == 0) {
+            free((void *)progress_bars[i].id);
+            free((void *)progress_bars[i].title);
+            free((void *)progress_bars[i].msg);
             progress_bars[i].active = false;
             progress_bars[i].id = NULL;
+            progress_bars[i].title = NULL;
+            progress_bars[i].msg = NULL;
             progress_bar_count--;
+            clear();
+            gui_progress_draw();
             return;
         }
     }
