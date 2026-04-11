@@ -51,7 +51,7 @@ void sysconf_init(OperationManager *manager){
     Operation op;
     op.name = "sysconf";
     op.alias = "sc";
-    op.description = "Trigger sysconf operations";
+    op.description = _("Trigger sysconf operations");
     op.min_args = 0;
     op.help = NULL;
     op.call = (callback)sysconf_main;

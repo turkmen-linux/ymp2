@@ -95,7 +95,7 @@ void info_init(OperationManager* manager){
     Operation op;
     op.name="info";
     op.alias = "i";
-    op.description = "Show package information";
+    op.description = _("Show package information");
     op.min_args = 1;
     op.call = (callback)info_main;
     op.help = NULL;

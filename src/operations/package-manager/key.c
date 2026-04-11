@@ -55,7 +55,7 @@ static int key_list(char** args){
     for(size_t i=0; keys[i]; i++){
         if(endswith(keys[i], ".gpg")){
             keys[i][strlen(keys[i])-4] = '\0';
-            printf("%s\n", keys[i]);
+            print("%s\n", keys[i]);
             free(keys[i]);
         }
     }
@@ -79,12 +79,12 @@ void key_init(OperationManager *manager){
     Operation op;
     op.name = "key";
     op.alias = "k";
-    op.description = "Ymp key manager";
+    op.description = _("Ymp key manager");
     op.min_args = 0;
      op.help = help_new();
-    help_add_parameter(op.help, "--add", "Add a key into ymp keyring db");
-    help_add_parameter(op.help, "--remove", "Add a key from ymp keyring db");
-    help_add_parameter(op.help, "--name", "Name for new key");
+    help_add_parameter(op.help, "--add", _("Add a key into ymp keyring db"));
+    help_add_parameter(op.help, "--remove", _("Add a key from ymp keyring db"));
+    help_add_parameter(op.help, "--name", _("Name for new key"));
 
     op.call = (callback)key_main;
     operation_register(manager, op);

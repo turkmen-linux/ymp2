@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 
+#include <core/ymp.h>
 #include <utils/string.h>
 #include <utils/array.h>
 #include <core/logger.h>
@@ -147,8 +148,8 @@ visible char** yaml_get_area_list(const char* fdata, const char* path, int* area
                         ret = tmp;
                     }
                     if (ret == NULL) {
-                        fprintf(stderr, "Memory allocation failed\n");
-                        return NULL; // Handle allocation failure
+                        print(_("Memory allocation failed\n"));
+                        return NULL;
                     }
                 }
                 ret[*area_count] = trim(array_get_string(area));
@@ -179,8 +180,8 @@ visible char** yaml_get_area_list(const char* fdata, const char* path, int* area
             max += 32; // Increase size by 32
             ret = realloc(ret, max * sizeof(char*));
             if (ret == NULL) {
-                fprintf(stderr, "Memory allocation failed\n");
-                return NULL; // Handle allocation failure
+                print(_("Memory allocation failed\n"));
+                return NULL;
             }
         }
         ret[*area_count] = trim(array_get_string(area));

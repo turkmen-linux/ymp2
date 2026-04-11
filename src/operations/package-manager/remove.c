@@ -148,7 +148,7 @@ void remove_init(OperationManager* manager){
     Operation op;
     op.name = "remove";
     op.alias = "rm:del:unmerge";
-    op.description = "Remove package";
+    op.description = _("Remove package");
     op.min_args = 1;
     op.help = NULL;
     op.call = (callback)remove_main;

@@ -270,7 +270,7 @@ void repo_init(OperationManager* manager){
     Operation op;
     op.name = "repo";
     op.alias = "";
-    op.description = "Repository operations";
+    op.description = _("Repository operations");
     op.min_args = 0;
     op.help = NULL;
     op.call = (callback)repo_main;

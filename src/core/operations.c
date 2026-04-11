@@ -7,6 +7,7 @@
 
 #include <sys/stat.h>
 
+#include <core/ymp.h>
 #include <core/logger.h>
 #include <core/operations.h>
 #include <core/variable.h>
@@ -61,8 +62,7 @@ void visible operation_register(OperationManager *manager, Operation new_op) {
 
         // Check if realloc was successful
         if (new_ops == NULL) {
-            // Handle memory allocation failure (e.g., log an error, exit, etc.)
-            fprintf(stderr, "Memory allocation failed\n");
+            print(_("Memory allocation failed\n"));
             return;
         }
 

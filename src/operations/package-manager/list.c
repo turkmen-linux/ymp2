@@ -81,11 +81,11 @@ void list_init(OperationManager* manager){
     Operation op;
     op.name = "list";
     op.alias = "ls";
-    op.description = "List packages, repos and more";
+    op.description = _("List packages, repos and more");
     op.min_args = 0;
     op.help = help_new();
-    help_add_parameter(op.help, "--available", "List available packages");
-    help_add_parameter(op.help, "--installed", "List installed packages");
+    help_add_parameter(op.help, "--available", _("List available packages"));
+    help_add_parameter(op.help, "--installed", _("List installed packages"));
     op.call = (callback)list;
     operation_register(manager, op);
 }

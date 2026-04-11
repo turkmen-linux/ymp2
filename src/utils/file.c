@@ -18,6 +18,7 @@
 
 #include <utils/array.h>
 #include <utils/string.h>
+#include <core/ymp.h>
 #include <core/logger.h>
 
 visible uint64_t filesize(const char* path) {
@@ -310,22 +311,19 @@ visible bool copy_file(const char *sourceFile, const char *destFile) {
 visible bool copy_directory(const char *sourceDir, const char *destDir) {
     struct stat st;
     if (stat(sourceDir, &st) != 0) {
-        perror("Error accessing source directory");
-        printf("%s\n", sourceDir);
+        print(_("Error accessing source directory: %s\n"), sourceDir);
         return false;
     }
 
     // Create the destination directory
     if (!isdir(destDir) && mkdir(destDir, st.st_mode) != 0) {
-        perror("Error creating destination directory");
-        printf("%s\n", destDir);
+        print(_("Error creating destination directory: %s\n"), destDir);
         return false;
     }
 
     DIR *dir = opendir(sourceDir);
     if (dir == NULL) {
-        perror("Error opening source directory");
-        printf("%s\n", sourceDir);
+        print(_("Error opening source directory: %s\n"), sourceDir);
         return false;
     }
 
@@ -396,11 +394,9 @@ visible char* sreadlink(const char* path) {
 }
 
 visible	bool remove_all(const char *path) {
-    // Struct for path information
     struct stat st;
-    // Check access
     if (stat(path, &st) != 0) {
-        fprintf(stderr, "Cannot access: %s\n", path);
+        print(_("Cannot access: %s\n"), path);
         return false;
     }
 

@@ -1,6 +1,7 @@
 #include <string.h>
 
 #include <core/ymp.h>
+#include <core/logger.h>
 #include <utils/archive.h>
 
 static VariableManager* vars;
@@ -24,10 +25,10 @@ visible void plugin_init(Ymp* ymp){
     vars = ymp->variables;
     Operation op;
     op.name = "extract";
-    op.description = "Extract files from archive";
+    op.description = _("Extract files from archive");
     op.alias = "x";
     op.help = help_new();
-    help_add_parameter(op.help, "--target", "Target directory");
+    help_add_parameter(op.help, "--target", _("Target directory"));
     op.min_args = 1;
     op.call = (callback) extract_main;
     operation_register(ymp->manager, op);

@@ -64,7 +64,7 @@ static void serve_file(int client_fd, FILE* file, size_t fsize, size_t start, si
 static void list_directory(int client_fd, const char* dir_path, const char* serve) {
     DIR *dir = opendir(dir_path);
     if (dir == NULL) {
-        printf("Failed to open directory: %s\n", dir_path);
+        print(_("Failed to open directory: %s\n"), dir_path);
         return;
     }
 
@@ -125,7 +125,7 @@ static void* handle_client(void* arg){
     char* path = "/";
     int bytes_read = read(client_fd, buffer, sizeof(buffer) - 1);
     if(bytes_read < 0){
-        printf("Failed to read from client");
+        print(_("Failed to read from client"));
         close(client_fd);
         return NULL;
     }
@@ -177,11 +177,11 @@ static void* handle_client(void* arg){
     }
     free(lines);
     // check path is valid
-    printf("GET: %s\n", path);
+    print(_("GET: %s\n"), path);
     if(isfile(path)){
         FILE *file = fopen(path, "rb");
         if (file == NULL) {
-            printf("Failed to open file: %s\n", path);
+            print(_("Failed to open file: %s\n"), path);
         } else {
             size_t fsize = filesize(path);
             serve_file(client_fd, file, fsize, r.start, r.end);
@@ -226,7 +226,7 @@ static int httpd(char** args){
     int addrlen = sizeof(addr);
     int fd = socket(AF_INET, SOCK_STREAM, 0);
     if(fd < 0) {
-        printf("Error opening socket\n");
+        print(_("Error opening socket\n"));
         return 1;
     }
     addr.sin_port = htons(port);
@@ -237,11 +237,11 @@ static int httpd(char** args){
         perror("setsockopt(SO_REUSEPORT) failed");
     }
     if(bind(fd, (struct sockaddr *)&addr,sizeof(struct sockaddr_in) ) < 0) {
-        printf("Error binding socket\n");
+        print(_("Error binding socket\n"));
         return 1;
     }
     if ((listen(fd, 3)) < 0) {
-        printf("Listen failed...\n");
+        print(_("Listen failed...\n"));
         return 1;
     }
     while (true){
@@ -259,12 +259,12 @@ visible void plugin_init(Ymp* ymp){
     y = ymp;
     Operation op;
     op.name = "httpd";
-    op.description = "simple http server";
+    op.description = _("simple http server");
     op.call = (callback)httpd;
     op.alias = NULL;
     op.help = help_new();
-    help_add_parameter(op.help, "--source", "serve directory. (default /)");
-    help_add_parameter(op.help, "--port", "server tcp port (default 8000)");
+    help_add_parameter(op.help, "--source", _("serve directory. (default /)"));
+    help_add_parameter(op.help, "--port", _("server tcp port (default 8000)"));
     op.min_args = 0;
     operation_register(y->manager, op);
 }

@@ -55,9 +55,9 @@ static void sigsegv_event(int signal){
     size = backtrace(array, 10);
     strings = backtrace_symbols(array, size);
 
-    printf("Segmentation fault:\n");
+    print(_("Segmentation fault:\n"));
     for (i = 0; i < size; i++) {
-        printf("%s\n", strings[i]);
+        print("%s\n", strings[i]);
     }
 
     /* Free the memory allocated by backtrace_symbols */
@@ -141,7 +141,7 @@ visible void ymp_add(Ymp* ymp, const char* name, void* args) {
         queue->item = realloc(queue->item, sizeof(OperationJob) * queue->capacity);
         if (queue->item == NULL) {
             // Handle memory allocation failure
-            fprintf(stderr, "Memory allocation failed\n");
+            print(_("Memory allocation failed\n"));
             return;
         }
     }

@@ -10,6 +10,7 @@
 #include <utils/fetcher.h>
 #include <utils/color.h>
 
+#include <core/ymp.h>
 #include <core/logger.h>
 #include <core/variable.h>
 #include <config.h>
@@ -70,8 +71,8 @@ static void repository_load_data(Repository* repo, const char* data, bool is_sou
         repo->packages[repo->package_count]->is_virtual = true;
         repo->packages[repo->package_count]->repo = (void*)repo;
         if (repo->packages[repo->package_count] == NULL) {
-            printf("Failed to create new package\n");
-            continue; // Handle package creation failure
+            print(_("Failed to create new package\n"));
+            continue;
         }
         package_load_from_metadata(repo->packages[repo->package_count], areas[i], is_source);
         repo->package_count++;

@@ -19,7 +19,7 @@ static void brainfuck(char * code, unsigned int size) {
   }
   for (i = 0; i < strlen(code); i++) {
     if(ptr >=size){
-        fprintf(stderr, "Failed to run brainfuck code: Out of memory\n");
+        print(_("Failed to run brainfuck code: Out of memory\n"));
         return;
     }
     if (code[i] == '>') {
@@ -124,7 +124,7 @@ visible void plugin_init(Ymp* ymp){
     Operation op;
     op.name = "brainfuck";
     op.alias = "bf";
-    op.description = "Brainfuck interpreter";
+    op.description = _("Brainfuck interpreter");
     op.min_args = 1;
     op.help = NULL;
     op.call = (callback) brainfuck_op;

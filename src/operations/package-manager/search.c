@@ -37,7 +37,7 @@ static int search_package(const char* arg, Repository **repos){
 
                 char* desc_colorized = str_replace(desc, arg, arg_green);
                 char* name_colorized = str_replace(name, arg, arg_green);
-                printf("%s::%s::%s: %s\n", repos[i]->name, isc, name_colorized, desc_colorized);
+                print("%s::%s::%s: %s\n", repos[i]->name, isc, name_colorized, desc_colorized);
                 free(desc_colorized);
                 free(name_colorized);
                 free(arg_green);
@@ -70,10 +70,10 @@ void search_init(OperationManager *manager){
     Operation op;
     op.name = "search";
     op.alias = "sr:find";
-    op.description = "Search package or file";
+    op.description = _("Search package or file");
     op.min_args = 1;
     op.call = (callback)search_main;
     op.help = help_new();
-    help_add_parameter(op.help, "--file", "Search files");
+    help_add_parameter(op.help, "--file", _("Search files"));
     operation_register(manager, op);
 }

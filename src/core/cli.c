@@ -18,7 +18,7 @@ visible int ymp_main(int argc, char** argv){
         for(int i= 0; argv[i]; i++){
             if(iseq(argv[i], "--version")){
                 color_print(BOLD, COLOR_RED, "YMP");
-                printf("    : %serli ve %silli %sackage manager\n",
+                print("    : %serli ve %silli %sackage manager\n",
                     "Y", "M", "P");
                 print(_("Version: %s\n"), VERSION);
                 show_ver = true;
@@ -34,10 +34,10 @@ visible int ymp_main(int argc, char** argv){
         }
         ymp_add(ymp, argv[1], parse_args(argv+2));
     } else {
-        printf("No command given.\n");
-        printf("Run ");
+        print(_("No command given.\n"));
+        print(_("Run "));
         color_print(BOLD, COLOR_RED,  "ymp help");
-        printf(" for more information about usage.\n");
+        print(_(" for more information about usage.\n"));
         ymp_unref(ymp);
         return 1;
     }

@@ -5,6 +5,7 @@
 #include <libgen.h>
 #include <stdbool.h>
 
+#include <core/ymp.h>
 #include <core/logger.h>
 #include <utils/fetcher.h>
 #include <utils/file.h>
@@ -66,7 +67,7 @@ visible bool fetch(const char* url, const char* path) {
         // Perform the request
         fetch->res = curl_easy_perform(fetch->curl);
         if (fetch->res != CURLE_OK) {
-            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(fetch->res));
+            print(_("curl_easy_perform() failed: %s\n"), curl_easy_strerror(fetch->res));
             fclose(fetch->fp); // Close the file on error
             free(fetch);
             return false; // Return false if the request fails

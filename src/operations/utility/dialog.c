@@ -14,7 +14,7 @@ void dialog_init(OperationManager* manager){
     Operation op;
     op.name = "dialog";
     op.alias = "ask";
-    op.description = "Dialog";
+    op.description = _("Dialog");
     op.min_args = 2;
     op.help = NULL;
     op.call = (callback)dialog_main;

@@ -101,13 +101,13 @@ void install_init(OperationManager* manager){
     Operation op;
     op.name = "install";
     op.alias = "it:add:merge";
-    op.description = "Install package";
+    op.description = _("Install package");
     op.min_args = 1;
     op.call = (callback)install_main;
     op.help = help_new();
-    help_add_parameter(op.help, "--ignore-dependency", "disable dependency check");
-    help_add_parameter(op.help, "--reinstall", "reinstall if already installed");
-    help_add_parameter(op.help, "--no-emerge", "use binary package");
-    help_add_parameter(op.help, "--sync-single", "sync quarantine after every package installation");
+    help_add_parameter(op.help, "--ignore-dependency", _("disable dependency check"));
+    help_add_parameter(op.help, "--reinstall", _("reinstall if already installed"));
+    help_add_parameter(op.help, "--no-emerge", _("use binary package"));
+    help_add_parameter(op.help, "--sync-single", _("sync quarantine after every package installation"));
     operation_register(manager, op);
 }

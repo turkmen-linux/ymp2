@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <core/ymp.h>
-
+#include <core/logger.h>
 #include <utils/string.h>
 
 static int set_fn(char** args){
@@ -9,7 +9,7 @@ static int set_fn(char** args){
 }
 static int get_fn(char** args){
     const char* value = get_value(args[0]);
-    printf("%s\n", value);
+    print("%s\n", value);
     return 0;
 }
 
@@ -30,7 +30,7 @@ void setget_init(OperationManager* manager){
     set.name = "set";
     set.alias = NULL;
     set.help = NULL;
-    set.description = "Set ymp variable";
+    set.description = _("Set ymp variable");
     set.min_args = 2;
     set.call = (callback)set_fn;
     operation_register(manager, set);
@@ -38,7 +38,7 @@ void setget_init(OperationManager* manager){
     Operation get;
     get.name = "get";
     get.alias = NULL;
-    get.description = "Get ymp variable";
+    get.description = _("Get ymp variable");
     get.min_args = 1;
     get.help = NULL;
     get.call = (callback) get_fn;
@@ -46,7 +46,7 @@ void setget_init(OperationManager* manager){
 
     Operation eq;
     eq.name = "eq";
-    eq.description = "Compare strings";
+    eq.description = _("Compare strings");
     eq.alias = NULL;
     eq.min_args = 2;
     eq.help = NULL;
@@ -55,7 +55,7 @@ void setget_init(OperationManager* manager){
 
     Operation dummy;
     dummy.name = ":";
-    dummy.description = "Do nothing";
+    dummy.description = _("Do nothing");
     dummy.alias = NULL;
     dummy.min_args = 0;
     dummy.help = NULL;

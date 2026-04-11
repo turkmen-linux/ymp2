@@ -59,7 +59,7 @@ static int help_main(char** args){
 void help_init(OperationManager* manager){
     Operation op;
     op.name = "help";
-    op.description = "Print help message";
+    op.description = _("Print help message");
     op.alias = "h";
     op.min_args = 0;
     op.help = NULL;

@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 
+#include <core/ymp.h>
 #include <utils/array.h>
 #include <core/logger.h>
 
@@ -11,12 +12,12 @@
 visible array *array_new() {
     array *arr = (array *)malloc(sizeof(array));
     if(!arr){
-        printf("memory allocation failed");
+        print(_("memory allocation failed"));
         return NULL;
     }
     arr->data = (char**)malloc(1024* sizeof(char*));
     if(!arr->data){
-        printf("memory allocation failed");
+        print(_("memory allocation failed"));
         free(arr);
         return NULL;
     }

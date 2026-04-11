@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-09 08:15+0000\n"
+"POT-Creation-Date: 2026-04-11 18:35+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,266 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/core/cli.c:21
+#: src/core/cli.c:23
 #, c-format
 msgid "Version: %s\n"
+msgstr ""
+
+#: src/core/cli.c:37
+msgid "No command given.\n"
+msgstr ""
+
+#: src/core/cli.c:38
+msgid "Run "
+msgstr ""
+
+#: src/core/cli.c:40
+msgid " for more information about usage.\n"
+msgstr ""
+
+#: src/core/help.c:16
+msgid "Memory allocation failed for Help structure.\n"
+msgstr ""
+
+#: src/core/help.c:27
+msgid "Memory allocation failed for parameters array.\n"
+msgstr ""
+
+#: src/core/help.c:52
+msgid "Memory reallocation failed for parameters array.\n"
+msgstr ""
+
+#: src/core/help.c:60
+#, c-format
+msgid "String duplication failed for: %s\n"
+msgstr ""
+
+#: src/core/operations.c:65 src/core/variable.c:65 src/core/ymp.c:144
+#: src/utils/yaml.c:151 src/utils/yaml.c:183
+msgid "Memory allocation failed\n"
+msgstr ""
+
+#: src/core/variable.c:43 src/core/variable.c:89
+msgid "Invalid VariableManager\n"
+msgstr ""
+
+#: src/core/ymp.c:58
+msgid "Segmentation fault:\n"
+msgstr ""
+
+#: src/utils/archive.c:162
+#, c-format
+msgid "Skip unsupported archive entry: %s\n"
+msgstr ""
+
+#: src/utils/array.c:15 src/utils/array.c:20
+msgid "memory allocation failed"
+msgstr ""
+
+#: src/utils/fetcher.c:70
+#, c-format
+msgid "curl_easy_perform() failed: %s\n"
+msgstr ""
+
+#: src/utils/file.c:314
+#, c-format
+msgid "Error accessing source directory: %s\n"
+msgstr ""
+
+#: src/utils/file.c:320
+#, c-format
+msgid "Error creating destination directory: %s\n"
+msgstr ""
+
+#: src/utils/file.c:326
+#, c-format
+msgid "Error opening source directory: %s\n"
+msgstr ""
+
+#: src/utils/file.c:399
+#, c-format
+msgid "Cannot access: %s\n"
+msgstr ""
+
+#: src/data/repository.c:74
+msgid "Failed to create new package\n"
+msgstr ""
+
+#: src/operations/package-manager/build.c:66
+msgid "Build package"
+msgstr ""
+
+#: src/operations/package-manager/build.c:69
+msgid "install after build"
+msgstr ""
+
+#: src/operations/package-manager/info.c:98
+msgid "Show package information"
+msgstr ""
+
+#: src/operations/package-manager/install.c:104
+msgid "Install package"
+msgstr ""
+
+#: src/operations/package-manager/install.c:108
+msgid "disable dependency check"
+msgstr ""
+
+#: src/operations/package-manager/install.c:109
+msgid "reinstall if already installed"
+msgstr ""
+
+#: src/operations/package-manager/install.c:110
+msgid "use binary package"
+msgstr ""
+
+#: src/operations/package-manager/install.c:111
+msgid "sync quarantine after every package installation"
+msgstr ""
+
+#: src/operations/package-manager/key.c:82
+msgid "Ymp key manager"
+msgstr ""
+
+#: src/operations/package-manager/key.c:85
+msgid "Add a key into ymp keyring db"
+msgstr ""
+
+#: src/operations/package-manager/key.c:86
+msgid "Add a key from ymp keyring db"
+msgstr ""
+
+#: src/operations/package-manager/key.c:87
+msgid "Name for new key"
+msgstr ""
+
+#: src/operations/package-manager/list.c:84
+msgid "List packages, repos and more"
+msgstr ""
+
+#: src/operations/package-manager/list.c:87
+msgid "List available packages"
+msgstr ""
+
+#: src/operations/package-manager/list.c:88
+msgid "List installed packages"
+msgstr ""
+
+#: src/operations/package-manager/remove.c:151
+msgid "Remove package"
+msgstr ""
+
+#: src/operations/package-manager/repo.c:273
+msgid "Repository operations"
+msgstr ""
+
+#: src/operations/package-manager/search.c:73
+msgid "Search package or file"
+msgstr ""
+
+#: src/operations/package-manager/search.c:77
+msgid "Search files"
+msgstr ""
+
+#: src/operations/utility/dialog.c:17
+msgid "Dialog"
+msgstr ""
+
+#: src/operations/utility/help.c:62
+msgid "Print help message"
+msgstr ""
+
+#: src/operations/utility/print.c:20
+msgid "Print message"
+msgstr ""
+
+#: src/operations/utility/revdep.c:71
+msgid "Check library for broken links."
+msgstr ""
+
+#: src/operations/utility/setget.c:33
+msgid "Set ymp variable"
+msgstr ""
+
+#: src/operations/utility/setget.c:41
+msgid "Get ymp variable"
+msgstr ""
+
+#: src/operations/utility/setget.c:49
+msgid "Compare strings"
+msgstr ""
+
+#: src/operations/utility/setget.c:58
+msgid "Do nothing"
+msgstr ""
+
+#: src/operations/utility/sysconf.c:54
+msgid "Trigger sysconf operations"
+msgstr ""
+
+#: plugin/brainfuck.c:22
+msgid "Failed to run brainfuck code: Out of memory\n"
+msgstr ""
+
+#: plugin/brainfuck.c:127
+msgid "Brainfuck interpreter"
+msgstr ""
+
+#: plugin/extract.c:28
+msgid "Extract files from archive"
+msgstr ""
+
+#: plugin/extract.c:31
+msgid "Target directory"
+msgstr ""
+
+#: plugin/hello.c:10
+msgid "Hello World\n"
+msgstr ""
+
+#: plugin/hello.c:19
+msgid "Simple hello world plugin"
+msgstr ""
+
+#: plugin/httpd.c:67
+#, c-format
+msgid "Failed to open directory: %s\n"
+msgstr ""
+
+#: plugin/httpd.c:128
+msgid "Failed to read from client"
+msgstr ""
+
+#: plugin/httpd.c:180
+#, c-format
+msgid "GET: %s\n"
+msgstr ""
+
+#: plugin/httpd.c:184
+#, c-format
+msgid "Failed to open file: %s\n"
+msgstr ""
+
+#: plugin/httpd.c:229
+msgid "Error opening socket\n"
+msgstr ""
+
+#: plugin/httpd.c:240
+msgid "Error binding socket\n"
+msgstr ""
+
+#: plugin/httpd.c:244
+msgid "Listen failed...\n"
+msgstr ""
+
+#: plugin/httpd.c:262
+msgid "simple http server"
+msgstr ""
+
+#: plugin/httpd.c:266
+msgid "serve directory. (default /)"
+msgstr ""
+
+#: plugin/httpd.c:267
+msgid "server tcp port (default 8000)"
 msgstr ""

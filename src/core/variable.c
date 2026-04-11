@@ -40,7 +40,7 @@ visible void variable_manager_unref(VariableManager* variables){
 
 static void variable_set_value_fn(VariableManager* variables, const char* name, const char* value, bool read_only) {
     if (!variables) {
-        printf("Invalid VariableManager\n");
+        print(_("Invalid VariableManager\n"));
         return;
     }
     YmpVariable* vars = (YmpVariable*)variables->priv_data;
@@ -62,8 +62,8 @@ static void variable_set_value_fn(VariableManager* variables, const char* name, 
         variables->capacity += 32;
         YmpVariable* new_vars = realloc(variables->priv_data, sizeof(YmpVariable) * variables->capacity);
         if (!new_vars) {
-            printf("Memory allocation failed\n");
-            return; // Handle memory allocation failure
+            print(_("Memory allocation failed\n"));
+            return;
         }
         variables->priv_data = new_vars;
         vars = new_vars; // Update local pointer
@@ -86,7 +86,7 @@ void visible variable_set_value_read_only(VariableManager* variables, const char
 
 visible char* variable_get_value(VariableManager* variables, const char* name) {
     if (!variables) {
-        printf("Invalid VariableManager\n");
+        print(_("Invalid VariableManager\n"));
         return "";
     }
     YmpVariable* vars = (YmpVariable*)variables->priv_data;

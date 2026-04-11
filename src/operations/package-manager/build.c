@@ -63,10 +63,10 @@ static int build(void** args) {
 void build_init(OperationManager* manager){
     Operation op;
     op.name = "build";
-    op.description = "Build package";
+    op.description = _("Build package");
     op.alias = "bi:make";
     op.help = help_new();
-    help_add_parameter(op.help, "--install", "install after build");
+    help_add_parameter(op.help, "--install", _("install after build"));
     op.call = (callback)build;
     op.min_args = 1;
     operation_register(manager, op);

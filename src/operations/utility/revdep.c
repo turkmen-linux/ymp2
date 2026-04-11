@@ -68,7 +68,7 @@ void revdep_init(OperationManager* manager){
     Operation op;
     op.name = "revdep-rebuild";
     op.alias = "rbd:cr";
-    op.description = "Check library for broken links.";
+    op.description = _("Check library for broken links.");
     op.min_args = 0;
     op.help = NULL;
     op.call = (callback)revdep_main;
