@@ -36,8 +36,6 @@
  */
 #define ERROR 4
 
-#define COLORIZE 4
-
 /**
  * @brief Set the logging status for a specific log type.
  *
@@ -109,96 +107,5 @@ int print_fn(const char* caller, int type, const char* format, ...);
  * @param ... Additional arguments for the format string.
  */
 #define warning(A, ...) print_fn(__func__, WARNING, A, ##__VA_ARGS__)
-
-#define BLACK 30
-#define RED 31
-#define GREEN 32
-#define YELLOW 33
-#define BLUE 34
-#define MAGENTA 35
-#define CYAN 36
-#define WHITE 37
-
-/**
- * @typedef Colorize
- * @brief Function pointer type for colorizing text.
- *
- * This typedef defines a function pointer type named Colorize that points
- * to a function taking two const char pointers as arguments and returning a
- * pointer to a char (interpreted as a colorized string).
- *
- * @param colorized A string that represents the formatted colorized text,
- *                  containing ANSI escape codes.
- * @param flat A string that represents the plain, non-colorized text.
- * @return A char pointer to the colorized string ready for output.
- */
-typedef char* (*Colorize)(const char* colorized, const char* flat);
-
-/**
- * @var colorize_fn
- * @brief Global function pointer for colorizing text.
- *
- * This variable holds the address of a function that implements the
- * colorizing behavior. It is created and used by Ymp.
- */
-extern Colorize colorize_fn;
-
-#define clr(A) #A
-/**
- * @brief Constructs a colorized string with ANSI escape codes.
- *
- * This macro constructs a string that combines ANSI escape codes for text color
- * with the specified string. It is primarily used in conjunction with the
- * colorize function.
- *
- * @param color The color code (e.g., 31 for red).
- * @param message The string to be colorized.
- * @return A string literal containing the full ANSI color sequence.
- */
-#define colorized(color, message) "\033[" clr(color) "m" message "\033[;0m"
-
-/**
- * @brief Colorizes a message with the specified color.
- *
- * This function takes a color code and a message string as input, and returns
- * a new string that contains the message formatted with the specified color.
- * The color codes are based on ANSI escape codes for terminal text coloring.
- *
- * @param color The color code to apply to the message. Valid values are:
- *              - BLACK (30)
- *              - RED (31)
- *              - GREEN (32)
- *              - YELLOW (33)
- *              - BLUE (34)
- *              - MAGENTA (35)
- *              - CYAN (36)
- *              - WHITE (37)
- * @param message The message string to be colorized.
- * @return colorized message
- *
- * Example:
- * @code
- * #include <stdio.h>
- * #include <core/logger.h>
- * #include <core/ymp.h>
- *
- * int main() {
- *     ymp_init();
- *     // print messages
- *     printf("%s\n", colorize(RED,"Red Message"));
- *     printf(colorize_fn(colorized(RED,"%s")" %s\n", "%s %s\n"), "Green", "Message");
- *     // disable colorize
- *     logger_set_status(COLORIZE, false);
- *     // print messages
- *     printf("%s\n", colorize(YELLOW,"non-colorized message"));
- *     printf("%s\n", colorized("force blue message"));
- *
- *     return 0;
- * }
- * @endcode
- */
-#define colorize(color, message) colorize_fn(colorized(color, message), message)
-
-
 
 #endif

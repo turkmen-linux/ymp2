@@ -17,7 +17,7 @@ visible int ymp_main(int argc, char** argv){
         for(int i= 0; argv[i]; i++){
             if(iseq(argv[i], "--version")){
                 print("YMP    : %serli ve %silli %sackage manager\n",
-                    colorize(RED,"Y"), colorize(RED,"M"), colorize(RED,"P"));
+                    "Y", "M", "P");
                 print(_("Version: %s\n"), VERSION);
                 show_ver = true;
             } else if(show_ver && iseq(argv[i], "--flag")) {
@@ -32,7 +32,7 @@ visible int ymp_main(int argc, char** argv){
         }
         ymp_add(ymp, argv[1], parse_args(argv+2));
     } else {
-        char* err_msg = build_string("No command given.\nRun %s for more information about usage.\n", colorize(RED, "ymp help"));
+        char* err_msg = build_string("No command given.\nRun %s for more information about usage.\n", "ymp help");
         error_add(err_msg);
         free(err_msg);
     }

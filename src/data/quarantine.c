@@ -19,7 +19,7 @@
 
 // Function to validate metadata
 static int quarantine_validate_metadata(const char* name){
-    print("%s: %s (%s)\n", colorize(YELLOW, "Validate"), name, "metadata");
+    print("%s: %s (%s)\n", "Validate", name, "metadata");
     // Get the destination directory from global variables
     char* destdir = variable_get_value(global->variables, "DESTDIR");
 
@@ -67,7 +67,7 @@ static int quarantine_validate_metadata(const char* name){
 
 // Function to validate files in the quarantine directory
 static int quarantine_validate_files(const char* name) {
-    print("%s: %s (%s)\n", colorize(YELLOW, "Validate"), name, "files");
+    print("%s: %s (%s)\n", "Validate", name, "files");
     // Get the destination directory from global variables
     char* destdir = variable_get_value(global->variables, "DESTDIR");
 
@@ -147,7 +147,7 @@ free_quarantine_validate_files:
 }
 
 static int quarantine_validate_links(const char* name){
-    print("%s: %s (%s)\n", colorize(YELLOW, "Validate"), name, "links");
+    print("%s: %s (%s)\n", "Validate", name, "links");
     // Get the destination directory from global variables
     char* destdir = variable_get_value(global->variables, "DESTDIR");
 
@@ -227,7 +227,7 @@ free_quarantine_validate_links:
 
 // Function to sync quarantine validated files
 visible int quarantine_sync(const char* name){
-    print("%s: %s \n", colorize(YELLOW, "Sync"), name);
+    print("%s: %s \n", "Sync", name);
     int status = 0;
     // Get the destination directory from global variables
     char* destdir = variable_get_value(global->variables, "DESTDIR");

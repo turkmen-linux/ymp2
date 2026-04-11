@@ -122,7 +122,7 @@ static int repo_index_op(char* file, PkgIndex* i){
         status = 1;
         goto repo_index_op_free;
     }
-    info("%s: %s\n", colorize(YELLOW, "Index"), file);
+    info("%s: %s\n", "Index", file);
     i->md5 = calculate_md5(file);
     i->sha256 = calculate_sha256(file);
     i->metadata = metadata+5;

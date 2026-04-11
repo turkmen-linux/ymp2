@@ -17,11 +17,11 @@
 
 
 static int download_cb(Package* p, int num){
-    print("%s: %s\n", colorize(YELLOW, "Downloading"), p->name);
+    print("%s: %s\n", "Downloading", p->name);
     Repository *r = (Repository*)p->repo;
     debug("download %d %s\n", num, r->uri);
     if(!package_download(p, r->uri)){
-        print("%s: %s\n", colorize(RED, "Download Failed"), p->name);
+        print("%s: %s\n", "Download Failed", p->name);
         return 1;
     }
     package_load_from_file(p, p->path);
@@ -30,9 +30,9 @@ static int download_cb(Package* p, int num){
 
 static int install_cb(Package*p, int num){
     debug("install %d", num);
-    print("%s: %s\n", colorize(YELLOW, "Installing"), p->name);
+    print("%s: %s\n", "Installing", p->name);
     if(!package_extract(p)){
-        print("%s: %s\n", colorize(RED, "Install Failed"), p->name);
+        print("%s: %s\n", "Install Failed", p->name);
         return 1;
     }
     if(get_bool("sync-single")){

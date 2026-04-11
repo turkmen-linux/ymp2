@@ -84,7 +84,7 @@ visible Ymp* ymp_init(){
         return NULL; // Memory allocation failed!
     }
     if(!isatty(fileno(stdout))){
-        logger_set_status(COLORIZE, false);
+        ; // is not interactive
     }
     ymp->manager = operation_manager_new(); // Operation manager.
     ymp->variables = variable_manager_new();

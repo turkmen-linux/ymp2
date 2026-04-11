@@ -29,9 +29,9 @@ static int search_package(const char* arg, Repository **repos){
                     isc = "src";
                 }
                 if(package_is_installed(repos[i]->packages[j])){
-                    arg_green = build_string(colorize_fn(colorized(GREEN, "%s"), "%s"), arg);
+                    arg_green = build_string("%s", arg);
                 } else {
-                    arg_green = build_string(colorize_fn(colorized(RED, "%s"), "%s"), arg);
+                    arg_green = build_string("%s", arg);
                 }
 
 

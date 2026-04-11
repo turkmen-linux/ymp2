@@ -11,14 +11,14 @@ extern Ymp* global;
 
 static void help_print(Operation op){
     if(op.alias != NULL){
-        print("%s:%s\n", colorize(GREEN,"Aliases"), op.alias);
+        print("%s:%s\n", "Aliases", op.alias);
     }
-    print("%s: ymp %s [OPTION]... [ARGS]...\n", colorize(GREEN,"Usage"), op.name);
+    print("%s: ymp %s [OPTION]... [ARGS]...\n", "Usage", op.name);
     print("%s\n", op.description);
     if(op.help == NULL){
         return;
     }
-    print("%s:\n", colorize(GREEN, "Options"));
+    print("%s:\n", "Options");
     for(size_t i=0; i < op.help->cur; i++){
         print("  %s\n", op.help->parameters[i]);
     }
@@ -47,7 +47,7 @@ static int help_main(char** args){
     OperationManager *manager = global->manager;
     for(size_t i=0; i < manager->length; i++){
         Operation op = manager->operations[i];
-        printf(colorize_fn(colorized(GREEN, "%s")"  :  %s\n", "%s  :  %s\n"),  op.name, op.description);
+        printf("%s  :  %s\n",  op.name, op.description);
     }
     return 0;
 }
