@@ -30,7 +30,7 @@ static void labels_unref() {
 }
 
 
-visible char** parse_args(char** args) {
+visible char** parse_args(char** args, bool free_strings) {
 
     size_t len = 0;
     size_t offset = 0;
@@ -56,7 +56,9 @@ visible char** parse_args(char** args) {
                 val[strlen(args[i]) - offset -1] = '\0';
                 set_value(var, val);
             }
-            free(args[i]);
+            if (free_strings) {
+                free(args[i]);
+            }
             args[i]=NULL;
         }
     }
@@ -75,7 +77,7 @@ visible char** parse_args(char** args) {
 static char** parse_line(const char* line){
     char* tmp = strip((char*)line);
     char** stmp = split(tmp, " ");
-    char** ret = parse_args(stmp);
+    char** ret = parse_args(stmp, true);
     for(size_t i=0; stmp[i]; i++){
         free(stmp[i]);
     }

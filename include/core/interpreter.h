@@ -6,11 +6,12 @@
  *
  * @param args A pointer to an array of strings (char**) representing the command-line arguments.
  *             The first element is typically the name of the program.
+ * @param free_strings If true, free the strings in the args array after processing.
  * @return A pointer to an array of strings (char**) containing the parsed arguments.
  *         The caller is responsible for freeing the returned array.
  *         Returns NULL if parsing fails or if args is NULL.
  */
-char** parse_args(char** args);
+char** parse_args(char** args, bool free_strings);
 
 /**
  * @brief Executes a script file.

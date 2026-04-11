@@ -10,22 +10,21 @@
 
 #include <stdbool.h>
 
-/**
- * @brief Downloads a file from a specified URL and saves it to a local path.
- *
- * This function uses libcurl to perform the download. It opens the specified
- * file path for writing and writes the contents of the URL to that file.
- *
- * @param url The URL of the file to download. This should be a valid URL
- *            that points to the resource to be fetched.
- * @param path The local file path where the downloaded file will be saved.
- *             This should be a writable path on the local filesystem.
- *
- * @return true if the file was downloaded successfully, false otherwise.
- *
- * @note The function will return false if the URL is invalid, if the file
- *       cannot be opened for writing, or if the download fails for any reason.
- */
+typedef struct FetchJob FetchJob;
+
+typedef void (*FetchProgressCB)(const char* url, size_t downloaded, size_t total, void* userdata);
+
+struct FetchJob {
+    char* url;
+    char* path;
+    size_t downloaded;
+    size_t total;
+    bool done;
+    bool error;
+    char* error_msg;
+};
+
+bool fetch_with_progress(const char* url, const char* path, FetchProgressCB cb, void* userdata);
 bool fetch(const char* url, const char* path);
 
 #endif

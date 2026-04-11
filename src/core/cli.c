@@ -35,7 +35,7 @@ visible int ymp_main(int argc, char** argv){
         if(isfile(argv[1])){
             return run_script(readfile(argv[1]));
         }
-        ymp_add(ymp, argv[1], parse_args(argv+2));
+        ymp_add(ymp, argv[1], parse_args(argv+2, false));
     } else {
         print(_("No command given.\n"));
         print(_("Run %s for more information about usage.\n"), red "ymp help" nop);
