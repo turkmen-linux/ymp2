@@ -7,6 +7,7 @@
 #include <utils/string.h>
 #include <utils/error.h>
 #include <utils/file.h>
+#include <utils/color.h>
 
 #include <config.h>
 
@@ -16,7 +17,8 @@ visible int ymp_main(int argc, char** argv){
         bool show_ver = false;
         for(int i= 0; argv[i]; i++){
             if(iseq(argv[i], "--version")){
-                print("YMP    : %serli ve %silli %sackage manager\n",
+                color_print(BOLD, COLOR_RED, "YMP");
+                printf("    : %serli ve %silli %sackage manager\n",
                     "Y", "M", "P");
                 print(_("Version: %s\n"), VERSION);
                 show_ver = true;
@@ -32,14 +34,16 @@ visible int ymp_main(int argc, char** argv){
         }
         ymp_add(ymp, argv[1], parse_args(argv+2));
     } else {
-        char* err_msg = build_string("No command given.\nRun %s for more information about usage.\n", "ymp help");
-        error_add(err_msg);
-        free(err_msg);
+        printf("No command given.\n");
+        printf("Run ");
+        color_print(BOLD, COLOR_RED,  "ymp help");
+        printf(" for more information about usage.\n");
+        ymp_unref(ymp);
+        return 1;
     }
     if(getenv("DEBUG") != NULL){
         logger_set_status(DEBUG, true);
     }
-    error(1);
     int status = ymp_run(ymp);
     ymp_unref(ymp);
     return status;
