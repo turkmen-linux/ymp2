@@ -9,16 +9,28 @@
 #include <utils/gui.h>
 #include <utils/fetcher.h>
 
+typedef struct {
+    const char *id;
+    const char *title;
+    const char *msg;
+    size_t done;
+    size_t total;
+    bool active;
+} gui_progress_bar_t;
+
 static WINDOW *win = NULL;
 static int win_w = 0, win_h = 0;
 static bool initialized = false;
 static gui_progress_bar_t progress_bars[GUI_MAX_BARS];
 static int progress_bar_count = 0;
+static pthread_mutex_t gui_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 static bool init_ncurses(void);
 static void format_size(char *buf, size_t buf_len, size_t bytes);
 
+
 static void cleanup(void) {
+    pthread_mutex_lock(&gui_mutex);
     if (win) {
         delwin(win);
         win = NULL;
@@ -37,6 +49,7 @@ static void cleanup(void) {
         progress_bars[i].msg = NULL;
     }
     progress_bar_count = 0;
+    pthread_mutex_unlock(&gui_mutex);
 }
 
 static void handle_resize(int sig) {
@@ -54,8 +67,11 @@ static void handle_resize(int sig) {
 }
 
 static bool init_ncurses(void) {
-    if (initialized)
+    pthread_mutex_lock(&gui_mutex);
+    if (initialized) {
+        pthread_mutex_unlock(&gui_mutex);
         return true;
+    }
 
     signal(SIGWINCH, handle_resize);
 
@@ -86,6 +102,7 @@ static bool init_ncurses(void) {
     }
 
     initialized = true;
+    pthread_mutex_unlock(&gui_mutex);
     return true;
 }
 
@@ -139,6 +156,7 @@ visible bool gui_init(void) {
 
 visible void gui_end(void) {
     cleanup();
+    pthread_mutex_destroy(&gui_mutex);
 }
 
 visible void gui_msg(const char *title, const char *msg, msg_type_t type) {
@@ -292,17 +310,6 @@ visible bool gui_yes_no(const char *title, const char *msg, bool def) {
     return ret;
 }
 
-visible void gui_progress(const char *title, const char *msg, size_t done, size_t total) {
-    gui_progress_draw();
-
-    if (progress_bar_count == 0) {
-        gui_progress_add("default", title, msg, total);
-    }
-
-    gui_progress_update("default", done, total);
-    gui_progress_draw();
-}
-
 static void draw_progress_bar(WINDOW *w, int y, const char *title, const char *msg, size_t done, size_t total) {
     int w_w, w_h;
     getmaxyx(w, w_h, w_w);
@@ -353,8 +360,14 @@ static void draw_progress_bar(WINDOW *w, int y, const char *title, const char *m
 }
 
 visible int gui_progress_add(const char *id, const char *title, const char *msg, size_t total) {
-    if (!id || progress_bar_count >= GUI_MAX_BARS)
+    if (!id)
         return -1;
+
+    pthread_mutex_lock(&gui_mutex);
+    if (progress_bar_count >= GUI_MAX_BARS) {
+        pthread_mutex_unlock(&gui_mutex);
+        return -1;
+    }
 
     if (total == 0)
         total = 100;
@@ -368,9 +381,11 @@ visible int gui_progress_add(const char *id, const char *title, const char *msg,
             progress_bars[i].total = total;
             progress_bars[i].active = true;
             progress_bar_count++;
+            pthread_mutex_unlock(&gui_mutex);
             return i;
         }
     }
+    pthread_mutex_unlock(&gui_mutex);
     return -1;
 }
 
@@ -378,13 +393,16 @@ visible void gui_progress_update(const char *id, size_t done, size_t total) {
     if (!id)
         return;
 
+    pthread_mutex_lock(&gui_mutex);
     for (int i = 0; i < GUI_MAX_BARS; i++) {
         if (progress_bars[i].active && progress_bars[i].id && strcmp(progress_bars[i].id, id) == 0) {
             progress_bars[i].done = done;
             progress_bars[i].total = total;
+            pthread_mutex_unlock(&gui_mutex);
             return;
         }
     }
+    pthread_mutex_unlock(&gui_mutex);
 }
 
 static void format_size(char *buf, size_t buf_len, size_t bytes) {
@@ -406,6 +424,7 @@ visible void gui_progress_remove(const char *id) {
     if (!id)
         return;
 
+    pthread_mutex_lock(&gui_mutex);
     for (int i = 0; i < GUI_MAX_BARS; i++) {
         if (progress_bars[i].active && progress_bars[i].id && strcmp(progress_bars[i].id, id) == 0) {
             free((void *)progress_bars[i].id);
@@ -416,11 +435,13 @@ visible void gui_progress_remove(const char *id) {
             progress_bars[i].title = NULL;
             progress_bars[i].msg = NULL;
             progress_bar_count--;
+            pthread_mutex_unlock(&gui_mutex);
             clear();
             gui_progress_draw();
             return;
         }
     }
+    pthread_mutex_unlock(&gui_mutex);
 }
 
 visible void gui_progress_draw(void) {
@@ -428,6 +449,8 @@ visible void gui_progress_draw(void) {
         if (!init_ncurses())
             return;
     }
+
+    pthread_mutex_lock(&gui_mutex);
 
     //clear();
     refresh();
@@ -438,8 +461,10 @@ visible void gui_progress_draw(void) {
             active_count++;
     }
 
-    if (active_count == 0)
+    if (active_count == 0) {
+        pthread_mutex_unlock(&gui_mutex);
         return;
+    }
 
     int bar_h = 4;
     int h = active_count * bar_h + 4;
@@ -469,5 +494,6 @@ visible void gui_progress_draw(void) {
 
         wrefresh(win);
     }
+    pthread_mutex_unlock(&gui_mutex);
 }
 
