@@ -118,9 +118,11 @@ static void archive_extract_fn(Archive *data, const char *path, bool all) {
         if (S_ISDIR(mode)) {
             /* Create the directory if it doesn't exist */
             if (access(target_file, F_OK) != -1) {
+                free(target_file);
                 continue;
             }
             create_dir(target_file);
+            free(target_file);
             continue;
         }
         char* dir = strdup(target_file);
@@ -128,11 +130,13 @@ static void archive_extract_fn(Archive *data, const char *path, bool all) {
         if (!isdir(dir)) {
             create_dir(dir);
         }
+        free(dir);
         if(issymlink(target_file) || isfile(target_file)){
             unlink(target_file);
         }
         if (S_ISLNK(mode)) {
             if(isdir(target_file)){
+                free(target_file);
                 continue;
             }
             const char *link_target = archive_entry_symlink(entry);
@@ -140,8 +144,10 @@ static void archive_extract_fn(Archive *data, const char *path, bool all) {
                 if (symlink(link_target, target_file) != 0) {
                     char* error_msg = build_string("Failed to create symbolic link: %s -> %s", target_file, link_target);
                     error_add(error_msg);
+                    free(target_file);
                     error(3);
                 }
+                free(target_file);
                 continue;
             }
         }else if (S_ISREG(mode)){
@@ -149,6 +155,7 @@ static void archive_extract_fn(Archive *data, const char *path, bool all) {
             if (file == NULL) {
                 char* error_msg = build_string("Failed to open file for writing: %s", target_file);
                 error_add(error_msg);
+                free(target_file);
                 error(3);
             }
             char buffer[4096];
@@ -158,8 +165,10 @@ static void archive_extract_fn(Archive *data, const char *path, bool all) {
             }
             fclose(file);
             chmod(target_file, 0755);
+            free(target_file);
         } else {
             print(_("Skip unsupported archive entry: %s\n"), entry_path);
+            free(target_file);
         }
     }
     archive_read_close(data->archive);

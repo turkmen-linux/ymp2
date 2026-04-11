@@ -88,15 +88,18 @@ int visible operation_main(OperationManager *manager, const char* name, void* ar
     for (size_t i = 0; i < manager->length; i++) {
         if (manager->operations[i].alias) {
             char** alias = split(manager->operations[i].alias, ":");
-            for(size_t a=0; alias[a]; a++){
+            size_t a;
+            for(a=0; alias[a]; a++){
                 if(strcmp(alias[a], name) == 0){
-                    for(; alias[a]; a++){
-                        free(alias[a]);
+                    for(size_t b=0; alias[b]; b++){
+                        free(alias[b]);
                     }
                     free(alias);
                     goto operation_main_on_call;
                 }
-                free(alias[a]);
+            }
+            for(size_t b=0; b<a; b++){
+                free(alias[b]);
             }
             free(alias);
         }

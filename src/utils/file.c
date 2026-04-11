@@ -212,13 +212,15 @@ visible char* getoutput_unshare(char* argv[], int flags) {
                 // Resize buffer if needed
                 bufsize = len * 2;
                 char* tmp = realloc(ret, bufsize);
-                if(tmp){
-                    ret = tmp;
-                }
-                if (!ret) {
+                if(!tmp) {
                     perror("Memory reallocation error");
+                    free(ret);
+                    close(pipefd[0]);
+                    int status;
+                    wait(&status);
                     return "";
                 }
+                ret = tmp;
             }
             strcat(ret, buff);
             total_read += bytes_read;
@@ -231,7 +233,10 @@ visible char* getoutput_unshare(char* argv[], int flags) {
         wait(&status);
 
         // Trim the buffer to the actual size needed
-        ret = realloc(ret, (strlen(ret) + 1) * sizeof(char));
+        char* trimmed = realloc(ret, (strlen(ret) + 1) * sizeof(char));
+        if(trimmed){
+            ret = trimmed;
+        }
 
         return ret;
     }

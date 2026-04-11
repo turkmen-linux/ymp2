@@ -56,6 +56,7 @@ visible char** parse_args(char** args) {
                 val[strlen(args[i]) - offset -1] = '\0';
                 set_value(var, val);
             }
+            free(args[i]);
             args[i]=NULL;
         }
     }
@@ -75,6 +76,10 @@ static char** parse_line(const char* line){
     char* tmp = strip((char*)line);
     char** stmp = split(tmp, " ");
     char** ret = parse_args(stmp);
+    for(size_t i=0; stmp[i]; i++){
+        free(stmp[i]);
+    }
+    free(stmp);
     free(tmp);
     return ret;
 }

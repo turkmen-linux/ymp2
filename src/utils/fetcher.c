@@ -58,7 +58,8 @@ visible bool fetch(const char* url, const char* path) {
         chunk = curl_slist_append(chunk, "Sec-GPC: 1");
         chunk = curl_slist_append(chunk, "Ymp: \"NE MUTLU TURKUM DIYENE\"");
         curl_easy_setopt(fetch->curl, CURLOPT_HTTPHEADER, chunk);
-        curl_easy_setopt(fetch->curl, CURLOPT_USERAGENT, build_string("Ymp fetcher/%s", VERSION));
+        char* useragent = build_string("Ymp fetcher/%s", VERSION);
+        curl_easy_setopt(fetch->curl, CURLOPT_USERAGENT, useragent);
         curl_easy_setopt(fetch->curl, CURLOPT_URL, url); // Set the URL
         curl_easy_setopt(fetch->curl, CURLOPT_WRITEFUNCTION, write_data); // Set the write callback
         curl_easy_setopt(fetch->curl, CURLOPT_WRITEDATA, fetch); // Pass the file pointer to the callback
@@ -69,11 +70,15 @@ visible bool fetch(const char* url, const char* path) {
         if (fetch->res != CURLE_OK) {
             print(_("Download failed: %s\n"), curl_easy_strerror(fetch->res));
             fclose(fetch->fp); // Close the file on error
+            curl_slist_free_all(chunk);
+            free(useragent);
             free(fetch);
             return false; // Return false if the request fails
         }
 
         fclose(fetch->fp); // Close the file
+        curl_slist_free_all(chunk);
+        free(useragent);
         curl_easy_cleanup(fetch->curl); // Clean up
         free(fetch);
         return true; // Return true if the download is successful
