@@ -4,6 +4,7 @@
 #include <data/repository.h>
 #include <core/logger.h>
 #include <core/variable.h>
+#include <core/ymp.h>
 
 #include <utils/array.h>
 #include <utils/file.h>
@@ -24,7 +25,7 @@ size_t depth = 0; // Variable to track the depth of dependency resolution
 
 
 visible char** get_group_packages (const char* name) {
-    info("reslove group: %s depth:%d\n", name, depth);
+    info("Resolving group: %s depth:%d\n", name, depth);
     array *res = array_new();
     Package *pi = package_new();
     pi->is_virtual = true;
@@ -241,7 +242,7 @@ visible void resolve_end(Repository** repos) {
 visible Package** resolve_dependency(char* name) {
     size_t begin_time = get_epoch();
     if(repos == NULL){
-        print("Dependencies resolve failed\n");
+        print(_("Failed to resolve dependencies\n"));
         return NULL; // Dont resolve package if repository list is empty
     }
     resolved = malloc(sizeof(Package*)* 1024); // Create a new array for resolved packages

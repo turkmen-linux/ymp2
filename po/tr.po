@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-11 18:35+0300\n"
+"POT-Creation-Date: 2026-04-11 19:02+0300\n"
 "PO-Revision-Date: 2026-04-11 18:45+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,158 +17,64 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: src/core/cli.c:23
-#, c-format
-msgid "Version: %s\n"
-msgstr "Sürüm: %s\n"
-
-#: src/core/cli.c:37
-msgid "No command given.\n"
-msgstr "Komut verilmedi.\n"
-
-#: src/core/cli.c:38
-msgid "Run "
-msgstr "Çalıştır "
-
-#: src/core/cli.c:40
-msgid " for more information about usage.\n"
-msgstr " kullanım hakkında daha fazla bilgi almak için.\n"
-
 #: src/core/help.c:16
 msgid "Memory allocation failed for Help structure.\n"
-msgstr "Yardım yapısı için bellek ayrılamadı.\n"
+msgstr "Yardim yapisi icin bellek ayrilamadi.\n"
 
 #: src/core/help.c:27
 msgid "Memory allocation failed for parameters array.\n"
-msgstr "Parametre dizisi için bellek ayrılamadı.\n"
+msgstr "Parametre dizisi icin bellek ayrilamadi.\n"
 
 #: src/core/help.c:52
 msgid "Memory reallocation failed for parameters array.\n"
-msgstr "Parametre dizisi için bellek yeniden ayrılamadı.\n"
+msgstr "Parametre dizisi icin bellek yeniden ayrilamadi.\n"
 
 #: src/core/help.c:60
 #, c-format
 msgid "String duplication failed for: %s\n"
-msgstr "Dize kopyalanamadı: %s\n"
-
-#: src/core/operations.c:65 src/core/variable.c:65 src/core/ymp.c:144
-#: src/utils/yaml.c:151 src/utils/yaml.c:183
-msgid "Memory allocation failed\n"
-msgstr "Bellek ayrılamadı\n"
+msgstr "Dize kopyalanamadi: %s\n"
 
 #: src/core/variable.c:43 src/core/variable.c:89
 msgid "Invalid VariableManager\n"
-msgstr "Geçersiz DeğişkenYöneticisi\n"
+msgstr "Gecersiz DegiskenYoneticisi\n"
+
+#: src/core/variable.c:65 src/core/operations.c:65 src/core/ymp.c:144
+#: src/utils/yaml.c:151 src/utils/yaml.c:183
+msgid "Memory allocation failed\n"
+msgstr "Bellek ayrilamadi\n"
 
 #: src/core/ymp.c:58
 msgid "Segmentation fault:\n"
-msgstr "Bölümleme hatası:\n"
+msgstr "Bolumleme hatasi:\n"
 
-#: src/utils/archive.c:162
+#: src/core/cli.c:26
 #, c-format
-msgid "Skip unsupported archive entry: %s\n"
-msgstr "Desteklenmeyen arşiv girdisi atlanıyor: %s\n"
+msgid "Version: %s\n"
+msgstr "Surum: %s\n"
 
-#: src/utils/array.c:15 src/utils/array.c:20
-msgid "memory allocation failed"
-msgstr "bellek ayrılamadı"
+#: src/core/cli.c:40
+msgid "No command given.\n"
+msgstr "Komut verilmedi.\n"
 
-#: src/utils/fetcher.c:70
-#, c-format
-msgid "curl_easy_perform() failed: %s\n"
-msgstr "curl_easy_perform() başarısız oldu: %s\n"
-
-#: src/utils/file.c:314
-#, c-format
-msgid "Error accessing source directory: %s\n"
-msgstr "Kaynak dizine erişilemedi: %s\n"
-
-#: src/utils/file.c:320
-#, c-format
-msgid "Error creating destination directory: %s\n"
-msgstr "Hedef dizin oluşturulamadı: %s\n"
-
-#: src/utils/file.c:326
-#, c-format
-msgid "Error opening source directory: %s\n"
-msgstr "Kaynak dizin açılamadı: %s\n"
-
-#: src/utils/file.c:399
-#, c-format
-msgid "Cannot access: %s\n"
-msgstr "Erişilemiyor: %s\n"
+#: src/core/cli.c:41
+msgid "Run %s for more information about usage.\n"
+msgstr "Kullanim hakkinda daha fazla bilgi almak icin %s calistirin.\n"
 
 #: src/data/repository.c:74
 msgid "Failed to create new package\n"
-msgstr "Yeni paket oluşturulamadı\n"
+msgstr "Yeni paket olusturulamadi\n"
 
-#: src/operations/package-manager/build.c:66
-msgid "Build package"
-msgstr "Paket derle"
+#: src/data/build.c:197
+msgid "Stripping: %s\n"
+msgstr "Kirpiliyor: %s\n"
 
-#: src/operations/package-manager/build.c:69
-msgid "install after build"
-msgstr "derleme sonrası kur"
+#: src/data/build.c:255
+msgid "Skipping hash verification for: %s\n"
+msgstr "Hash doğrulaması geçiliyor: %s\n"
 
-#: src/operations/package-manager/info.c:98
-msgid "Show package information"
-msgstr "Paket bilgilerini göster"
-
-#: src/operations/package-manager/install.c:104
-msgid "Install package"
-msgstr "Paket kur"
-
-#: src/operations/package-manager/install.c:108
-msgid "disable dependency check"
-msgstr "bağımlılık denetimini devre dışı bırak"
-
-#: src/operations/package-manager/install.c:109
-msgid "reinstall if already installed"
-msgstr "zaten kuruluysa yeniden kur"
-
-#: src/operations/package-manager/install.c:110
-msgid "use binary package"
-msgstr "hazır paket kullan"
-
-#: src/operations/package-manager/install.c:111
-msgid "sync quarantine after every package installation"
-msgstr "her paket kurulumundan sonra karantinayı eşitle"
-
-#: src/operations/package-manager/key.c:82
-msgid "Ymp key manager"
-msgstr "Ymp anahtar yöneticisi"
-
-#: src/operations/package-manager/key.c:85
-msgid "Add a key into ymp keyring db"
-msgstr "Ymp anahtar deposuna bir anahtar ekle"
-
-#: src/operations/package-manager/key.c:86
-msgid "Add a key from ymp keyring db"
-msgstr "Ymp anahtar deposundan bir anahtar kaldır"
-
-#: src/operations/package-manager/key.c:87
-msgid "Name for new key"
-msgstr "Yeni anahtar için ad"
-
-#: src/operations/package-manager/list.c:84
-msgid "List packages, repos and more"
-msgstr "Paketleri, depoları ve daha fazlasını listele"
-
-#: src/operations/package-manager/list.c:87
-msgid "List available packages"
-msgstr "Kullanılabilir paketleri listele"
-
-#: src/operations/package-manager/list.c:88
-msgid "List installed packages"
-msgstr "Kurulu paketleri listele"
-
-#: src/operations/package-manager/remove.c:151
-msgid "Remove package"
-msgstr "Paketi kaldır"
-
-#: src/operations/package-manager/repo.c:273
-msgid "Repository operations"
-msgstr "Depo işlemleri"
+#: src/data/dependency.c:245
+msgid "Failed to resolve dependencies\n"
+msgstr "Bagimlilik cozme basarisiz: %s\n"
 
 #: src/operations/package-manager/search.c:73
 msgid "Search package or file"
@@ -176,7 +82,75 @@ msgstr "Paket veya dosya ara"
 
 #: src/operations/package-manager/search.c:77
 msgid "Search files"
-msgstr "Dosyaları ara"
+msgstr "Dosyalari ara"
+
+#: src/operations/package-manager/list.c:84
+msgid "List packages, repos and more"
+msgstr "Paketleri, depolari ve daha fazlasini listele"
+
+#: src/operations/package-manager/list.c:87
+msgid "List available packages"
+msgstr "Kullanilabilir paketleri listele"
+
+#: src/operations/package-manager/list.c:88
+msgid "List installed packages"
+msgstr "Kurulu paketleri listele"
+
+#: src/operations/package-manager/key.c:82
+msgid "Ymp key manager"
+msgstr "Ymp anahtar yoneticisi"
+
+#: src/operations/package-manager/key.c:85
+msgid "Add a key into ymp keyring db"
+msgstr "Ymp anahtar deposuna bir anahtar ekle"
+
+#: src/operations/package-manager/key.c:86
+msgid "Add a key from ymp keyring db"
+msgstr "Ymp anahtar deposundan bir anahtar kaldir"
+
+#: src/operations/package-manager/key.c:87
+msgid "Name for new key"
+msgstr "Yeni anahtar icin ad"
+
+#: src/operations/package-manager/repo.c:273
+msgid "Repository operations"
+msgstr "Depo islemleri"
+
+#: src/operations/package-manager/build.c:66
+msgid "Build package"
+msgstr "Paket derle"
+
+#: src/operations/package-manager/build.c:69
+msgid "install after build"
+msgstr "derleme sonrasi kur"
+
+#: src/operations/package-manager/info.c:98
+msgid "Show package information"
+msgstr "Paket bilgilerini goster"
+
+#: src/operations/package-manager/install.c:104
+msgid "Install package"
+msgstr "Paket kur"
+
+#: src/operations/package-manager/install.c:108
+msgid "disable dependency check"
+msgstr "bagimlilik denetimini devre disi birak"
+
+#: src/operations/package-manager/install.c:109
+msgid "reinstall if already installed"
+msgstr "zaten kuruluysa yeniden kur"
+
+#: src/operations/package-manager/install.c:110
+msgid "use binary package"
+msgstr "hazir paket kullan"
+
+#: src/operations/package-manager/install.c:111
+msgid "sync quarantine after every package installation"
+msgstr "her paket kurulumundan sonra karantinayi esitle"
+
+#: src/operations/package-manager/remove.c:151
+msgid "Remove package"
+msgstr "Paketi kaldir"
 
 #: src/operations/utility/dialog.c:17
 msgid "Dialog"
@@ -184,99 +158,67 @@ msgstr "Sorgulama"
 
 #: src/operations/utility/help.c:62
 msgid "Print help message"
-msgstr "Yardım iletisini göster"
+msgstr "Yardim iletisini goster"
 
 #: src/operations/utility/print.c:20
 msgid "Print message"
-msgstr "İleti yazdır"
+msgstr "Ileti yazdir"
 
 #: src/operations/utility/revdep.c:71
 msgid "Check library for broken links."
-msgstr "Kırık bağlantılar için kitaplıkları denetle."
+msgstr "Kirik baglantilar icin kitapliklari denetle."
 
 #: src/operations/utility/setget.c:33
 msgid "Set ymp variable"
-msgstr "Ymp değişkeni ata"
+msgstr "Ymp degiskeni ata"
 
 #: src/operations/utility/setget.c:41
 msgid "Get ymp variable"
-msgstr "Ymp değişkeni al"
+msgstr "Ymp degiskeni al"
 
 #: src/operations/utility/setget.c:49
 msgid "Compare strings"
-msgstr "Dizeleri karşılaştır"
+msgstr "Dizeleri karsilastir"
 
 #: src/operations/utility/setget.c:58
 msgid "Do nothing"
-msgstr "Hiçbir şey yapma"
+msgstr "Hicbir sey yapma"
 
 #: src/operations/utility/sysconf.c:54
 msgid "Trigger sysconf operations"
-msgstr "Sistem yapılandırma işlemlerini çalıştır"
+msgstr "Sistem yapilandirma islemlerini calistir"
 
-#: plugin/brainfuck.c:22
-msgid "Failed to run brainfuck code: Out of memory\n"
-msgstr "Brainfuck kodu çalıştırılamadı: Bellek yetersiz\n"
-
-#: plugin/brainfuck.c:127
-msgid "Brainfuck interpreter"
-msgstr "Brainfuck yorumlayıcı"
-
-#: plugin/extract.c:28
-msgid "Extract files from archive"
-msgstr "Dosyaları arşivden çıkar"
-
-#: plugin/extract.c:31
-msgid "Target directory"
-msgstr "Hedef dizin"
-
-#: plugin/hello.c:10
-msgid "Hello World\n"
-msgstr "Merhaba Dünya\n"
-
-#: plugin/hello.c:19
-msgid "Simple hello world plugin"
-msgstr "Basit merhaba dünya eklentisi"
-
-#: plugin/httpd.c:67
+#: src/utils/archive.c:162
 #, c-format
-msgid "Failed to open directory: %s\n"
-msgstr "Dizin açılamadı: %s\n"
+msgid "Skip unsupported archive entry: %s\n"
+msgstr "Desteklenmeyen arsiv girdisi atlaniyor: %s\n"
 
-#: plugin/httpd.c:128
-msgid "Failed to read from client"
-msgstr "İstemciden okunamadı"
+#: src/utils/array.c:15 src/utils/array.c:20
+msgid "memory allocation failed"
+msgstr "bellek ayrilamadi"
 
-#: plugin/httpd.c:180
+#: src/utils/fetcher.c:70
 #, c-format
-msgid "GET: %s\n"
-msgstr "AL: %s\n"
+msgid "Download failed: %s\n"
+msgstr ""
 
-#: plugin/httpd.c:184
+#: src/utils/file.c:314
 #, c-format
-msgid "Failed to open file: %s\n"
-msgstr "Dosya açılamadı: %s\n"
+msgid "Error accessing source directory: %s\n"
+msgstr "Kaynak dizine erisilemedi: %s\n"
 
-#: plugin/httpd.c:229
-msgid "Error opening socket\n"
-msgstr "Yuva açma hatası\n"
+#: src/utils/file.c:320
+#, c-format
+msgid "Error creating destination directory: %s\n"
+msgstr "Hedef dizin olusturulamadi: %s\n"
 
-#: plugin/httpd.c:240
-msgid "Error binding socket\n"
-msgstr "Yuva bağlama hatası\n"
+#: src/utils/file.c:326
+#, c-format
+msgid "Error opening source directory: %s\n"
+msgstr "Kaynak dizin acilamadi: %s\n"
 
-#: plugin/httpd.c:244
-msgid "Listen failed...\n"
-msgstr "Dinleme başarısız...\n"
+#: src/utils/file.c:399
+#, c-format
+msgid "Cannot access: %s\n"
+msgstr "Erisilemiyor: %s\n"
 
-#: plugin/httpd.c:262
-msgid "simple http server"
-msgstr "basit http sunucusu"
-
-#: plugin/httpd.c:266
-msgid "serve directory. (default /)"
-msgstr "sunulacak dizin. (varsayılan /)"
-
-#: plugin/httpd.c:267
-msgid "server tcp port (default 8000)"
-msgstr "sunucu tcp bağlantı noktası (varsayılan 8000)"

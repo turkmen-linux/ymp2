@@ -11,6 +11,9 @@
 
 #include <config.h>
 
+#define red "\033[31;1m"
+#define nop "\033[0m"
+
 visible int ymp_main(int argc, char** argv){
     Ymp* ymp = ymp_init(); // Create ymp context
     if(argc > 1) {
@@ -19,7 +22,7 @@ visible int ymp_main(int argc, char** argv){
             if(iseq(argv[i], "--version")){
                 color_print(BOLD, COLOR_RED, "YMP");
                 print("    : %serli ve %silli %sackage manager\n",
-                    "Y", "M", "P");
+                    red "Y" nop, red "M" nop , red "P" nop);
                 print(_("Version: %s\n"), VERSION);
                 show_ver = true;
             } else if(show_ver && iseq(argv[i], "--flag")) {
@@ -35,9 +38,7 @@ visible int ymp_main(int argc, char** argv){
         ymp_add(ymp, argv[1], parse_args(argv+2));
     } else {
         print(_("No command given.\n"));
-        print(_("Run "));
-        color_print(BOLD, COLOR_RED,  "ymp help");
-        print(_(" for more information about usage.\n"));
+        print(_("Run %s for more information about usage.\n"), red "ymp help" nop);
         ymp_unref(ymp);
         return 1;
     }

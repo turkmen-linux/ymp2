@@ -19,7 +19,7 @@
 
 // Function to validate metadata
 static int quarantine_validate_metadata(const char* name){
-    print("%s: %s (%s)\n", "Validate", name, "metadata");
+    print(_("Validating metadata: %s\n"), name);
     // Get the destination directory from global variables
     char* destdir = variable_get_value(global->variables, "DESTDIR");
 
@@ -30,7 +30,7 @@ static int quarantine_validate_metadata(const char* name){
     char* metadata = readfile(metadata_path);
     char *data = yaml_get_area(metadata, "ymp");
     if(!data){
-        warning("Inwalid metadata: %s\n", metadata_path);
+        warning(_("Invalid metadata: %s\n"), metadata_path);
         status = 1;
         free(metadata);
         return status;
@@ -42,7 +42,7 @@ static int quarantine_validate_metadata(const char* name){
     } else if(yaml_has_area(data, "source")){
         area_data = yaml_get_area(data, "source");
     } else {
-        warning("unsupported package format: %s\n", metadata_path);
+        warning(_("Unsupported package format: %s\n"), metadata_path);
         status = 1;
         free(data);
         free(metadata_path);
@@ -67,7 +67,7 @@ static int quarantine_validate_metadata(const char* name){
 
 // Function to validate files in the quarantine directory
 static int quarantine_validate_files(const char* name) {
-    print("%s: %s (%s)\n", "Validate", name, "files");
+    print(_("Validating files: %s\n"), name);
     // Get the destination directory from global variables
     char* destdir = variable_get_value(global->variables, "DESTDIR");
 
@@ -80,7 +80,7 @@ static int quarantine_validate_files(const char* name) {
 
     // Check if the files_path is a valid file
     if (!isfile(files_path)) {
-        warning("package files not found!\n");
+        warning(_("Package files not found\n"));
         free(files_path);
         free(rootfs_path);
         return 0;
@@ -89,7 +89,7 @@ static int quarantine_validate_files(const char* name) {
     // Open the files for reading
     FILE *files = fopen(files_path, "r");
     if(!files){
-        warning("failed to open package files!\n");
+        warning(_("Failed to open package files\n"));
         free(files_path);
         free(rootfs_path);
         return 0;
@@ -147,7 +147,7 @@ free_quarantine_validate_files:
 }
 
 static int quarantine_validate_links(const char* name){
-    print("%s: %s (%s)\n", "Validate", name, "links");
+    print(_("Validating links: %s\n"), name);
     // Get the destination directory from global variables
     char* destdir = variable_get_value(global->variables, "DESTDIR");
 
@@ -160,7 +160,7 @@ static int quarantine_validate_links(const char* name){
 
     // Check if the files_path is a valid file
     if (!isfile(links_path)) {
-        warning("package links not found!\n");
+        warning(_("Package links not found\n"));
         free(links_path);
         free(rootfs_path);
         return 0;
@@ -172,7 +172,7 @@ static int quarantine_validate_links(const char* name){
     char actual_link[PATH_MAX + strlen(rootfs_path)]; // Buffer for actual file path (max file name length is PATH_MAX)
     char link_target[PATH_MAX]; // Buffer for actual file path (max file name length is PATH_MAX)
     if(!links){
-        warning("failed to open package links!\n");
+        warning(_("Failed to open package links\n"));
         free(links_path);
         free(rootfs_path);
         return 0;
@@ -227,7 +227,7 @@ free_quarantine_validate_links:
 
 // Function to sync quarantine validated files
 visible int quarantine_sync(const char* name){
-    print("%s: %s \n", "Sync", name);
+    print(_("Syncing: %s\n"), name);
     int status = 0;
     // Get the destination directory from global variables
     char* destdir = variable_get_value(global->variables, "DESTDIR");

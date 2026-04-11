@@ -67,7 +67,7 @@ visible bool fetch(const char* url, const char* path) {
         // Perform the request
         fetch->res = curl_easy_perform(fetch->curl);
         if (fetch->res != CURLE_OK) {
-            print(_("curl_easy_perform() failed: %s\n"), curl_easy_strerror(fetch->res));
+            print(_("Download failed: %s\n"), curl_easy_strerror(fetch->res));
             fclose(fetch->fp); // Close the file on error
             free(fetch);
             return false; // Return false if the request fails

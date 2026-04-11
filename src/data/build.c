@@ -194,7 +194,7 @@ static void binary_process(const char* path){
             free(inodes[i]);
             continue;
         }
-        print("Binary process: %s\n", inodes[i]+strlen(path)+7);
+        print(_("Stripping: %s\n"), inodes[i]+strlen(path)+7);
         pid_t pid = fork();
         if(pid == 0){
             char *cmd[] = {
@@ -252,7 +252,7 @@ static bool get_resource(const char* resource_path, const char* resource_name, s
     char* actual_hash = calculate_hash(resource_type, target_file_path);
 
     if (iseq((char*)expected_hash, "SKIP")) {
-        warning("Hash control disabled for: %s\n", source_file_name);
+        warning(_("Skipping hash verification for: %s\n"), source_file_name);
     } else if (!iseq(actual_hash, (char*)expected_hash)) {
         print("Archive hash is invalid:\n  -> Expected: %s\n  -> Received: %s\n", expected_hash, actual_hash);
         return false;
