@@ -4,7 +4,7 @@
 #include <utils/gui.h>
 
 static int dialog_main(char** args) {
-    if(yes_no_dialog(args[0], args[1])){
+    if(ymp_gui_yes_no(args[0], args[1], false)){
         return 0;
     }
     return 1;

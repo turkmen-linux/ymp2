@@ -1,18 +1,21 @@
-/**
- * @brief Displays a Yes/No dialog box with a specified title and message.
- *
- * This function presents a dialog to the user that allows them to make a
- * response of "Yes" or "No". The dialog is typically used for confirming
- * actions or decisions that require user input.
- *
- * @param title A string representing the title of the dialog window. This
- *              will be displayed prominently at the top of the dialog.
- * @param message A string containing the message to be displayed in the
- *                dialog. This should provide context for the user's
- *                decision.
- *
- * @return Returns true if the user selects "Yes", or false if the user
- *         selects "No".
- *
- */
-bool yes_no_dialog(const char* title, const char *message);
+#ifndef GUI_H
+#define GUI_H
+
+#include <stdbool.h>
+#include <stddef.h>
+
+typedef enum {
+    MSG_INFO,
+    MSG_SUCCESS,
+    MSG_WARNING,
+    MSG_ERROR
+} msg_type_t;
+
+bool ymp_gui_init(void);
+void ymp_gui_end(void);
+
+void ymp_gui_msg(const char *title, const char *msg, msg_type_t type);
+bool ymp_gui_yes_no(const char *title, const char *msg, bool def);
+void ymp_gui_progress(const char *title, const char *msg, int done, int total);
+
+#endif
