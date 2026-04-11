@@ -10,22 +10,10 @@
 
 #include <stdbool.h>
 
-typedef struct FetchJob FetchJob;
+typedef void (*FetchProgressCallback)(const char* url, size_t downloaded, size_t total, void* userdata);
 
-typedef void (*FetchProgressCB)(const char* url, size_t downloaded, size_t total, void* userdata);
-
-struct FetchJob {
-    char* url;
-    char* path;
-    size_t downloaded;
-    size_t total;
-    bool done;
-    bool error;
-    char* error_msg;
-};
-
-bool fetch_with_progress(const char* url, const char* path, FetchProgressCB cb, void* userdata);
-bool fetch(const char* url, const char* path);
+bool fetch_with_progress(const char* url, const char* path, FetchProgressCallback cb, void* userdata);
+#define fetch(A, B) fetch_with_progress(A, B, NULL, NULL)
 
 #endif
 

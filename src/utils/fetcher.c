@@ -19,7 +19,7 @@ typedef struct {
     CURLcode res;
     size_t cur_size;
     size_t total_size;
-    FetchProgressCB progress_cb;
+    FetchProgressCallback progress_cb;
     void* userdata;
     char* url;
 } fetcher;
@@ -40,7 +40,7 @@ static int progress_callback(void *clientp, curl_off_t dltotal, curl_off_t dlnow
     return 0;
 }
 
-bool fetch_with_progress(const char* url, const char* path, FetchProgressCB cb, void* userdata) {
+visible bool fetch_with_progress(const char* url, const char* path, FetchProgressCallback cb, void* userdata) {
     debug("Fetch: %s -> %s\n", url, path);
     fetcher* fetch = malloc(sizeof(fetcher));
 
@@ -116,9 +116,5 @@ bool fetch_with_progress(const char* url, const char* path, FetchProgressCB cb, 
 
     free(fetch);
     return false;
-}
-
-visible bool fetch(const char* url, const char* path) {
-    return fetch_with_progress(url, path, NULL, NULL);
 }
 
