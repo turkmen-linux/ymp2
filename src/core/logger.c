@@ -7,6 +7,7 @@
 
 #include <utils/string.h>
 #include <utils/process.h>
+#include <utils/color.h>
 
 #include <core/logger.h>
 
@@ -39,12 +40,12 @@ visible int print_fn(const char* caller, int type, const char* format, ...){
         if(cur_time == 0){
             cur_time = get_epoch();
         }
-        printf("[%s:%ld]: ", caller, get_epoch() - cur_time);
+        color_print(NORMAL, COLOR_MAGENTA, "[%s:%ld]: ", caller, get_epoch() - cur_time);
         cur_time = get_epoch();
     }else if(type == WARNING){
-        printf("%s: ", "Warning");
+        color_print(BOLD, COLOR_YELLOW, "%s: ", "Warning");
     }else if(type == ERROR){
-        printf("%s: ", "ERROR");
+        color_print(BOLD, COLOR_RED, "%s: ", "ERROR");
     }
 
     int status = print_functions[type](format, args);

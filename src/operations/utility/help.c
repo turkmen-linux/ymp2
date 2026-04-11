@@ -6,21 +6,24 @@
 #include <core/logger.h>
 
 #include <utils/string.h>
+#include <utils/color.h>
 
 extern Ymp* global;
 
 static void help_print(Operation op){
     if(op.alias != NULL){
-        print("%s:%s\n", "Aliases", op.alias);
+        color_print(BOLD, COLOR_CYAN, "%s:", "Aliases");
+        color_print(NORMAL, COLOR_DEFAULT, "%s\n", op.alias);
     }
-    print("%s: ymp %s [OPTION]... [ARGS]...\n", "Usage", op.name);
-    print("%s\n", op.description);
+    color_print(BOLD, COLOR_CYAN, "%s: ", "Usage");
+    color_print(NORMAL, COLOR_GREEN, "ymp %s [OPTION]... [ARGS]...\n", op.name);
+    color_print(NORMAL, COLOR_DEFAULT, "%s\n", op.description);
     if(op.help == NULL){
         return;
     }
-    print("%s:\n", "Options");
+    color_print(BOLD, COLOR_CYAN, "%s:\n", "Options");
     for(size_t i=0; i < op.help->cur; i++){
-        print("  %s\n", op.help->parameters[i]);
+        color_print(NORMAL, COLOR_YELLOW, "  %s\n", op.help->parameters[i]);
     }
 }
 
@@ -47,7 +50,8 @@ static int help_main(char** args){
     OperationManager *manager = global->manager;
     for(size_t i=0; i < manager->length; i++){
         Operation op = manager->operations[i];
-        printf("%s  :  %s\n",  op.name, op.description);
+        color_print(BOLD, COLOR_CYAN, "%s", op.name);
+        color_print(NORMAL, COLOR_DEFAULT, "  :  %s\n", op.description);
     }
     return 0;
 }

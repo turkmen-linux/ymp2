@@ -8,6 +8,7 @@
 #include <utils/string.h>
 #include <utils/yaml.h>
 #include <utils/fetcher.h>
+#include <utils/color.h>
 
 #include <core/logger.h>
 #include <core/variable.h>
@@ -25,7 +26,7 @@ visible Repository* repository_new() {
     repo->packages = malloc(sizeof(Package*) * 32); // Initialize with a reasonable capacity
     if (!repo->packages) {
         free(repo);
-        printf("Memory initial allocation failed\n");
+        color_print(BOLD, COLOR_RED, "Memory initial allocation failed\n");
         return NULL; // Handle memory allocation failure
     }
     return repo;
@@ -59,7 +60,7 @@ static void repository_load_data(Repository* repo, const char* data, bool is_sou
     // Reallocate package storage
     repo->packages = realloc(repo->packages, (repo->package_count + len) * sizeof(Package*));
     if (!repo->packages) {
-        printf("Memory allocation failed %ld\n", repo->package_count + len);
+        color_print(BOLD, COLOR_RED, "Memory allocation failed %ld\n", repo->package_count + len);
         return; // Handle memory allocation failure
     }
 

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include <core/ymp.h>
+#include <utils/color.h>
 #include <core/variable.h>
 #include <core/logger.h>
 
@@ -29,9 +30,9 @@ static void list_available(){
             }
             char* meta = build_string("%s/%s/metadata/%s.yaml", get_value("DESTDIR"), STORAGE, name);
             if(isfile(meta)){
-                printf("i %s %s\n", name, desc);
+                color_print(BOLD, COLOR_GREEN, "i %s %s\n", name, desc);
             } else {
-                printf("u %s %s\n", name, desc);
+                color_print(BOLD, COLOR_YELLOW, "u %s %s\n", name, desc);
             }
             free(meta);
         }
@@ -53,7 +54,8 @@ static void list_installed(){
         bool load = package_load_from_installed(pi, meta[i]);
         if(load){
             const char* desc = yaml_get_value(pi->metadata, "description");
-            printf("%s %s\n", pi->name, desc);
+            color_print(BOLD, COLOR_CYAN, "%s ", pi->name);
+            color_print(NORMAL, COLOR_DEFAULT, "%s\n", desc);
         } else {
             warning("Failed to read package metadata: %s\n", meta[i]);
         }

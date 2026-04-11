@@ -5,6 +5,7 @@
 #include <utils/file.h>
 #include <utils/string.h>
 #include <utils/process.h>
+#include <utils/color.h>
 
 #include <core/ymp.h>
 #include <core/variable.h>
@@ -17,7 +18,7 @@ static int key_add(char** args){
     char* name = get_value("name");
     char* destdir = get_value("DESTDIR");
     if(strlen(name) == 0){
-        print("Key name is not defined!\n");
+        color_print(BOLD, COLOR_RED, "Key name is not defined!\n");
         return 1;
     }
     char* file = args[0];

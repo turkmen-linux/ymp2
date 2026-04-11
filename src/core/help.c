@@ -5,6 +5,7 @@
 #include <core/logger.h>
 
 #include <utils/string.h>
+#include <utils/color.h>
 
 // Function to create a new Help structure
 visible Help* help_new() {

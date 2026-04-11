@@ -7,39 +7,38 @@
 #include <data/dependency.h>
 
 #include <utils/yaml.h>
+#include <utils/color.h>
 
 static void dump_info(Package *pi){
     if(pi->is_source){
-        printf("source:\n");
+        color_print(BOLD, COLOR_CYAN, "source:\n");
     } else {
-        printf("package:\n");
+        color_print(BOLD, COLOR_CYAN, "package:\n");
     }
     const char* desc = yaml_get_value(pi->metadata, "description");
     if(desc == NULL){
         return;
     }
-    printf(
-        "  name: %s\n"
-        "  version: %s\n"
-        "  release %d\n"
-        "  description; %s\n",
-        pi->name,
-        pi->version,
-        pi->release,
-        desc
-    );
+    color_print(BOLD, COLOR_YELLOW, "  name: ");
+    color_print(NORMAL, COLOR_DEFAULT, "%s\n", pi->name);
+    color_print(BOLD, COLOR_YELLOW, "  version: ");
+    color_print(NORMAL, COLOR_DEFAULT, "%s\n", pi->version);
+    color_print(BOLD, COLOR_YELLOW, "  release: ");
+    color_print(NORMAL, COLOR_DEFAULT, "%d\n", pi->release);
+    color_print(BOLD, COLOR_YELLOW, "  description: ");
+    color_print(NORMAL, COLOR_DEFAULT, "%s\n", desc);
     if(package_is_installed(pi)){
-        printf("  installed: true\n");
+        color_print(BOLD, COLOR_GREEN, "  installed: true\n");
     } else {
-        printf("  installed: false\n");
+        color_print(BOLD, COLOR_RED, "  installed: false\n");
     }
-    printf("  dependencies:\n");
+    color_print(BOLD, COLOR_YELLOW, "  dependencies:\n");
     for(size_t i=0; pi->dependencies[i]; i++){
-        printf("    - %s\n", pi->dependencies[i]);
+        color_print(NORMAL, COLOR_CYAN, "    - %s\n", pi->dependencies[i]);
     }
-    printf("  groups:\n");
+    color_print(BOLD, COLOR_YELLOW, "  groups:\n");
     for(size_t i=0; pi->groups[i]; i++){
-        printf("    - %s\n", pi->groups[i]);
+        color_print(NORMAL, COLOR_MAGENTA, "    - %s\n", pi->groups[i]);
     }
 
 }

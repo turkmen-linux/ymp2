@@ -14,6 +14,7 @@
 #include <utils/jobs.h>
 #include <utils/gpg.h>
 #include <utils/archive.h>
+#include <utils/color.h>
 
 #include <config.h>
 
@@ -168,7 +169,7 @@ static void move_packages(const char* path){
 static int repo_index(const char* path){
     const char* name = get_value("name");
     if(strlen(name) < 1){
-        printf("repo name is undefined. Use --name=xxx\n");
+        color_print(BOLD, COLOR_RED, "repo name is undefined. Use --name=xxx\n");
         return 1;
     }
     if (get_bool("move")){
@@ -216,7 +217,7 @@ static int repo_index(const char* path){
     }
     char* repicent = get_value("repicent");
     if(strlen(repicent)<1){
-        printf("Failed to set gpg repicent!\n");
+        color_print(BOLD, COLOR_RED, "Failed to set gpg repicent!\n");
         status = 1;
         goto repo_index_free;
     }

@@ -1,13 +1,14 @@
 #include <core/ymp.h>
 
 #include <stdio.h>
+#include <utils/color.h>
 static int print(void** args) {
     size_t i=0;
     for(i=0; args[i]; i++){
-        printf("%s ", (char*)args[i]);
+        color_print(NORMAL, COLOR_DEFAULT, "%s ", (char*)args[i]);
     }
     if(i>0){
-        printf("\n");
+        color_print(NORMAL, COLOR_DEFAULT, "\n");
     }
     return 0;
 }
