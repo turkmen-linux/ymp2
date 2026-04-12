@@ -55,7 +55,7 @@ static void list_installed(){
         if(load){
             const char* desc = yaml_get_value(pi->metadata, "description");
             color_print(BOLD, COLOR_CYAN, "%s ", pi->name);
-            color_print(NORMAL, COLOR_DEFAULT, "%s\n", desc);
+            color_print(NORMAL, COLOR_WHITE, "%s\n", desc);
         } else {
             warning("Failed to read package metadata: %s\n", meta[i]);
         }

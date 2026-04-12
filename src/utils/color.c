@@ -1,17 +1,12 @@
 #include <utils/color.h>
 
-visible void color_print(bool bold, color_t color, const char *fmt, ...) {
+visible void color_print(bool bold, int color, const char *fmt, ...) {
     va_list ap;
 
-    if (color != COLOR_DEFAULT) {
-        if (bold) {
-            printf("\x1b[1;%dm", color);
-        }
-        else {
-            printf("\x1b[%dm", color);
-        }
-    } else if (bold) {
-        printf("\x1b[1m");
+    if (bold) {
+        printf("\x1b[1;%dm", color+30);
+    }  else {
+        printf("\x1b[%dm", color+30);
     }
 
     va_start(ap, fmt);
