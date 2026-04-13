@@ -3,11 +3,18 @@
 #include <core/ymp.h>
 #include <utils/gui.h>
 
+#include <string.h>
+
 static int dialog_main(char** args) {
-    if(gui_yes_no(args[0], args[1], false)){
-        return 0;
+    if(get_bool("yes-no")){
+        if(gui_yes_no(args[0], args[1], false)){
+            return 0;
+        }
+        return 1;
+    } else if (get_bool("message")) {
+        gui_msg(args[0], args[1], MSG_INFO);
     }
-    return 1;
+    return 0;
 }
 
 void dialog_init(OperationManager* manager){
