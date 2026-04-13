@@ -69,7 +69,9 @@ visible void plugin_init(Ymp* ymp){
     Operation op;
     op.name = "fetch";
     op.alias = "dl:download:wget";
-    op.help = NULL;
+    op.description = _("file downloader");
+    op.help = help_new();
+    help_add_parameter(op.help, "--target", _("Target directory"));
     op.min_args = 1;
     op.call = (callback) fetch_fn;
     operation_register(ymp->manager, op);

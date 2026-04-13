@@ -407,16 +407,16 @@ visible void gui_progress_update(const char *id, size_t done, size_t total) {
 
 static void format_size(char *buf, size_t buf_len, size_t bytes) {
     if (bytes >= 1024 * 1024 * 1024) {
-        snprintf(buf, buf_len, "%zu.%zuGB", bytes / (1024 * 1024 * 1024),
+        snprintf(buf, buf_len+1, "%zu.%zuGB", bytes / (1024 * 1024 * 1024),
                 (bytes % (1024 * 1024 * 1024)) / (1024 * 1024 * 102));
     } else if (bytes >= 1024 * 1024) {
-        snprintf(buf, buf_len, "%zu.%zuMB", bytes / (1024 * 1024),
+        snprintf(buf, buf_len+1, "%zu.%zuMB", bytes / (1024 * 1024),
                 (bytes % (1024 * 1024)) / (1024 * 102));
     } else if (bytes >= 1024) {
-        snprintf(buf, buf_len, "%zu.%zuKB", bytes / 1024,
+        snprintf(buf, buf_len+1, "%zu.%zuKB", bytes / 1024,
                 (bytes % 1024) / 102);
     } else {
-        snprintf(buf, buf_len, "%zuB", bytes);
+        snprintf(buf, buf_len+1, "%zuB", bytes);
     }
 }
 

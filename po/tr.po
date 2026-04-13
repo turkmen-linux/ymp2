@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-11 19:02+0300\n"
+"POT-Creation-Date: 2026-04-13 12:04+0000\n"
 "PO-Revision-Date: 2026-04-11 18:45+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: src/core/cli.c:26
+#, c-format
+msgid "Version: %s\n"
+msgstr "Surum: %s\n"
+
+#: src/core/cli.c:40
+msgid "No command given.\n"
+msgstr "Komut verilmedi.\n"
+
+#: src/core/cli.c:41
+#, c-format
+msgid "Run %s for more information about usage.\n"
+msgstr "Kullanim hakkinda daha fazla bilgi almak icin %s calistirin.\n"
 
 #: src/core/help.c:16
 msgid "Memory allocation failed for Help structure.\n"
@@ -34,87 +48,82 @@ msgstr "Parametre dizisi icin bellek yeniden ayrilamadi.\n"
 msgid "String duplication failed for: %s\n"
 msgstr "Dize kopyalanamadi: %s\n"
 
-#: src/core/variable.c:43 src/core/variable.c:89
-msgid "Invalid VariableManager\n"
-msgstr "Gecersiz DegiskenYoneticisi\n"
-
-#: src/core/variable.c:65 src/core/operations.c:65 src/core/ymp.c:144
+#: src/core/operations.c:65 src/core/variable.c:65 src/core/ymp.c:144
 #: src/utils/yaml.c:151 src/utils/yaml.c:183
 msgid "Memory allocation failed\n"
 msgstr "Bellek ayrilamadi\n"
+
+#: src/core/variable.c:43 src/core/variable.c:89
+msgid "Invalid VariableManager\n"
+msgstr "Gecersiz DegiskenYoneticisi\n"
 
 #: src/core/ymp.c:58
 msgid "Segmentation fault:\n"
 msgstr "Bolumleme hatasi:\n"
 
-#: src/core/cli.c:26
-#, c-format
-msgid "Version: %s\n"
-msgstr "Surum: %s\n"
-
-#: src/core/cli.c:40
-msgid "No command given.\n"
-msgstr "Komut verilmedi.\n"
-
-#: src/core/cli.c:41
-msgid "Run %s for more information about usage.\n"
-msgstr "Kullanim hakkinda daha fazla bilgi almak icin %s calistirin.\n"
-
-#: src/data/repository.c:74
-msgid "Failed to create new package\n"
-msgstr "Yeni paket olusturulamadi\n"
-
 #: src/data/build.c:197
+#, c-format
 msgid "Stripping: %s\n"
 msgstr "Kirpiliyor: %s\n"
 
 #: src/data/build.c:255
+#, c-format
 msgid "Skipping hash verification for: %s\n"
-msgstr "Hash doğrulaması geçiliyor: %s\n"
+msgstr "Hash dogrulamasi geciliyor: %s\n"
 
 #: src/data/dependency.c:245
 msgid "Failed to resolve dependencies\n"
 msgstr "Bagimlilik cozme basarisiz: %s\n"
 
-#: src/operations/package-manager/search.c:73
-msgid "Search package or file"
-msgstr "Paket veya dosya ara"
+#: src/data/quarantine.c:22
+#, c-format
+msgid "Validating metadata: %s\n"
+msgstr "Metadata dogrulaniyor: %s\n"
 
-#: src/operations/package-manager/search.c:77
-msgid "Search files"
-msgstr "Dosyalari ara"
+#: src/data/quarantine.c:33
+#, c-format
+msgid "Invalid metadata: %s\n"
+msgstr "Gecersiz metadata: %s\n"
 
-#: src/operations/package-manager/list.c:84
-msgid "List packages, repos and more"
-msgstr "Paketleri, depolari ve daha fazlasini listele"
+#: src/data/quarantine.c:45
+#, c-format
+msgid "Unsupported package format: %s\n"
+msgstr "Desteklenmeyen paket turu: %s\n"
 
-#: src/operations/package-manager/list.c:87
-msgid "List available packages"
-msgstr "Kullanilabilir paketleri listele"
+#: src/data/quarantine.c:70
+#, c-format
+msgid "Validating files: %s\n"
+msgstr "Dosyalar dogrulaniyor: %s\n"
 
-#: src/operations/package-manager/list.c:88
-msgid "List installed packages"
-msgstr "Kurulu paketleri listele"
+#: src/data/quarantine.c:83
+msgid "Package files not found\n"
+msgstr "Paket dosyalari bulunamadi\n"
 
-#: src/operations/package-manager/key.c:82
-msgid "Ymp key manager"
-msgstr "Ymp anahtar yoneticisi"
+#: src/data/quarantine.c:92
+msgid "Failed to open package files\n"
+msgstr "Paket dosyalari acma basarisiz\n"
 
-#: src/operations/package-manager/key.c:85
-msgid "Add a key into ymp keyring db"
-msgstr "Ymp anahtar deposuna bir anahtar ekle"
+#: src/data/quarantine.c:150
+#, c-format
+msgid "Validating links: %s\n"
+msgstr "Linkler dogrulaniyor: %s\n"
 
-#: src/operations/package-manager/key.c:86
-msgid "Add a key from ymp keyring db"
-msgstr "Ymp anahtar deposundan bir anahtar kaldir"
+#: src/data/quarantine.c:163
+msgid "Package links not found\n"
+msgstr "Paket linkleri bulunamadi\n"
 
-#: src/operations/package-manager/key.c:87
-msgid "Name for new key"
-msgstr "Yeni anahtar icin ad"
+#: src/data/quarantine.c:175
+msgid "Failed to open package links\n"
+msgstr "Paket linkleri acma basarisiz\n"
 
-#: src/operations/package-manager/repo.c:273
-msgid "Repository operations"
-msgstr "Depo islemleri"
+#: src/data/quarantine.c:230
+#, c-format
+msgid "Syncing: %s\n"
+msgstr "Esleniyor: %s\n"
+
+#: src/data/repository.c:74
+msgid "Failed to create new package\n"
+msgstr "Yeni paket olusturulamadi\n"
 
 #: src/operations/package-manager/build.c:66
 msgid "Build package"
@@ -148,9 +157,49 @@ msgstr "hazir paket kullan"
 msgid "sync quarantine after every package installation"
 msgstr "her paket kurulumundan sonra karantinayi esitle"
 
+#: src/operations/package-manager/key.c:82
+msgid "Ymp key manager"
+msgstr "Ymp anahtar yoneticisi"
+
+#: src/operations/package-manager/key.c:85
+msgid "Add a key into ymp keyring db"
+msgstr "Ymp anahtar deposuna bir anahtar ekle"
+
+#: src/operations/package-manager/key.c:86
+msgid "Add a key from ymp keyring db"
+msgstr "Ymp anahtar deposundan bir anahtar kaldir"
+
+#: src/operations/package-manager/key.c:87
+msgid "Name for new key"
+msgstr "Yeni anahtar icin ad"
+
+#: src/operations/package-manager/list.c:84
+msgid "List packages, repos and more"
+msgstr "Paketleri, depolari ve daha fazlasini listele"
+
+#: src/operations/package-manager/list.c:87
+msgid "List available packages"
+msgstr "Kullanilabilir paketleri listele"
+
+#: src/operations/package-manager/list.c:88
+msgid "List installed packages"
+msgstr "Kurulu paketleri listele"
+
 #: src/operations/package-manager/remove.c:151
 msgid "Remove package"
 msgstr "Paketi kaldir"
+
+#: src/operations/package-manager/repo.c:273
+msgid "Repository operations"
+msgstr "Depo islemleri"
+
+#: src/operations/package-manager/search.c:73
+msgid "Search package or file"
+msgstr "Paket veya dosya ara"
+
+#: src/operations/package-manager/search.c:77
+msgid "Search files"
+msgstr "Dosyalari ara"
 
 #: src/operations/utility/dialog.c:17
 msgid "Dialog"
@@ -188,7 +237,7 @@ msgstr "Hicbir sey yapma"
 msgid "Trigger sysconf operations"
 msgstr "Sistem yapilandirma islemlerini calistir"
 
-#: src/utils/archive.c:162
+#: src/utils/archive.c:170
 #, c-format
 msgid "Skip unsupported archive entry: %s\n"
 msgstr "Desteklenmeyen arsiv girdisi atlaniyor: %s\n"
@@ -197,28 +246,27 @@ msgstr "Desteklenmeyen arsiv girdisi atlaniyor: %s\n"
 msgid "memory allocation failed"
 msgstr "bellek ayrilamadi"
 
-#: src/utils/fetcher.c:70
+#: src/utils/fetcher.c:94
 #, c-format
 msgid "Download failed: %s\n"
-msgstr ""
+msgstr "Indirme basarisiz: %s\n"
 
-#: src/utils/file.c:314
+#: src/utils/file.c:319
 #, c-format
 msgid "Error accessing source directory: %s\n"
 msgstr "Kaynak dizine erisilemedi: %s\n"
 
-#: src/utils/file.c:320
+#: src/utils/file.c:325
 #, c-format
 msgid "Error creating destination directory: %s\n"
 msgstr "Hedef dizin olusturulamadi: %s\n"
 
-#: src/utils/file.c:326
+#: src/utils/file.c:331
 #, c-format
 msgid "Error opening source directory: %s\n"
 msgstr "Kaynak dizin acilamadi: %s\n"
 
-#: src/utils/file.c:399
+#: src/utils/file.c:404
 #, c-format
 msgid "Cannot access: %s\n"
 msgstr "Erisilemiyor: %s\n"
-
