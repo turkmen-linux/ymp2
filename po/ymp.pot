@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-13 12:04+0000\n"
+"POT-Creation-Date: 2026-04-17 14:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -133,10 +133,6 @@ msgstr ""
 msgid "install after build"
 msgstr ""
 
-#: src/operations/package-manager/info.c:98
-msgid "Show package information"
-msgstr ""
-
 #: src/operations/package-manager/install.c:104
 msgid "Install package"
 msgstr ""
@@ -173,18 +169,6 @@ msgstr ""
 msgid "Name for new key"
 msgstr ""
 
-#: src/operations/package-manager/list.c:84
-msgid "List packages, repos and more"
-msgstr ""
-
-#: src/operations/package-manager/list.c:87
-msgid "List available packages"
-msgstr ""
-
-#: src/operations/package-manager/list.c:88
-msgid "List installed packages"
-msgstr ""
-
 #: src/operations/package-manager/remove.c:151
 msgid "Remove package"
 msgstr ""
@@ -201,7 +185,23 @@ msgstr ""
 msgid "Search files"
 msgstr ""
 
-#: src/operations/utility/dialog.c:17
+#: src/operations/package-manager/info.c:100
+msgid "Show package information"
+msgstr ""
+
+#: src/operations/package-manager/list.c:86
+msgid "List packages, repos and more"
+msgstr ""
+
+#: src/operations/package-manager/list.c:89
+msgid "List available packages"
+msgstr ""
+
+#: src/operations/package-manager/list.c:90
+msgid "List installed packages"
+msgstr ""
+
+#: src/operations/utility/dialog.c:24
 msgid "Dialog"
 msgstr ""
 
@@ -269,4 +269,16 @@ msgstr ""
 #: src/utils/file.c:404
 #, c-format
 msgid "Cannot access: %s\n"
+msgstr ""
+
+#: src/utils/gui.c:265
+msgid "Select: "
+msgstr ""
+
+#: src/utils/gui.c:269
+msgid " Yes "
+msgstr ""
+
+#: src/utils/gui.c:278
+msgid " No "
 msgstr ""

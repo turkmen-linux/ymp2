@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-13 12:04+0000\n"
+"POT-Creation-Date: 2026-04-17 14:53+0000\n"
 "PO-Revision-Date: 2026-04-11 18:45+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -133,10 +133,6 @@ msgstr "Paket derle"
 msgid "install after build"
 msgstr "derleme sonrasi kur"
 
-#: src/operations/package-manager/info.c:98
-msgid "Show package information"
-msgstr "Paket bilgilerini goster"
-
 #: src/operations/package-manager/install.c:104
 msgid "Install package"
 msgstr "Paket kur"
@@ -173,18 +169,6 @@ msgstr "Ymp anahtar deposundan bir anahtar kaldir"
 msgid "Name for new key"
 msgstr "Yeni anahtar icin ad"
 
-#: src/operations/package-manager/list.c:84
-msgid "List packages, repos and more"
-msgstr "Paketleri, depolari ve daha fazlasini listele"
-
-#: src/operations/package-manager/list.c:87
-msgid "List available packages"
-msgstr "Kullanilabilir paketleri listele"
-
-#: src/operations/package-manager/list.c:88
-msgid "List installed packages"
-msgstr "Kurulu paketleri listele"
-
 #: src/operations/package-manager/remove.c:151
 msgid "Remove package"
 msgstr "Paketi kaldir"
@@ -201,7 +185,23 @@ msgstr "Paket veya dosya ara"
 msgid "Search files"
 msgstr "Dosyalari ara"
 
-#: src/operations/utility/dialog.c:17
+#: src/operations/package-manager/info.c:100
+msgid "Show package information"
+msgstr "Paket bilgilerini goster"
+
+#: src/operations/package-manager/list.c:86
+msgid "List packages, repos and more"
+msgstr "Paketleri, depolari ve daha fazlasini listele"
+
+#: src/operations/package-manager/list.c:89
+msgid "List available packages"
+msgstr "Kullanilabilir paketleri listele"
+
+#: src/operations/package-manager/list.c:90
+msgid "List installed packages"
+msgstr "Kurulu paketleri listele"
+
+#: src/operations/utility/dialog.c:24
 msgid "Dialog"
 msgstr "Sorgulama"
 
@@ -270,3 +270,15 @@ msgstr "Kaynak dizin acilamadi: %s\n"
 #, c-format
 msgid "Cannot access: %s\n"
 msgstr "Erisilemiyor: %s\n"
+
+#: src/utils/gui.c:265
+msgid "Select: "
+msgstr "Secim: "
+
+#: src/utils/gui.c:269
+msgid " Yes "
+msgstr " Evet "
+
+#: src/utils/gui.c:278
+msgid " No "
+msgstr " Hayir "
