@@ -260,11 +260,11 @@ visible bool gui_yes_no(const char *title, const char *msg, bool def) {
             draw_text(msg, 3, true);
         }
 
-        mvwprintw(win, h - 4, 2, "Select: ");
+        mvwprintw(win, h - 4, 2, _("Select: "));
         if (sel == 0) {
             wattron(win, A_REVERSE);
         }
-        mvwprintw(win, h - 4, 10, " Yes ");
+        mvwprintw(win, h - 4, 10, _(" Yes "));
         if (sel == 0) {
             wattroff(win, A_REVERSE);
         }
@@ -273,15 +273,9 @@ visible bool gui_yes_no(const char *title, const char *msg, bool def) {
         if (sel == 1) {
             wattron(win, A_REVERSE);
         }
-        mvwprintw(win, h - 4, 18, " No ");
+        mvwprintw(win, h - 4, 18, _(" No "));
         if (sel == 1) {
             wattroff(win, A_REVERSE);
-        }
-
-        if (sel == 0) {
-            mvwaddstr(win, h - 3, win_w / 2 - 10, "[ Press Enter to confirm ]");
-        } else {
-            mvwaddstr(win, h - 3, win_w / 2 - 9, "[ Press Enter to deny ]");
         }
 
         wrefresh(win);
