@@ -6,6 +6,8 @@
 #include <ncurses.h>
 #include <panel.h>
 
+#include <core/ymp.h>
+
 #include <utils/gui.h>
 #include <utils/fetcher.h>
 
