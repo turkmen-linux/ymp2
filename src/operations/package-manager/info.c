@@ -27,10 +27,11 @@ static void dump_info(Package *pi){
     color_print(NORMAL, COLOR_WHITE, "%d\n", pi->release);
     color_print(BOLD, COLOR_YELLOW, "  description: ");
     color_print(NORMAL, COLOR_WHITE, "%s\n", desc);
+    color_print(BOLD, COLOR_YELLOW, "  installed: ");
     if(package_is_installed(pi)){
-        color_print(BOLD, COLOR_GREEN, "  installed: true\n");
+        color_print(BOLD, COLOR_GREEN, "true\n");
     } else {
-        color_print(BOLD, COLOR_RED, "  installed: false\n");
+        color_print(BOLD, COLOR_RED, "false\n");
     }
     color_print(BOLD, COLOR_YELLOW, "  dependencies:\n");
     for(size_t i=0; pi->dependencies[i]; i++){
@@ -40,6 +41,7 @@ static void dump_info(Package *pi){
     for(size_t i=0; pi->groups[i]; i++){
         color_print(NORMAL, COLOR_MAGENTA, "    - %s\n", pi->groups[i]);
     }
+    color_print(NORMAL, COLOR_WHITE, "\n");
 
 }
 
