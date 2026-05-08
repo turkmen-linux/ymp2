@@ -4,12 +4,15 @@
 
 #include <core/ymp.h>
 
+#include <config.h>
+
 #include <data/repository.h>
 #include <data/dependency.h>
 #include <core/logger.h>
 
 #include <utils/yaml.h>
 #include <utils/string.h>
+#include <utils/file.h>
 
 static int search_package(const char* arg, Repository **repos){
     for(size_t i=0; repos[i]; i++){
@@ -47,6 +50,35 @@ static int search_package(const char* arg, Repository **repos){
     return 0;
 }
 
+static int file_search(const char* arg){
+    char* destdir=get_value("DESTDIR");
+    char filesdir[PATH_MAX];
+    char file[PATH_MAX];
+    strcpy(filesdir, destdir);
+    strcpy(filesdir, STORAGE);
+    strcpy(filesdir, "/files");
+    int status=1;
+    char** files = listdir(filesdir);
+    for(size_t i = 0; files[i]; i++){
+        strcpy(file, filesdir);
+        strcpy(file, "/");
+        strcpy(file, files[i]);
+        char* data = readfile(file);
+        char** lines  = split(data, "\n");
+        for(size_t j = 0; lines[j]; i++){
+             if(strstr(lines[j]+40, arg)){
+                 print(files[i], lines[j]+40);
+                 status=0;
+             }
+             free(lines[j]);
+        }
+        free(lines);
+        free(files[i]);
+    }
+    free(files);
+    return status;
+}
+
 static int search_main(char** args){
     // Begin resolve
     Repository **repos = resolve_begin();
@@ -56,7 +88,7 @@ static int search_main(char** args){
     int ret = 0;
     for(size_t i=0; args[i]; i++){
         if(get_bool("file")){
-            //TODO: implement this
+            ret += file_search(args[i]);
         } else {
             ret += search_package(args[i], repos);
         }
