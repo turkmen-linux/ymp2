@@ -17,6 +17,7 @@
 #include <utils/error.h>
 #include <utils/file.h>
 #include <utils/string.h>
+#include <utils/tty.h>
 
 void ctx_init(OperationManager *manager);
 
@@ -76,6 +77,9 @@ static void gettext_init(){
 visible Ymp* ymp_init(){
 #ifdef YMP_GETTEXT
     gettext_init();
+    if(setup_raw_mode()){
+        return NULL;
+    }
 #endif
     // Allocate memory for Ymp instance
     size_t begin_time = get_epoch();

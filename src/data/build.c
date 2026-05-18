@@ -21,6 +21,8 @@
 #include <utils/yaml.h>
 #include <utils/sandbox.h>
 
+#include <utils/tty.h>
+
 #include <data/build.h>
 #include <config.h>
 
@@ -142,6 +144,7 @@ visible int ympbuild_check(char* ympfile){
 }
 
 visible int ympbuild_run_function(ympbuild* ymp, const char* name) {
+    enable_raw_mode();
     pid_t pid = fork();
     if(pid == 0){
         char* command = build_string(
@@ -172,6 +175,7 @@ visible int ympbuild_run_function(ympbuild* ymp, const char* name) {
         free(command);
         exit(1);
     } else {
+        disable_raw_mode();
         int status = 0;
         (void)waitpid(pid, &status, 0);
         return status;
