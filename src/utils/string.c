@@ -355,4 +355,25 @@ visible char* strip(const char* str) {
     return trimmed;
 }
 
+static char alphabet[] = "0123456789abcdef";
+visible char* generate_uuid(){
+    char* ret = calloc(37, sizeof(char));
+    size_t j = 0;
+    srand(time(NULL));
+    for(size_t i=0; i< 8; i++){
+        ret[j++] = alphabet[rand() % 16];
+    }
+    ret[j++] = '-';
+    for(size_t k=0; k<3; k++){
+        for(size_t i=0; i< 4; i++){
+            ret[j++] = alphabet[rand() % 16];
+        }
+        ret[j++] = '-';
+    }
+    for(size_t i=0; i< 12; i++){
+        ret[j++] = alphabet[rand() % 16];
+    }
+    return ret;
+}
+
 #endif

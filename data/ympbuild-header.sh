@@ -28,6 +28,7 @@ export GOTMPDIR="@buildpath@"
 
 export LANG="C.UTF-8"
 
+declare -r UUID="@UUID@"
 declare -r API_KEY='@APIKEY@'
 
 exec 0< /dev/null

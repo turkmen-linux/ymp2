@@ -18,6 +18,11 @@ int main() {
     // Read file
     char *os_release = readfile("/etc/os-release");
     printf("%s\n", os_release);
+
+    // uuid generate
+    char* uuid = generate_uuid();
+    puts(uuid);
+
     // Read resource
     char* example_txt = readfile(":/example.txt");
     printf("%s\n", example_txt);
@@ -85,8 +90,11 @@ int main() {
         printf("%ld-> %s\n",i, result[i]);
     }
 
+
     // Free the allocated memory
+    free(uuid);
     free(result);
+
 
     return 0;
 }

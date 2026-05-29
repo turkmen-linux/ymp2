@@ -317,6 +317,7 @@ static char** get_uses(ympbuild *ymp) {
 }
 
 static void configure_header(ympbuild *ymp) {
+    char* uuid = generate_uuid();
     ymp->header = readfile(":/ympbuild-header.sh");
     ymp->header = str_replace(ymp->header, "@buildpath@", ymp->path);
     ymp->header = str_replace(ymp->header, "@CC@", variable_get_value(global->variables, "build:cc"));
@@ -325,6 +326,7 @@ static void configure_header(ympbuild *ymp) {
     ymp->header = str_replace(ymp->header, "@CXXFLAGS@", variable_get_value(global->variables, "build:cxxflags"));
     ymp->header = str_replace(ymp->header, "@LDFLAGS@", variable_get_value(global->variables, "build:ldflags"));
     ymp->header = str_replace(ymp->header, "@APIKEY@", variable_get_value(global->variables, "build:token"));
+    ymp->header = str_replace(ymp->header, "@UUID@", uuid);
     ymp->header = str_replace(ymp->header, "@ARCH@", ARCH);
     ymp->header = str_replace(ymp->header, "@DEBARCH@", DEBARCH);
     ymp->header = str_replace(ymp->header, "@DISTRODIR@", DISTRODIR);
@@ -335,6 +337,7 @@ static void configure_header(ympbuild *ymp) {
         ymp->header = new_header;
     }
     free(flag);
+    free(uuid);
 }
 
 static void generate_links_files(const char* path) {
