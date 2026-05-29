@@ -30,3 +30,21 @@ ymp:
 
 ```
 
+## files
+File list and hashes.
+
+Format: `sha1sum filepath`
+```
+3760de851dfe0e88af01362680c8354252c59026 usr/bin/example
+b7f123b49345e9274f3f894b2e8aed7ed0716ca0 usr/lib64/libexample.so.1
+c909ac4e6081822eedfdcb30e158b374be553c7f usr/share/man/man1/example.1
+```
+
+## links
+File symlink and path
+
+Format: `linkpath target`
+```
+usr/lib64/libexample.so.1 libexample
+usr/bin/example ../libexec/example
+```
