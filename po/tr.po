@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-17 14:53+0000\n"
+"POT-Creation-Date: 2026-06-04 16:34+0300\n"
 "PO-Revision-Date: 2026-04-11 18:45+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,7 +48,7 @@ msgstr "Parametre dizisi icin bellek yeniden ayrilamadi.\n"
 msgid "String duplication failed for: %s\n"
 msgstr "Dize kopyalanamadi: %s\n"
 
-#: src/core/operations.c:65 src/core/variable.c:65 src/core/ymp.c:144
+#: src/core/operations.c:65 src/core/variable.c:65 src/core/ymp.c:148
 #: src/utils/yaml.c:151 src/utils/yaml.c:183
 msgid "Memory allocation failed\n"
 msgstr "Bellek ayrilamadi\n"
@@ -57,16 +57,16 @@ msgstr "Bellek ayrilamadi\n"
 msgid "Invalid VariableManager\n"
 msgstr "Gecersiz DegiskenYoneticisi\n"
 
-#: src/core/ymp.c:58
+#: src/core/ymp.c:59
 msgid "Segmentation fault:\n"
 msgstr "Bolumleme hatasi:\n"
 
-#: src/data/build.c:197
+#: src/data/build.c:201
 #, c-format
 msgid "Stripping: %s\n"
 msgstr "Kirpiliyor: %s\n"
 
-#: src/data/build.c:255
+#: src/data/build.c:259
 #, c-format
 msgid "Skipping hash verification for: %s\n"
 msgstr "Hash dogrulamasi geciliyor: %s\n"
@@ -133,6 +133,10 @@ msgstr "Paket derle"
 msgid "install after build"
 msgstr "derleme sonrasi kur"
 
+#: src/operations/package-manager/info.c:100
+msgid "Show package information"
+msgstr "Paket bilgilerini goster"
+
 #: src/operations/package-manager/install.c:104
 msgid "Install package"
 msgstr "Paket kur"
@@ -169,26 +173,6 @@ msgstr "Ymp anahtar deposundan bir anahtar kaldir"
 msgid "Name for new key"
 msgstr "Yeni anahtar icin ad"
 
-#: src/operations/package-manager/remove.c:151
-msgid "Remove package"
-msgstr "Paketi kaldir"
-
-#: src/operations/package-manager/repo.c:273
-msgid "Repository operations"
-msgstr "Depo islemleri"
-
-#: src/operations/package-manager/search.c:73
-msgid "Search package or file"
-msgstr "Paket veya dosya ara"
-
-#: src/operations/package-manager/search.c:77
-msgid "Search files"
-msgstr "Dosyalari ara"
-
-#: src/operations/package-manager/info.c:100
-msgid "Show package information"
-msgstr "Paket bilgilerini goster"
-
 #: src/operations/package-manager/list.c:86
 msgid "List packages, repos and more"
 msgstr "Paketleri, depolari ve daha fazlasini listele"
@@ -200,6 +184,22 @@ msgstr "Kullanilabilir paketleri listele"
 #: src/operations/package-manager/list.c:90
 msgid "List installed packages"
 msgstr "Kurulu paketleri listele"
+
+#: src/operations/package-manager/remove.c:151
+msgid "Remove package"
+msgstr "Paketi kaldir"
+
+#: src/operations/package-manager/repo.c:273
+msgid "Repository operations"
+msgstr "Depo islemleri"
+
+#: src/operations/package-manager/search.c:105
+msgid "Search package or file"
+msgstr "Paket veya dosya ara"
+
+#: src/operations/package-manager/search.c:109
+msgid "Search files"
+msgstr "Dosyalari ara"
 
 #: src/operations/utility/dialog.c:24
 msgid "Dialog"
@@ -282,3 +282,78 @@ msgstr " Evet "
 #: src/utils/gui.c:278
 msgid " No "
 msgstr " Hayir "
+
+#: plugin/brainfuck.c:22
+msgid "Failed to run brainfuck code: Out of memory\n"
+msgstr "Brainfuck kodu calistirilamadi: Bellek dolu\n"
+
+#: plugin/brainfuck.c:127
+msgid "Brainfuck interpreter"
+msgstr "Brainfuck yorumlayicisi"
+
+#: plugin/extract.c:28
+msgid "Extract files from archive"
+msgstr "Arsivden dosyalari ayikla"
+
+#: plugin/extract.c:31 plugin/fetch.c:74
+msgid "Target directory"
+msgstr "Hedef dizin"
+
+#: plugin/fetch.c:43
+msgid "Download"
+msgstr "Indir"
+
+#: plugin/fetch.c:72
+msgid "file downloader"
+msgstr "dosya indirici"
+
+#: plugin/hello.c:10
+msgid "Hello World\n"
+msgstr "Merhaba Dunya\n"
+
+#: plugin/hello.c:19
+msgid "Simple hello world plugin"
+msgstr "Basit merhaba dunya eklentisi"
+
+#: plugin/httpd.c:67
+#, c-format
+msgid "Failed to open directory: %s\n"
+msgstr "Dizin acilamadi: %s\n"
+
+#: plugin/httpd.c:128
+msgid "Failed to read from client"
+msgstr "Kullanicidan veri okunamadi"
+
+#: plugin/httpd.c:180
+#, c-format
+msgid "GET: %s\n"
+msgstr "GET: %s\n"
+
+#: plugin/httpd.c:184
+#, c-format
+msgid "Failed to open file: %s\n"
+msgstr "Dosyala acma basarisiz %s\n"
+
+#: plugin/httpd.c:229
+msgid "Error opening socket\n"
+msgstr "Socket acilamadi\n"
+
+#: plugin/httpd.c:240
+msgid "Error binding socket\n"
+msgstr "Socket ayrilamadi: %s\n"
+
+#: plugin/httpd.c:244
+msgid "Listen failed...\n"
+msgstr "Dinleme hatasi...\n"
+
+#: plugin/httpd.c:262
+msgid "simple http server"
+msgstr "basit http sunucusu"
+
+#: plugin/httpd.c:266
+msgid "serve directory. (default /)"
+msgstr "dizini sun (varsayilan /)"
+
+#: plugin/httpd.c:267
+msgid "server tcp port (default 8000)"
+msgstr "sunucu tcp portu (varsayilan 8000)"

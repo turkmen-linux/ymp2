@@ -14,7 +14,8 @@ build:
 pot:
 	xgettext --language=C++ -v --keyword=_\
 	     -o po/ymp.pot --from-code="utf-8" \
-	     `find src -type f -iname "*.c"` 2>/dev/null
+	     `find src -type f -iname "*.c"` \
+	     `find plugin -type f -iname "*.c"` 2>/dev/null
 	for file in `ls po/*.po`; do \
 	    msgmerge $$file po/ymp.pot -o $$file.new ; \
 	    echo POT: $$file; \

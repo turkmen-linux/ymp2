@@ -82,7 +82,9 @@ visible Ymp* ymp_init(){
     }
 #endif
     // Allocate memory for Ymp instance
+#ifndef NDEBUG
     size_t begin_time = get_epoch();
+#endif
     Ymp* ymp = (Ymp*)malloc(sizeof(Ymp));
     if(ymp == NULL){
         return NULL; // Memory allocation failed!
@@ -120,7 +122,10 @@ visible Ymp* ymp_init(){
     }
     free(plugins);
     #endif
-    debug("ymp init done in %ld µs\n", get_epoch() - begin_time);
+#ifndef NDEBUG
+    size_t done_time = get_epoch() - begin_time;
+    debug("ymp init done in %ld µs\n", done_time);
+#endif
 
     return ymp; // Return the pointer to the newly created instance
 }
@@ -160,7 +165,9 @@ static void ymp_set_logger_status(){
 }
 
 visible int ymp_run(Ymp* ymp){
+#ifndef NDEBUG
     size_t begin_time = get_epoch();
+#endif
     ymp_set_logger_status();
     YmpPrivate *queue = (YmpPrivate*)ymp->priv_data;
     int rc = 0;
@@ -172,7 +179,9 @@ visible int ymp_run(Ymp* ymp){
     }
     free(queue);
     ymp->priv_data = (void*) queue_init();
+#ifndef NDEBUG
     debug("ymp run done in %ld µs\n", get_epoch() - begin_time);
+#endif
     return rc;
 }
 visible void load_plugin(Ymp* ymp, const char* path){

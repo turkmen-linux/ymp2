@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-17 14:53+0000\n"
+"POT-Creation-Date: 2026-06-04 16:34+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -48,7 +48,7 @@ msgstr ""
 msgid "String duplication failed for: %s\n"
 msgstr ""
 
-#: src/core/operations.c:65 src/core/variable.c:65 src/core/ymp.c:144
+#: src/core/operations.c:65 src/core/variable.c:65 src/core/ymp.c:148
 #: src/utils/yaml.c:151 src/utils/yaml.c:183
 msgid "Memory allocation failed\n"
 msgstr ""
@@ -57,16 +57,16 @@ msgstr ""
 msgid "Invalid VariableManager\n"
 msgstr ""
 
-#: src/core/ymp.c:58
+#: src/core/ymp.c:59
 msgid "Segmentation fault:\n"
 msgstr ""
 
-#: src/data/build.c:197
+#: src/data/build.c:201
 #, c-format
 msgid "Stripping: %s\n"
 msgstr ""
 
-#: src/data/build.c:255
+#: src/data/build.c:259
 #, c-format
 msgid "Skipping hash verification for: %s\n"
 msgstr ""
@@ -133,6 +133,10 @@ msgstr ""
 msgid "install after build"
 msgstr ""
 
+#: src/operations/package-manager/info.c:100
+msgid "Show package information"
+msgstr ""
+
 #: src/operations/package-manager/install.c:104
 msgid "Install package"
 msgstr ""
@@ -169,26 +173,6 @@ msgstr ""
 msgid "Name for new key"
 msgstr ""
 
-#: src/operations/package-manager/remove.c:151
-msgid "Remove package"
-msgstr ""
-
-#: src/operations/package-manager/repo.c:273
-msgid "Repository operations"
-msgstr ""
-
-#: src/operations/package-manager/search.c:73
-msgid "Search package or file"
-msgstr ""
-
-#: src/operations/package-manager/search.c:77
-msgid "Search files"
-msgstr ""
-
-#: src/operations/package-manager/info.c:100
-msgid "Show package information"
-msgstr ""
-
 #: src/operations/package-manager/list.c:86
 msgid "List packages, repos and more"
 msgstr ""
@@ -199,6 +183,22 @@ msgstr ""
 
 #: src/operations/package-manager/list.c:90
 msgid "List installed packages"
+msgstr ""
+
+#: src/operations/package-manager/remove.c:151
+msgid "Remove package"
+msgstr ""
+
+#: src/operations/package-manager/repo.c:273
+msgid "Repository operations"
+msgstr ""
+
+#: src/operations/package-manager/search.c:105
+msgid "Search package or file"
+msgstr ""
+
+#: src/operations/package-manager/search.c:109
+msgid "Search files"
 msgstr ""
 
 #: src/operations/utility/dialog.c:24
@@ -281,4 +281,79 @@ msgstr ""
 
 #: src/utils/gui.c:278
 msgid " No "
+msgstr ""
+
+#: plugin/brainfuck.c:22
+msgid "Failed to run brainfuck code: Out of memory\n"
+msgstr ""
+
+#: plugin/brainfuck.c:127
+msgid "Brainfuck interpreter"
+msgstr ""
+
+#: plugin/extract.c:28
+msgid "Extract files from archive"
+msgstr ""
+
+#: plugin/extract.c:31 plugin/fetch.c:74
+msgid "Target directory"
+msgstr ""
+
+#: plugin/fetch.c:43
+msgid "Download"
+msgstr ""
+
+#: plugin/fetch.c:72
+msgid "file downloader"
+msgstr ""
+
+#: plugin/hello.c:10
+msgid "Hello World\n"
+msgstr ""
+
+#: plugin/hello.c:19
+msgid "Simple hello world plugin"
+msgstr ""
+
+#: plugin/httpd.c:67
+#, c-format
+msgid "Failed to open directory: %s\n"
+msgstr ""
+
+#: plugin/httpd.c:128
+msgid "Failed to read from client"
+msgstr ""
+
+#: plugin/httpd.c:180
+#, c-format
+msgid "GET: %s\n"
+msgstr ""
+
+#: plugin/httpd.c:184
+#, c-format
+msgid "Failed to open file: %s\n"
+msgstr ""
+
+#: plugin/httpd.c:229
+msgid "Error opening socket\n"
+msgstr ""
+
+#: plugin/httpd.c:240
+msgid "Error binding socket\n"
+msgstr ""
+
+#: plugin/httpd.c:244
+msgid "Listen failed...\n"
+msgstr ""
+
+#: plugin/httpd.c:262
+msgid "simple http server"
+msgstr ""
+
+#: plugin/httpd.c:266
+msgid "serve directory. (default /)"
+msgstr ""
+
+#: plugin/httpd.c:267
+msgid "server tcp port (default 8000)"
 msgstr ""
