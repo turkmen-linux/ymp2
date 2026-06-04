@@ -20,13 +20,13 @@ static void dump_info(Package *pi){
         return;
     }
     color_print(BOLD, COLOR_YELLOW, "  name: ");
-    color_print(NORMAL, COLOR_WHITE, "%s\n", pi->name);
+    color_print(NORMAL, COLOR_DEFAULT, "%s\n", pi->name);
     color_print(BOLD, COLOR_YELLOW, "  version: ");
-    color_print(NORMAL, COLOR_WHITE, "%s\n", pi->version);
+    color_print(NORMAL, COLOR_DEFAULT, "%s\n", pi->version);
     color_print(BOLD, COLOR_YELLOW, "  release: ");
-    color_print(NORMAL, COLOR_WHITE, "%d\n", pi->release);
+    color_print(NORMAL, COLOR_DEFAULT, "%d\n", pi->release);
     color_print(BOLD, COLOR_YELLOW, "  description: ");
-    color_print(NORMAL, COLOR_WHITE, "%s\n", desc);
+    color_print(NORMAL, COLOR_DEFAULT, "%s\n", desc);
     color_print(BOLD, COLOR_YELLOW, "  installed: ");
     if(package_is_installed(pi)){
         color_print(BOLD, COLOR_GREEN, "true\n");
@@ -41,7 +41,7 @@ static void dump_info(Package *pi){
     for(size_t i=0; pi->groups[i]; i++){
         color_print(NORMAL, COLOR_MAGENTA, "    - %s\n", pi->groups[i]);
     }
-    color_print(NORMAL, COLOR_WHITE, "\n");
+    color_print(NORMAL, COLOR_DEFAULT, "\n");
 
 }
 

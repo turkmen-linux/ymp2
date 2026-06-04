@@ -31,10 +31,10 @@ static void list_available(){
             char* meta = build_string("%s/%s/metadata/%s.yaml", get_value("DESTDIR"), STORAGE, name);
             if(isfile(meta)){
                 color_print(BOLD, COLOR_GREEN, "i %s ::", name);
-                color_print(NORMAL, COLOR_WHITE, " %s\n", desc);
+                color_print(NORMAL, COLOR_DEFAULT, " %s\n", desc);
             } else {
                 color_print(BOLD, COLOR_YELLOW, "r %s ::", name);
-                color_print(NORMAL, COLOR_WHITE, " %s\n", desc);
+                color_print(NORMAL, COLOR_DEFAULT, " %s\n", desc);
             }
             free(meta);
         }
@@ -57,7 +57,7 @@ static void list_installed(){
         if(load){
             const char* desc = yaml_get_value(pi->metadata, "description");
             color_print(BOLD, COLOR_GREEN, "i %s ::", pi->name);
-            color_print(NORMAL, COLOR_WHITE, " %s\n", desc);
+            color_print(NORMAL, COLOR_DEFAULT, " %s\n", desc);
         } else {
             warning("Failed to read package metadata: %s\n", meta[i]);
         }

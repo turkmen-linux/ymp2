@@ -3,8 +3,12 @@
 visible void color_print(bool bold, int color, const char *fmt, ...) {
     va_list ap;
 
-    if (bold) {
-        printf("\x1b[1;%dm", color+30);
+    if (color == COLOR_DEFAULT) {
+        if (bold) {
+            printf("\x1b[;1m");
+        }
+    } else if (bold) {
+        printf("\x1b[%d;1m", color+30);
     }  else {
         printf("\x1b[%dm", color+30);
     }

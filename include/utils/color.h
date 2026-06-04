@@ -14,6 +14,8 @@
 #define BOLD true
 #define NORMAL false
 
+#define COLOR_DEFAULT -1
+
 /**
  * @brief Print formatted text with ANSI color and optional bold styling.
  *
