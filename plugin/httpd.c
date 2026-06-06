@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <fcntl.h>
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -40,12 +41,11 @@ static void serve_file(int client_fd, FILE* file, size_t fsize, size_t start, si
         return;
     }
     // send size
-    char* msg = build_string("Content-Length: %ld\n", fsize);
-    if(swrite(client_fd, msg) < 0){
+    char* msg = build_string("Content-Length: %ld\n\n", fsize);
+    if(fcntl(client_fd, F_GETFD) < 0){
         return;
     }
-    // finish response body
-    if(swrite(client_fd, "\n") < 0){
+    if(swrite(client_fd, msg) < 0){
         return;
     }
     free(msg);
@@ -55,6 +55,9 @@ static void serve_file(int client_fd, FILE* file, size_t fsize, size_t start, si
     }
     // send content
     while ((bytesRead = fread(buffer, 1, BUFFER_SIZE, file)) > 0) {
+        if(fcntl(client_fd, F_GETFD) < 0){
+            return;
+        }
         if(write(client_fd, buffer, bytesRead) < 0){
             break;
         }
