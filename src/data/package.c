@@ -21,22 +21,19 @@
 #include <config.h>
 
 visible Package* package_new() {
-    // Allocate memory for a new Package structure
-    Package *pkg = malloc(sizeof(Package));
+    Package *pkg = calloc(1, sizeof(Package));
     if(!pkg){
         return NULL;
     }
 
-    // Initialize the archive member of the Package with a new archive
     pkg->archive = archive_new();
     pkg->is_virtual = false;
 
-    // Return the newly created Package instance
     return pkg;
 }
 
 visible void package_unref(Package *pkg){
-    free(pkg->archive);
+    archive_unref(pkg->archive);
     free(pkg);
 }
 
@@ -261,7 +258,7 @@ visible bool package_extract(Package* pkg) {
 
             free(hash);
             free(yaml_hash);
-            free(data); // Free the archive object
+            archive_unref(data);
             break; // Exit the loop after processing the data file
         }
         free(file);

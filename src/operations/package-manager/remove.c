@@ -44,8 +44,10 @@ static int remove_package(Package* pi){
     char* metadata_path = build_string("%s/%s/metadata/%s.yaml", destdir, STORAGE, pi->name);
 
     FILE *files = fopen(files_path, "r");
-    FILE *links = fopen(files_path, "r");
+    FILE *links = fopen(links_path, "r");
     if(!files || !links){
+        if(files) fclose(files);
+        if(links) fclose(links);
         free(files_path);
         free(links_path);
         free(metadata_path);

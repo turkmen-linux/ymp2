@@ -177,6 +177,7 @@ visible int ymp_run(Ymp* ymp){
             break;
         }
     }
+    free(queue->item);
     free(queue);
     ymp->priv_data = (void*) queue_init();
 #ifndef NDEBUG
@@ -197,6 +198,7 @@ visible void load_plugin(Ymp* ymp, const char* path){
     void (*plugin_func)(Ymp* ymp);
     *(void**)(&plugin_func) = dlsym(handle, "plugin_init");
     if(!plugin_func){
+        dlclose(handle);
         return;
     }
     plugin_func(ymp);

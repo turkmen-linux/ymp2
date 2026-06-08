@@ -249,8 +249,10 @@ visible int quarantine_sync(const char* name){
     char tmp[PATH_MAX + strlen(rootfs_path)]; // Temporary buffer
 
     if(!links || !files){
+        if(files) fclose(files);
+        if(links) fclose(links);
         status = 0;
-        goto free_quarantine_sync;
+        goto free_quarantine_sync_no_fclose;
     }
 
     // Read each line from the files
@@ -355,8 +357,9 @@ visible int quarantine_sync(const char* name){
 
     // Cleanup: free memory
 free_quarantine_sync:
-    fclose(files);
-    fclose(links);
+    if(files) fclose(files);
+    if(links) fclose(links);
+free_quarantine_sync_no_fclose:
     free(rootfs_path);
     free(files_path);
     free(links_path);

@@ -30,6 +30,7 @@ visible void single_instance(){
     locked = true;
     if(rc) {
         if(EWOULDBLOCK == errno){
+            close(pid_file);
             error_add("Another ymp instance is already running");
             exit(31);
         }

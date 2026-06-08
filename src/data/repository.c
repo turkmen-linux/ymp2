@@ -99,9 +99,10 @@ visible Package* repository_get(Repository *repo, const char* name, bool is_sour
 visible void repository_load_from_index(Repository* repo, const char* index) {
     debug("Load from index: %s\n", index);
     // Read index
-    const char* data = readfile(index);
+    char* data = readfile(index);
     if (data) {
         repository_load_from_data(repo, data);
+        free(data);
     }
 }
 
@@ -117,6 +118,7 @@ visible void repository_load_from_data(Repository* repo, const char* data) {
     char *tmp = readfile(repo_uri_file);
     repo->uri = strip(tmp);
     free(tmp);
+    free(repo_uri_file);
     // Load packages
     repository_load_data(repo, inner, true);
     repository_load_data(repo, inner, false);
@@ -133,7 +135,7 @@ visible bool repository_download_package(Repository* repo, const char* name, boo
     }
     bool status = package_download(p, repo->uri);
     // Cleanup
-    free(p);
+    package_unref(p);
     return status;
 }
 

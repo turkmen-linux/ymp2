@@ -66,6 +66,7 @@ visible bool fetch_with_progress(const char* url, const char* path, FetchProgres
         fetch->fp = fopen(path, "wb");
         if (fetch->fp == NULL) {
             perror("Failed to open file");
+            curl_easy_cleanup(fetch->curl);
             free(fetch);
             return false;
         }

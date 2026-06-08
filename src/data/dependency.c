@@ -105,7 +105,7 @@ static void resolve_dependency_fn(char* name, bool emerge) {
 
 
         // Check list length reallocate if needed
-        if(resolved_count+1 <= resolved_total) {
+        if(resolved_count+1 >= resolved_total) {
             resolved_total += 1024;
             Package** tmp = realloc(resolved, sizeof(Package*)*resolved_total);
             if(tmp){
@@ -134,7 +134,7 @@ static void resolve_reverse_dependency_fn(char* name) {
 
 
     // Check list length reallocate if needed
-    if(resolved_count+1 <= resolved_total) {
+    if(resolved_count+1 >= resolved_total) {
         resolved_total += 1024;
         Package** tmp = realloc(resolved, sizeof(Package*)*resolved_total);
         if(tmp){
@@ -234,7 +234,13 @@ visible void resolve_end(Repository** repos) {
         repository_unref(repos[i]);
     }
     free(repos); // Free the repository pointer array
-    free(resolved); // Unreference the resolved dependencies array
+    // Free packages not owned by any repository (created by resolve_reverse_dependency_fn)
+    for (size_t i = 0; i < resolved_count; i++) {
+        if (resolved[i] && resolved[i]->repo == NULL) {
+            package_unref(resolved[i]);
+        }
+    }
+    free(resolved); // Free the resolved dependencies array
     array_unref(cache); // Unreference the cache array
 }
 

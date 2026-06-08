@@ -318,8 +318,9 @@ static char** get_uses(ympbuild *ymp) {
 
 static void configure_header(ympbuild *ymp) {
     char* uuid = generate_uuid();
-    ymp->header = readfile(":/ympbuild-header.sh");
-    ymp->header = str_replace(ymp->header, "@buildpath@", ymp->path);
+    char* tmp = readfile(":/ympbuild-header.sh");
+    ymp->header = str_replace(tmp, "@buildpath@", ymp->path);
+    free(tmp);
     ymp->header = str_replace(ymp->header, "@CC@", variable_get_value(global->variables, "build:cc"));
     ymp->header = str_replace(ymp->header, "@CXX@", variable_get_value(global->variables, "build:cxx"));
     ymp->header = str_replace(ymp->header, "@CFLAGS@", variable_get_value(global->variables, "build:cflags"));
@@ -644,7 +645,13 @@ visible char *build_binary_from_path(const char* path) {
     for (size_t i = 0; actions[i]; i++) {
         int status = ympbuild_run_function(ymp, actions[i]);
         if (status != 0) {
-            free(ympfile); // Free the ympfile string on error
+            archive_unref(a);
+            free(src_files);
+            free(ymp->ctx);
+            free(ymp->path);
+            free(ymp);
+            free(build_id);
+            free(ympfile);
             return NULL; // Return NULL if any action fails
         }
     }
@@ -662,6 +669,7 @@ visible char *build_binary_from_path(const char* path) {
     char* ret = strdup(ymp->path);
 
     // Cleanup: free allocated resources
+    archive_unref(a);
     free(ymp->ctx);
     free(ymp->path);
     free(ymp);
@@ -678,19 +686,21 @@ visible bool build_from_path(const char* path) {
     char* cache = build_source_from_path(path);
     print("Source created at: %s\n", cache); // Print the location of the created source
 
-    if (cache != NULL) {
+    if (cache == NULL) {
         return NULL;
     }
     // Build the binary from the created source
     char* build = build_binary_from_path(cache);
+    free(cache);
     if(build){
         print("Binary created at: %s\n", build); // Print the location of the created binary
+        free(build);
+        return true;
     } else {
         warning("Failed to create package!");
     }
 
-    // Return true if both the binary and cache are successfully created, otherwise false
-    return (build != NULL && cache != NULL);
+    return false;
 }
 
 visible char* create_package(const char* path) {
@@ -749,7 +759,7 @@ visible char* create_package(const char* path) {
         archive_create(a);
 
         // Free the archive object and the list of files
-        free(a);
+        archive_unref(a);
         free(files);
     } else if (yaml_has_area(metadata, "package")) {
         // Create a new archive object for packaging files
@@ -781,7 +791,7 @@ visible char* create_package(const char* path) {
 
         // Free the memory
         free(files);
-        free(a);
+        archive_unref(a);
 
         // Change the current working directory back to the original specified path
         if (chdir(path) < 0) {
@@ -808,7 +818,7 @@ visible char* create_package(const char* path) {
         archive_create(a);
 
         // Free the archive object after use
-        free(a);
+        archive_unref(a);
 
     }
 
