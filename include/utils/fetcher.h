@@ -20,6 +20,13 @@ typedef void (*FetchProgressCallback)(const char* url, size_t downloaded, size_t
  * @param cb Optional progress callback function, may be NULL.
  * @param userdata User data passed to the progress callback.
  * @return true if the download succeeded, false otherwise.
+ *
+ * @code
+ * // Simple download without progress
+ * if (fetch("https://example.com/file.tar.gz", "/tmp/file.tar.gz")) {
+ *     printf("Download complete\n");
+ * }
+ * @endcode
  */
 bool fetch_with_progress(const char* url, const char* path, FetchProgressCallback cb, void* userdata);
 #define fetch(A, B) fetch_with_progress(A, B, NULL, NULL)

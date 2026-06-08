@@ -31,6 +31,13 @@ typedef struct {
  * This function allocates and initializes a new dynamic array.
  *
  * @return A pointer to the newly created array, or NULL if the allocation fails.
+ *
+ * @code
+ * array *arr = array_new();
+ * array_add(arr, "foo");
+ * array_add(arr, "bar");
+ * array_unref(arr);
+ * @endcode
  */
 array* array_new();
 
@@ -41,6 +48,11 @@ array* array_new();
  *
  * @param arr Pointer to the dynamic array.
  * @param data The string to add to the array.
+ *
+ * @code
+ * array_add(arr, "apple");
+ * array_add(arr, "banana");
+ * @endcode
  */
 void array_add(array *arr, const char* data);
 
@@ -51,6 +63,11 @@ void array_add(array *arr, const char* data);
  *
  * @param arr Pointer to the dynamic array.
  * @param data Pointer to the array of strings to add.
+ *
+ * @code
+ * char *fruits[] = {"apple", "banana", NULL};
+ * array_adds(arr, fruits);
+ * @endcode
  */
 void array_adds(array *arr, char** data);
 
@@ -61,6 +78,11 @@ void array_adds(array *arr, char** data);
  *
  * @param arr Pointer to the dynamic array.
  * @param new_data Pointer to the new array of strings.
+ *
+ * @code
+ * char *items[] = {"a", "b", "c", NULL};
+ * array_set(arr, items);
+ * @endcode
  */
 void array_set(array *arr, char** new_data);
 
@@ -72,6 +94,14 @@ void array_set(array *arr, char** new_data);
  * @param arr Pointer to the dynamic array.
  * @param len Length of dynamic array.
  * @return Pointer to the array of strings.
+ *
+ * @code
+ * size_t len;
+ * char **items = array_get(arr, &len);
+ * for (size_t i = 0; i < len; i++) {
+ *     printf("%s\n", items[i]);
+ * }
+ * @endcode
  */
 char **array_get(array *arr, size_t* len);
 
@@ -82,6 +112,14 @@ char **array_get(array *arr, size_t* len);
  *
  * @param arr Pointer to the dynamic array.
  * @return A single concatenated string, or NULL if the array is empty.
+ *
+ * @code
+ * array_add(arr, "hello ");
+ * array_add(arr, "world");
+ * char *msg = array_get_string(arr);
+ * printf("%s\n", msg); // prints "hello world"
+ * free(msg);
+ * @endcode
  */
 char *array_get_string(array *arr);
 
@@ -90,6 +128,11 @@ char *array_get_string(array *arr);
  *
  * @param arr Pointer to the dynamic array.
  * @return The number of elements in the array.
+ *
+ * @code
+ * size_t n = array_length(arr);
+ * printf("Array has %zu elements\n", n);
+ * @endcode
  */
 size_t array_length(const array *arr);
 
@@ -99,6 +142,12 @@ size_t array_length(const array *arr);
  * This function reverses the order of the strings in the array.
  *
  * @param arr Pointer to the dynamic array.
+ *
+ * @code
+ * array_add(arr, "a");
+ * array_add(arr, "b");
+ * array_reverse(arr); // now b, a
+ * @endcode
  */
 void array_reverse(array *arr);
 
@@ -108,6 +157,12 @@ void array_reverse(array *arr);
  * This function removes duplicate strings from the array, keeping only unique values.
  *
  * @param arr Pointer to the dynamic array.
+ *
+ * @code
+ * array_add(arr, "x");
+ * array_add(arr, "x");
+ * array_uniq(arr); // only one "x" remains
+ * @endcode
  */
 void array_uniq(array *arr);
 
@@ -128,6 +183,12 @@ void array_insert(array *arr, const char* value, size_t index);
  * This function sorts the strings in the array in ascending order.
  *
  * @param arr Pointer to the dynamic array.
+ *
+ * @code
+ * array_add(arr, "z");
+ * array_add(arr, "a");
+ * array_sort(arr); // now a, z
+ * @endcode
  */
 void array_sort(array *arr);
 
@@ -137,6 +198,12 @@ void array_sort(array *arr);
  * This function frees the memory allocated for the array and its elements.
  *
  * @param arr Pointer to the dynamic array to free.
+ *
+ * @code
+ * array *arr = array_new();
+ * // ... use arr ...
+ * array_unref(arr);
+ * @endcode
  */
 void array_unref(array *arr);
 

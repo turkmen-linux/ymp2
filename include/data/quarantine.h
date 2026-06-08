@@ -27,7 +27,6 @@
  *
  * @warning Ensure that the package manager is initialized before calling this
  *          function to avoid undefined behavior.
- *
  */
 bool quarantine_validate();
 
@@ -49,7 +48,6 @@ bool quarantine_validate();
  * @warning Ensure that the package manager is initialized and that the
  *          package is verified before calling this function to avoid
  *          undefined behavior.
- *
  */
 int quarantine_sync(const char* name);
 
@@ -68,7 +66,6 @@ int quarantine_sync(const char* name);
  *
  * @warning Use this function with caution, as it may expose the system to
  *          previously quarantined packages that could be harmful.
- *
  */
 void quarantine_reset();
 #endif

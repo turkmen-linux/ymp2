@@ -18,6 +18,14 @@
  *
  * @param path The path to the file to be read.
  * @return A pointer to the string containing the file content, or NULL if the file could not be opened or read.
+ *
+ * @code
+ * char *content = readfile("/etc/hostname");
+ * if (content) {
+ *     printf("%s", content);
+ *     free(content);
+ * }
+ * @endcode
  */
 char* readfile(const char *path);
 
@@ -115,6 +123,12 @@ char* url_encode(const char *input);
  * @param format The format string.
  * @param ... The values to format into the string.
  * @return A new formatted string.
+ *
+ * @code
+ * char *path = build_string("%s/%s", "/usr/share", "ymp");
+ * // path = "/usr/share/ymp"
+ * free(path);
+ * @endcode
  */
 char* build_string(char* format, ...);
 
@@ -156,6 +170,11 @@ char* build_string(char* format, ...);
  * @warning If `oldSub` is an empty string, the behavior is undefined. Ensure that 
  *          `oldSub` is not empty before calling this function.
  *
+ * @code
+ * char *result = str_replace("hello world", "world", "there");
+ * // result = "hello there"
+ * free(result);
+ * @endcode
  */
 char* str_replace(const char* str, const char* oldSub, const char* newSub);
 
@@ -175,6 +194,14 @@ char* str_replace(const char* str, const char* oldSub, const char* newSub);
  *         If memory allocation fails, NULL is returned.
  *
  * @note The caller is responsible for freeing the memory allocated for the array and its contents.
+ *
+ * @code
+ * char **parts = split("a,b,c", ",");
+ * // parts = {"a", "b", "c", NULL}
+ * for (int i = 0; parts[i]; i++) {
+ *     printf("%s\n", parts[i]);
+ * }
+ * @endcode
  */
 char** split(const char* data, const char* f);
 
@@ -190,6 +217,12 @@ char** split(const char* data, const char* f);
  *         If the input string is NULL, the function will return NULL.
  *
  * @note The input string is modified in place. Ensure that the string is mutable and not a string literal.
+ *
+ * @code
+ * char s[] = "  hello world  ";
+ * strip(s);
+ * // s = "hello world"
+ * @endcode
  */
 char* strip(const char* str);
 

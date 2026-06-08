@@ -83,7 +83,6 @@ typedef struct {
  *
  * @note Ensure that the callback function pointed to by `new_op.call` is valid and
  *       properly defined before calling this function.
- *
  */
 void operation_register(OperationManager *manager, Operation new_op);
 

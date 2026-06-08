@@ -21,6 +21,13 @@ typedef struct {
  * @brief Creates a new Repository instance.
  *
  * @return A pointer to the newly created Repository, or NULL on failure.
+ *
+ * @code
+ * Repository *repo = repository_new();
+ * repository_load_from_index(repo, "/var/cache/ymp/index/main.yaml");
+ * Package *pkg = repository_get(repo, "curl", false);
+ * repository_unref(repo);
+ * @endcode
  */
 Repository* repository_new();
 
@@ -47,6 +54,12 @@ void repository_load_from_data(Repository* repo, const char* data);
  * @param name The name of the package to download.
  * @param is_source Indicates whether the package is a source package.
  * @return true if the download was successful, false otherwise.
+ *
+ * @code
+ * if (repository_download_package(repo, "curl", false)) {
+ *     printf("Package downloaded\n");
+ * }
+ * @endcode
  */
 bool repository_download_package(Repository* repo, const char* name, bool is_source);
 
@@ -57,6 +70,13 @@ bool repository_download_package(Repository* repo, const char* name, bool is_sou
  * @param name The name of the package to retrieve.
  * @param is_source Indicates whether to retrieve a source package.
  * @return A pointer to the Package if found, or NULL if not found.
+ *
+ * @code
+ * Package *pkg = repository_get(repo, "curl", false);
+ * if (pkg) {
+ *     printf("Found: %s-%s\n", pkg->name, pkg->version);
+ * }
+ * @endcode
  */
 Package* repository_get(Repository *repo, const char* name, bool is_source);
 

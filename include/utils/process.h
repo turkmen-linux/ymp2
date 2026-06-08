@@ -50,7 +50,6 @@ void single_instance();
  * @note Ensure that the `args` array is properly terminated with a NULL pointer.
  *       This function may invoke system calls that can fail, so error handling
  *       should be implemented as needed.
- *
  */
 int run_args(char *args[]);
 
@@ -69,7 +68,6 @@ int run_args(char *args[]);
  * @return A pointer to a string containing the full path of the command if found,
  *         or the original command name if not found. The returned string is dynamically
  *         allocated and should be freed by the caller to avoid memory leaks.
- *
  */
 char* which(char* cmd);
 

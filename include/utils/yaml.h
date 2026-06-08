@@ -14,6 +14,13 @@
  * @param data The data to search within.
  * @param path The name of the area to check for.
  * @return true if the area exists, false otherwise.
+ *
+ * @code
+ * if (yaml_has_area(data, "package")) {
+ *     char *pkg = yaml_get_area(data, "package");
+ *     char *name = yaml_get_value(pkg, "name");
+ * }
+ * @endcode
  */
 bool yaml_has_area(const char *data, const char *path);
 
@@ -23,6 +30,12 @@ bool yaml_has_area(const char *data, const char *path);
  * @param data The data to search within.
  * @param path The name of the area to retrieve.
  * @return A pointer to the string containing the area content, or NULL if the area does not exist.
+ *
+ * @code
+ * char *pkg = yaml_get_area(data, "package");
+ * char *name = yaml_get_value(pkg, "name");
+ * free(pkg);
+ * @endcode
  */
 char* yaml_get_area(const char *data, const char *path);
 
@@ -32,6 +45,12 @@ char* yaml_get_area(const char *data, const char *path);
  * @param data The data to search within.
  * @param name The name of the value to retrieve.
  * @return A pointer to the string containing the value, or NULL if the value does not exist.
+ *
+ * @code
+ * char *name = yaml_get_value(data, "name");
+ * printf("Package: %s\n", name);
+ * free(name);
+ * @endcode
  */
 char* yaml_get_value(const char *data, const char *name);
 

@@ -90,6 +90,17 @@ typedef struct {
  * @return A pointer to the newly created Ymp structure, or NULL if
  *         the initialization fails (e.g., due to memory allocation
  *         failure).
+ *
+ * @code
+ * Ymp *ymp = ymp_init();
+ * if (!ymp) {
+ *     fprintf(stderr, "Failed to initialize ymp\n");
+ *     return 1;
+ * }
+ * ymp_add(ymp, "print", "Hello World");
+ * ymp_run(ymp);
+ * ymp_unref(ymp);
+ * @endcode
  */
 Ymp* ymp_init();
 
@@ -111,6 +122,14 @@ Ymp* ymp_init();
  * @note Ensure that the Ymp structure is properly initialized before
  *       calling this function. The behavior is undefined if the
  *       structure is not valid.
+ *
+ * @code
+ * Ymp *ymp = ymp_init();
+ * ymp_add(ymp, "print", "Hello");
+ * ymp_add(ymp, "print", "World");
+ * ymp_run(ymp);
+ * ymp_unref(ymp);
+ * @endcode
  */
 void ymp_add(Ymp* ymp, const char* name, void* args);
 
@@ -130,13 +149,11 @@ void ymp_add(Ymp* ymp, const char* name, void* args);
  *             indicates that all operations were executed without
  *             early termination.
  * @code
- * // example usage:
- * int main(int argc, char** argv){
- *     Ymp *ymp = ymp_new();
- *     ymp_add(ymp, "print", "Hello World\n");
- *     ymp_add(ymp, "print", "How are you?\n");
- *     return ymp_run(ymp);
- * }
+ * Ymp *ymp = ymp_init();
+ * ymp_add(ymp, "install", "curl");
+ * int rc = ymp_run(ymp);
+ * ymp_unref(ymp);
+ * return rc;
  * @endcode
  */
 
@@ -156,6 +173,12 @@ int ymp_run(Ymp* ymp);
  *       the Ymp object while this function is called.
  *
  * @warning Calling this function on an already freed object will lead to undefined behavior.
+ *
+ * @code
+ * Ymp *ymp = ymp_init();
+ * // ... use ymp ...
+ * ymp_unref(ymp);
+ * @endcode
  */
 void ymp_unref(Ymp* ymp);
 

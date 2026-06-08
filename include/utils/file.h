@@ -26,6 +26,12 @@ uint64_t filesize(const char* path);
  *
  * @param filename The name of the file to check.
  * @return true if the file is a file, false otherwise.
+ *
+ * @code
+ * if (isfile("/etc/passwd")) {
+ *     printf("File exists\n");
+ * }
+ * @endcode
  */
 bool isfile(const char *filename);
 
@@ -42,6 +48,12 @@ bool isfile(const char *filename);
  *
  * @note This function does not differentiate between files and directories;
  *       it simply checks for the existence of the specified path.
+ *
+ * @code
+ * if (isexists("/tmp")) {
+ *     printf("/tmp exists\n");
+ * }
+ * @endcode
  */
 bool isexists(const char* path);
 
@@ -66,6 +78,11 @@ bool isdir(const char *path);
  * @brief Create a directory and any necessary parent directories.
  *
  * @param dir The path of the directory to create.
+ *
+ * @code
+ * create_dir("/tmp/foo/bar");
+ * // creates /tmp, /tmp/foo, /tmp/foo/bar if needed
+ * @endcode
  */
 void create_dir(const char *dir);
 
@@ -153,6 +170,12 @@ char* getoutput_unshare(char* argv[], int flags);
  *
  * @warning If the destination file already exists, it will be overwritten
  *          without any confirmation.
+ *
+ * @code
+ * if (copy_file("/tmp/foo", "/tmp/bar")) {
+ *     printf("Copied successfully\n");
+ * }
+ * @endcode
  */
 bool copy_file(const char *sourceFile, const char *destFile);
 

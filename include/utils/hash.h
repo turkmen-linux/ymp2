@@ -16,6 +16,12 @@
  * @param path The path to the file to hash.
  * @return A dynamically allocated hexadecimal hash string,
  *         or NULL on failure. The caller must free the returned string.
+ *
+ * @code
+ * char *hash = calculate_hash(SHA256, "/etc/hostname");
+ * printf("SHA256: %s\n", hash);
+ * free(hash);
+ * @endcode
  */
 char *calculate_hash(int type, const char *path);
 

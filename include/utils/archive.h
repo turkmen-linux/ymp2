@@ -45,6 +45,13 @@ typedef struct {
  * @brief Creates a new Archive instance.
  *
  * @return A pointer to the newly created Archive.
+ *
+ * @code
+ * Archive *a = archive_new();
+ * archive_load(a, "package.zip");
+ * archive_extract_all(a);
+ * archive_unref(a);
+ * @endcode
  */
 Archive* archive_new();
 
@@ -61,6 +68,14 @@ void archive_load(Archive *data, const char* path);
  *
  * @param data Pointer to the Archive instance.
  * @param target Path where the archive will be extracted.
+ *
+ * @code
+ * Archive *a = archive_new();
+ * archive_load(a, "package.zip");
+ * archive_set_target(a, "/output/dir");
+ * archive_extract_all(a);
+ * archive_unref(a);
+ * @endcode
  */
 void archive_set_target(Archive *data, const char* target);
 

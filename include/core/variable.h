@@ -34,6 +34,13 @@ typedef struct {
  *
  * @return A pointer to the newly created `VariableManager`, or NULL if
  *         the allocation fails.
+ *
+ * @code
+ * VariableManager *vm = variable_manager_new();
+ * variable_set_value(vm, "foo", "bar");
+ * char *val = variable_get_value(vm, "foo");
+ * variable_manager_unref(vm);
+ * @endcode
  */
 VariableManager *variable_manager_new();
 
@@ -55,6 +62,11 @@ void variable_manager_unref(VariableManager *variables);
  * @param variables Pointer to the `VariableManager` instance.
  * @param name The name of the variable to set.
  * @param value The value to assign to the variable.
+ *
+ * @code
+ * variable_set_value(vm, "debug", "true");
+ * variable_set_value(vm, "timeout", "30");
+ * @endcode
  */
 void variable_set_value(VariableManager* variables, const char* name, const char* value);
 /** @cond **/
@@ -86,6 +98,13 @@ invisible void set_value_read_only(const char* name, const char* value);
  * @param name The name of the variable to retrieve.
  * @return A pointer to the value of the variable, or NULL if the variable
  *         does not exist.
+ *
+ * @code
+ * char *val = variable_get_value(vm, "debug");
+ * if (val && strcmp(val, "true") == 0) {
+ *     // debug mode enabled
+ * }
+ * @endcode
  */
 char* variable_get_value(VariableManager* variables, const char* name);
 /** @cond **/

@@ -155,7 +155,6 @@ bool package_is_installed(Package *pkg);
  *
  * @return bool Returns true if the package was successfully loaded, 
  *              or false if the package could not be found or failed to load.
- *
  */
 bool package_load_from_installed(Package* pkg, const char* name);
 

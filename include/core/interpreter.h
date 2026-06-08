@@ -1,4 +1,14 @@
 /**
+ * @file interpreter.h
+ * @brief Command-line argument parsing and script execution.
+ */
+
+#ifndef INTERPRETER_H
+#define INTERPRETER_H
+
+#include <stdbool.h>
+
+/**
  * @brief Parses command-line arguments.
  *
  * This function takes an array of command-line arguments and processes them.
@@ -25,3 +35,5 @@ char** parse_args(char** args, bool free_strings);
  *         Returns 0 on success, or a non-zero error code on failure.
  */
 int run_script(const char* script);
+
+#endif
