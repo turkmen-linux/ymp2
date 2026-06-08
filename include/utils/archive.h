@@ -139,6 +139,13 @@ void archive_extract_all(Archive *data);
  */
 void archive_extract(Archive *data, const char* path);
 
-
+/**
+ * @brief Releases the resources associated with an Archive.
+ *
+ * Frees all internal allocations including the libarchive handle,
+ * error array, and the Archive struct itself.
+ *
+ * @param data Pointer to the Archive instance to release.
+ */
 void archive_unref(Archive *data);
 #endif

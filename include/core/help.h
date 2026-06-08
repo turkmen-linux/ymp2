@@ -31,6 +31,14 @@ typedef struct {
  */
 Help* help_new();
 
+/**
+ * @brief Releases the resources associated with a Help structure.
+ *
+ * Frees all internal allocations including the parameters array
+ * and the Help struct itself.
+ *
+ * @param h Pointer to the Help structure to release.
+ */
 void help_unref(Help* h);
 
 /**

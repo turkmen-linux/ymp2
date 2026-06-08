@@ -72,7 +72,7 @@ Package* package_new();
  */
 bool package_load_from_file(Package* pkg, const char* path);
 
-/*
+/**
  * @brief Loads a package from the provided metadata.
  *
  * This function initializes a Package structure using the metadata string.

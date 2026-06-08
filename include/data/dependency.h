@@ -26,8 +26,28 @@
  */
 Package** resolve_dependency(char* name);
 
+/**
+ * @brief Gets packages belonging to a group.
+ *
+ * Groups are specified with an '@' prefix. Built-in groups
+ * include "@universe" (all packages) and "@world" (installed packages).
+ *
+ * @param name The group name including the '@' prefix.
+ * @return A NULL-terminated array of package name strings.
+ *         The caller must free the array and its contents.
+ */
 char** get_group_packages (const char* name);
 
+/**
+ * @brief Resolves reverse dependencies for a given package.
+ *
+ * Finds all installed packages that depend on the specified package.
+ *
+ * @param name The name of the package to find reverse dependencies for.
+ * @return A NULL-terminated array of Package pointers.
+ *         The returned array is valid until the next call to this function
+ *         or to resolve_end().
+ */
 Package** resolve_reverse_dependency(char* name);
 
 /**

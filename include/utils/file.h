@@ -181,6 +181,16 @@ bool copy_file(const char *sourceFile, const char *destFile);
  */
 bool copy_directory(const char *sourceDir, const char *destDir);
 
+/**
+ * @brief Moves a file or directory from source to destination.
+ *
+ * Performs a rename(2) operation; falls back to copy + remove
+ * if the paths are on different filesystems.
+ *
+ * @param src The source path.
+ * @param dest The destination path.
+ * @return true if the move succeeded, false otherwise.
+ */
 bool move_file(const char* src, const char* dest);
 /**
  * @brief Reads the target of a symbolic link.

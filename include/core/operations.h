@@ -103,6 +103,13 @@ void operation_register(OperationManager *manager, Operation new_op);
  */
 OperationManager *operation_manager_new();
 
+/**
+ * @brief Releases the resources associated with an OperationManager.
+ *
+ * Frees all operations and the manager struct itself.
+ *
+ * @param manager Pointer to the OperationManager to release.
+ */
 void operation_manager_unref(OperationManager* manager);
 
 /**

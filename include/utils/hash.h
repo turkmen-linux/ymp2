@@ -7,6 +7,16 @@
 #define SHA1   2
 #define MD5    3
 
+/**
+ * @brief Calculates a hash of a file using the specified algorithm.
+ *
+ * Supported hash types: SHA512 (0), SHA256 (1), SHA1 (2), MD5 (3).
+ *
+ * @param type The hash algorithm type constant.
+ * @param path The path to the file to hash.
+ * @return A dynamically allocated hexadecimal hash string,
+ *         or NULL on failure. The caller must free the returned string.
+ */
 char *calculate_hash(int type, const char *path);
 
 /**

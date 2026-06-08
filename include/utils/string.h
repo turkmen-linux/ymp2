@@ -194,10 +194,13 @@ char** split(const char* data, const char* f);
 char* strip(const char* str);
 
 /**
- * @ brief Generate random UUID
+ * @brief Generate random UUID
  *
  * This function generates uuid version 4
  * https://datatracker.ietf.org/doc/html/rfc9562.html#section-5.4
+ *
+ * @return A dynamically allocated UUID string, or NULL on failure.
+ *         The caller must free the returned string.
  */
 char* generate_uuid();
 

@@ -1,4 +1,12 @@
 /**
+ * @file environment.h
+ * @brief Environment variable save, clear, and restore.
+ */
+
+#ifndef _environment_h
+#define _environment_h
+
+/**
  * @brief Saves the current environment settings.
  *
  * This function captures the current state of the environment,
@@ -34,3 +42,5 @@ void clear_env();
  *       to ensure that there is a valid state to restore from.
  */
 void restore_env();
+
+#endif

@@ -56,8 +56,28 @@ char* ympbuild_get_value(ympbuild* ymp, const char* name);
  */
 char** ympbuild_get_array(ympbuild* ymp, const char* name);
 
+/**
+ * @brief Generates a binary package filename from a build path.
+ *
+ * Constructs a filename in the format "name_version_release_arch.ymp"
+ * by reading the ympbuild file at the given path.
+ *
+ * @param path The directory path containing the ympbuild file.
+ * @return A dynamically allocated filename string, or NULL on failure.
+ *         The caller must free the returned string.
+ */
 char* ympbuild_package_filename(const char* path);
 
+/**
+ * @brief Generates a source package filename from a build path.
+ *
+ * Constructs a filename in the format "name_version_release_source.ymp"
+ * by reading the ympbuild file at the given path.
+ *
+ * @param path The directory path containing the ympbuild file.
+ * @return A dynamically allocated filename string, or NULL on failure.
+ *         The caller must free the returned string.
+ */
 char* ympbuild_source_filename(const char* path);
 
 /**

@@ -36,6 +36,14 @@ typedef struct {
  *         the allocation fails.
  */
 VariableManager *variable_manager_new();
+
+/**
+ * @brief Releases the resources associated with a VariableManager.
+ *
+ * Frees all stored variables and the manager struct itself.
+ *
+ * @param variables Pointer to the VariableManager to release.
+ */
 void variable_manager_unref(VariableManager *variables);
 
 /**
