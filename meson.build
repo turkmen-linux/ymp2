@@ -40,6 +40,12 @@ if get_option('build_plugins')
     add_project_arguments('-DPLUGIN_SUPPORT', language: 'c')
 endif
 
+if get_option('musl')
+    add_project_arguments('-DMUSL', language: 'c')
+    start = []
+    nostdlib = []
+endif
+
 l_args +=  ['-flto'] + nostdlib
 
 subdir('po')

@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-
+#ifndef MUSL
 typedef ssize_t (*write_func_t)(int, const void *, size_t);
 static write_func_t original_write;
 
@@ -31,3 +31,4 @@ visible ssize_t write(int fd, const void *buf, size_t count) {
     return bytes_written;
 }
 
+#endif
