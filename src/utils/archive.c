@@ -35,6 +35,7 @@ visible void archive_unref(Archive* data){
     free(data->target_path);
     if (data->archive) {
         archive_read_free(data->archive);
+        data->archive = NULL;
     }
     free(data);
 }
@@ -70,6 +71,7 @@ visible bool archive_is_archive(Archive *data, const char *path) {
     int result = archive_read_open_filename(data->archive, path, 10240);
     archive_read_close(data->archive);
     archive_read_free(data->archive);
+    data->archive = NULL;
     return result == ARCHIVE_OK;
 }
 
@@ -83,6 +85,7 @@ visible char** archive_list_files(Archive *data, size_t* len) {
     }
     archive_read_close(data->archive);
     archive_read_free(data->archive);
+    data->archive = NULL;
 
     return array_get(data->a, len);
 }
@@ -173,6 +176,7 @@ static void archive_extract_fn(Archive *data, const char *path, bool all) {
     }
     archive_read_close(data->archive);
     archive_read_free(data->archive);
+    data->archive = NULL;
 }
 
 
@@ -209,6 +213,7 @@ visible char* archive_readfile(Archive *data, const char *file_path) {
     }
     archive_read_close(data->archive);
     archive_read_free(data->archive);
+    data->archive = NULL;
     return ret;
 }
 

@@ -320,7 +320,6 @@ static void configure_header(ympbuild *ymp) {
     char* uuid = generate_uuid();
     char* tmp = readfile(":/ympbuild-header.sh");
     ymp->header = str_replace(tmp, "@buildpath@", ymp->path);
-    free(tmp);
     ymp->header = str_replace(ymp->header, "@CC@", variable_get_value(global->variables, "build:cc"));
     ymp->header = str_replace(ymp->header, "@CXX@", variable_get_value(global->variables, "build:cxx"));
     ymp->header = str_replace(ymp->header, "@CFLAGS@", variable_get_value(global->variables, "build:cflags"));
