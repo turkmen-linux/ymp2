@@ -112,6 +112,7 @@ visible void array_remove(array* arr, const char* item){
     while(start < arr->capacity){
         if(arr->data[start] != NULL && strcmp(arr->data[start],item)==0){
             free(arr->data[start]);
+            arr->data[start] = NULL;
             arr->size -= 1;
             arr->removed +=1;
         }
@@ -236,7 +237,8 @@ visible char **array_get(array *arr, size_t* len) {
     pthread_mutex_lock(&arr->lock);
 
     // Allocate memory for the return array
-    char** ret = malloc((arr->size - arr->removed +1)*sizeof(char*));
+    size_t count = arr->size > arr->removed ? arr->size - arr->removed : 0;
+    char** ret = malloc((count + 1) * sizeof(char*));
     if (!ret) {
         pthread_mutex_unlock(&arr->lock);
         return NULL; // Handle memory allocation failure

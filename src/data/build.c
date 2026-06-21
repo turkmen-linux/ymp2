@@ -68,7 +68,7 @@ visible char* ympbuild_package_filename(const char* path){
     char* name = ympbuild_get_value(ymp, "name");
     char* version = ympbuild_get_value(ymp, "version");
     char* release = ympbuild_get_value(ymp, "release");
-    char* ret = malloc(sizeof(char)*(strlen(name)+strlen(version)+strlen(ARCH)+8));
+    char* ret = malloc(sizeof(char)*(strlen(name)+strlen(version)+strlen(release)+strlen(ARCH)+9));
     if(!ret){
         ret = NULL;
         goto ympbuild_package_filename_free;
@@ -108,7 +108,7 @@ visible char* ympbuild_source_filename(const char* path){
     char* name = ympbuild_get_value(ymp, "name");
     char* version = ympbuild_get_value(ymp, "version");
     char* release = ympbuild_get_value(ymp, "release");
-    char* ret = malloc(sizeof(char)*(strlen(name)+strlen(version)+14));
+    char* ret = malloc(sizeof(char)*(strlen(name)+strlen(version)+strlen(release)+15));
     if(!ret){
         ret = NULL;
         goto ympbuild_source_filename_free;
@@ -206,7 +206,7 @@ static void binary_process(const char* path){
                 "objcopy", "-R", ".comment", "-R", ".note", "-R", ".debug_info",
                 "-R", ".debug_aranges", "-R", ".debug_pubnames", "-R", ".debug_pubtypes",
                 "-R", ".debug_abbrev", "-R", ".debug_line", "-R", ".debug_str",
-                "-R", ".debug_ranges", "-R", ".debug_loc", inodes[i]
+                "-R", ".debug_ranges", "-R", ".debug_loc", inodes[i], NULL
             };
             char* envs[] = {"PATH=/usr/bin:/usr/sbin:/bin:/sbin", NULL};
             execve(cmd[0], cmd, envs);

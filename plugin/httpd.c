@@ -32,20 +32,26 @@ typedef struct {
 
 static void serve_file(int client_fd, FILE* file, size_t fsize, size_t start, size_t end){
     (void)end;
-    char buffer[BUFFER_SIZE]; //1mb buffer
+    char* buffer = malloc(BUFFER_SIZE);
+    if(!buffer){
+        return;
+    }
     int bytesRead = 0;
     // send header
     const char* header = "HTTP/1.1 200 OK\n" \
         "Content-Type: text/plain\n" ;
     if(swrite(client_fd, header) < 0){
+        free(buffer);
         return;
     }
     // send size
     char* msg = build_string("Content-Length: %ld\n\n", fsize);
     if(fcntl(client_fd, F_GETFD) < 0){
+        free(buffer);
         return;
     }
     if(swrite(client_fd, msg) < 0){
+        free(buffer);
         return;
     }
     free(msg);
@@ -56,12 +62,14 @@ static void serve_file(int client_fd, FILE* file, size_t fsize, size_t start, si
     // send content
     while ((bytesRead = fread(buffer, 1, BUFFER_SIZE, file)) > 0) {
         if(fcntl(client_fd, F_GETFD) < 0){
+            free(buffer);
             return;
         }
         if(write(client_fd, buffer, bytesRead) < 0){
             break;
         }
     }
+    free(buffer);
 }
 
 static void list_directory(int client_fd, const char* dir_path, const char* serve) {
@@ -121,6 +129,7 @@ static void list_directory(int client_fd, const char* dir_path, const char* serv
 static void* handle_client(void* arg){
     const char* serve = variable_get_value(y->variables, "source");
     int client_fd = *(int*)arg;
+    free(arg);
     char buffer[1024];
     memset(buffer, 0, sizeof(buffer));
     // Read the request from the client
@@ -249,9 +258,12 @@ static int httpd(char** args){
     }
     while (true){
         int client_fd = accept(fd, (struct sockaddr *)&addr, (socklen_t*)&addrlen);
+        int* pclient = malloc(sizeof(int));
+        *pclient = client_fd;
         pthread_t th;
-        if (pthread_create(&th, NULL, handle_client, &client_fd) != 0) {
+        if (pthread_create(&th, NULL, handle_client, pclient) != 0) {
             perror("Failed to create thread");
+            free(pclient);
             continue;
         }
     }
