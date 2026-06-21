@@ -24,8 +24,9 @@ static void list_available(){
     while(repos[i]){
         for(size_t j=0; j< repos[i]->package_count;j++){
             const char* name = repos[i]->packages[j]->name;
-            const char* desc = yaml_get_value(repos[i]->packages[j]->metadata, "description");
+            char* desc = yaml_get_value(repos[i]->packages[j]->metadata, "description");
             if(name == NULL || desc == NULL){
+                free(desc);
                 continue;
             }
             char* meta = build_string("%s/%s/metadata/%s.yaml", get_value("DESTDIR"), STORAGE, name);
@@ -36,6 +37,7 @@ static void list_available(){
                 color_print(BOLD, COLOR_YELLOW, "r %s ::", name);
                 color_print(NORMAL, COLOR_DEFAULT, " %s\n", desc);
             }
+            free(desc);
             free(meta);
         }
         i++;
@@ -49,15 +51,17 @@ static void list_installed(){
     char** meta = listdir(metadata);
     for(size_t i=0; meta[i]; i++){
         if(!endswith(meta[i], ".yaml")){
+            free(meta[i]);
             continue;
         }
         meta[i][strlen(meta[i])-5] = '\0';
         Package *pi = package_new();
         bool load = package_load_from_installed(pi, meta[i]);
         if(load){
-            const char* desc = yaml_get_value(pi->metadata, "description");
+            char* desc = yaml_get_value(pi->metadata, "description");
             color_print(BOLD, COLOR_GREEN, "i %s ::", pi->name);
             color_print(NORMAL, COLOR_DEFAULT, " %s\n", desc);
+            free(desc);
         } else {
             warning("Failed to read package metadata: %s\n", meta[i]);
         }

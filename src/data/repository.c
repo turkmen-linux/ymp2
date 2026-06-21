@@ -34,11 +34,21 @@ visible Repository* repository_new() {
 }
 
 visible void repository_unref(Repository* repo) {
-    if (!repo) return; // Check for NULL
+    if (!repo){
+        return; // Check for NULL
+    }
     for (size_t i = 0; i < repo->package_count; i++) {
         package_unref(repo->packages[i]);
     }
-    free(repo->packages);
+    if(repo->packages){
+        free(repo->packages);
+    }
+    if(repo->name){
+        free((char*)repo->name);
+    }
+    if(repo->uri){
+        free((char*)repo->uri);
+    }
     free(repo);
 }
 
@@ -54,6 +64,7 @@ static void repository_load_data(Repository* repo, const char* data, bool is_sou
     }
 
     if(len == 0){
+        free(areas);
         return;
     }
     debug("loaded: %d\n", len);
@@ -62,6 +73,8 @@ static void repository_load_data(Repository* repo, const char* data, bool is_sou
     repo->packages = realloc(repo->packages, (repo->package_count + len) * sizeof(Package*));
     if (!repo->packages) {
         color_print(BOLD, COLOR_RED, "Memory allocation failed %ld\n", repo->package_count + len);
+        for (int i = 0; i < len; i++) free(areas[i]);
+        free(areas);
         return; // Handle memory allocation failure
     }
 
@@ -122,6 +135,7 @@ visible void repository_load_from_data(Repository* repo, const char* data) {
     // Load packages
     repository_load_data(repo, inner, true);
     repository_load_data(repo, inner, false);
+    free(inner);
 }
 
 visible bool repository_download_package(Repository* repo, const char* name, bool is_source) {
@@ -134,8 +148,6 @@ visible bool repository_download_package(Repository* repo, const char* name, boo
         return false;
     }
     bool status = package_download(p, repo->uri);
-    // Cleanup
-    package_unref(p);
     return status;
 }
 

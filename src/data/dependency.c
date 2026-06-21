@@ -61,7 +61,7 @@ visible char** get_group_packages (const char* name) {
     }
     size_t len;
     char** ret=array_get(res, &len);
-    free(res);
+    array_unref(res);
     return ret;
 }
 
@@ -144,6 +144,7 @@ static void resolve_reverse_dependency_fn(char* name) {
     Package* pkg = package_new();
     if(!package_load_from_installed(pkg, name)){
         warning("Package is not installed: %s\n", name);
+        package_unref(pkg);
         return;
     }
     // Add the resolved package to the list of resolved packages
@@ -156,19 +157,27 @@ static void resolve_reverse_dependency_fn(char* name) {
     depth++; // Increase the depth for the current package
     for(size_t i=0; packages[i]; i++){
         if(!endswith(packages[i], ".yaml")){
+            free(packages[i]);
             continue;
         }
         Package* pi = package_new();
         packages[i][strlen(packages[i])-5] = '\0';
         if(!package_load_from_installed(pi, packages[i])){
             warning("Installed package is broken: %s\n", packages[i]);
+            package_unref(pi);
+            free(packages[i]);
+            continue;
         }
         for(size_t j = 0; pi->dependencies[j];j++){
             if(iseq(name, pi->dependencies[j])){
                 resolve_reverse_dependency_fn(packages[i]);
             }
         }
+        package_unref(pi);
+        free(packages[i]);
     }
+    free(packages);
+    free(metadata_dir);
     depth--; // Decrease the depth after processing all dependencies
 
     // Log the resolved package and current depth

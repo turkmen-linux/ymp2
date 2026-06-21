@@ -259,6 +259,10 @@ static int httpd(char** args){
     while (true){
         int client_fd = accept(fd, (struct sockaddr *)&addr, (socklen_t*)&addrlen);
         int* pclient = malloc(sizeof(int));
+        if(!pclient){
+            close(client_fd);
+            continue;
+        }
         *pclient = client_fd;
         pthread_t th;
         if (pthread_create(&th, NULL, handle_client, pclient) != 0) {

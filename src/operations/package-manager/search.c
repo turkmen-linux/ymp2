@@ -23,8 +23,8 @@ static int search_package(const char* arg, Repository **repos){
             if(get_bool("source") && ! repos[i]->packages[j]->is_source){
                 continue;
             }
-            const char* desc = yaml_get_value(repos[i]->packages[j]->metadata, "description");
             const char* name = repos[i]->packages[j]->name;
+            char* desc = yaml_get_value(repos[i]->packages[j]->metadata, "description");
             if(strstr(name, arg) != NULL || strstr(desc, arg) != NULL){
                 char* arg_green = NULL;
                 const char* isc = "bin";
@@ -45,6 +45,7 @@ static int search_package(const char* arg, Repository **repos){
                 free(name_colorized);
                 free(arg_green);
             }
+            free(desc);
         }
     }
     return 0;
@@ -53,26 +54,27 @@ static int search_package(const char* arg, Repository **repos){
 static int file_search(const char* arg){
     char* destdir=get_value("DESTDIR");
     char filesdir[PATH_MAX];
-    char file[PATH_MAX];
-    strcpy(filesdir, destdir);
-    strcpy(filesdir, STORAGE);
-    strcpy(filesdir, "/files");
+    snprintf(filesdir, sizeof(filesdir), "%s/%s/files", destdir, STORAGE);
     int status=1;
     char** files = listdir(filesdir);
     for(size_t i = 0; files[i]; i++){
-        strcpy(file, filesdir);
-        strcpy(file, "/");
-        strcpy(file, files[i]);
+        char file[strlen(filesdir)+strlen(files[i])+2];
+        snprintf(file, sizeof(file), "%s/%s", filesdir, files[i]);
         char* data = readfile(file);
+        if (!data) {
+            free(files[i]);
+            continue;
+        }
         char** lines  = split(data, "\n");
-        for(size_t j = 0; lines[j]; i++){
+        for(size_t j = 0; lines[j]; j++){
              if(strstr(lines[j]+40, arg)){
-                 print(files[i], lines[j]+40);
+                 print("%s %s\n", files[i], lines[j]+40);
                  status=0;
              }
              free(lines[j]);
         }
         free(lines);
+        free(data);
         free(files[i]);
     }
     free(files);

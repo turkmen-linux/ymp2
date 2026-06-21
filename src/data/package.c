@@ -33,7 +33,39 @@ visible Package* package_new() {
 }
 
 visible void package_unref(Package *pkg){
-    archive_unref(pkg->archive);
+    if (pkg->archive){
+        archive_unref(pkg->archive);
+    }
+    if (pkg->name) {
+        free((char*)pkg->name);
+    }
+    if (pkg->version) {
+        free((char*)pkg->version);
+    }
+    if (pkg->metadata) {
+        free((char*)pkg->metadata);
+    }
+    if (pkg->files) {
+        free((char*)pkg->files);
+    }
+    if (pkg->links) {
+        free((char*)pkg->links);
+    }
+    if (pkg->path) {
+        free((char*)pkg->path);
+    }
+    if (pkg->dependencies) {
+        for (size_t i = 0; pkg->dependencies[i]; i++){
+            free(pkg->dependencies[i]);
+        }
+        free(pkg->dependencies);
+    }
+    if (pkg->groups) {
+        for (size_t i = 0; pkg->groups[i]; i++){
+            free(pkg->groups[i]);
+        }
+        free(pkg->groups);
+    }
     free(pkg);
 }
 
@@ -60,17 +92,24 @@ visible bool package_load_from_file(Package* pkg, const char* path) {
 
     // 2. Extract relevant metadata areas
     // Check if the metadata contains an area named "ymp"
+    char* tmp_metadata = NULL;
     if(yaml_has_area(pkg->metadata, "ymp")){
-        pkg->metadata = yaml_get_area(pkg->metadata,"ymp"); // Get the "ymp" area
+        tmp_metadata = yaml_get_area(pkg->metadata,"ymp"); // Get the "ymp" area
+        free((char*)pkg->metadata);
+        pkg->metadata = tmp_metadata;
     }
 
     // Check if the metadata contains a "source" area
     if(yaml_has_area(pkg->metadata, "source")){
         pkg->is_source = true; // Mark package as a source package
-        pkg->metadata = yaml_get_area(pkg->metadata, "source"); // Get the "source" area
+        tmp_metadata = yaml_get_area(pkg->metadata, "source"); // Get the "source" area
+        free((char*)pkg->metadata);
+        pkg->metadata = tmp_metadata;
     } else if(yaml_has_area(pkg->metadata, "package")){
         pkg->is_source = false; // Mark package as a regular package
-        pkg->metadata = yaml_get_area(pkg->metadata, "package"); // Get the "package" area
+        tmp_metadata = yaml_get_area(pkg->metadata, "package"); // Get the "package" area
+        free((char*)pkg->metadata);
+        pkg->metadata = tmp_metadata;
     } else {
         error_add("Metadata is invalid"); // Handle invalid metadata
         return false;
@@ -304,10 +343,14 @@ visible bool package_load_from_installed(Package* pkg, const char* name){
     // Check if the metadata contains a "source" area
     if(yaml_has_area(pkg->metadata, "source")){
         pkg->is_source = true; // Mark package as a source package
-        pkg->metadata = yaml_get_area(pkg->metadata, "source"); // Get the "source" area
+        char* tmp_meta = yaml_get_area(pkg->metadata, "source"); // Get the "source" area
+        free((char*)pkg->metadata);
+        pkg->metadata = tmp_meta;
     } else if(yaml_has_area(pkg->metadata, "package")){
         pkg->is_source = false; // Mark package as a regular package
-        pkg->metadata = yaml_get_area(pkg->metadata, "package"); // Get the "package" area
+        char* tmp_meta = yaml_get_area(pkg->metadata, "package"); // Get the "package" area
+        free((char*)pkg->metadata);
+        pkg->metadata = tmp_meta;
     } else {
         error_add("Metadata is invalid"); // Handle invalid metadata
     }
@@ -316,7 +359,6 @@ visible bool package_load_from_installed(Package* pkg, const char* name){
     free(manifest);
 free_package_load_from_installed:
     free(meta);
-    // dont free data beacuse of used as pkg->metadata;
     return is_package;
 }
 
@@ -346,7 +388,6 @@ visible bool package_is_installed(Package *pkg){
         is_package = (pi->release == pkg->release); // check installed release and package release are same
         // cleanup
         package_unref(pi);
-        free(data);
         free(ymp_data);
         free(manifest);
     }

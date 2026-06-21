@@ -151,8 +151,10 @@ static void move_packages(const char* path){
         }
         // build target filename
         char c = pkg->name[0];
-        char* arch = "source";
-        if(!pkg->is_source){
+        char* arch = NULL;
+        if(pkg->is_source){
+            arch = strdup("source");
+        } else {
             arch = yaml_get_value(pkg->metadata, "arch");
         }
         char* target = build_string("%s/%c/%s/%s_%s_%d_%s.ymp", path, c, pkg->name, pkg->name, pkg->version, pkg->release, arch);
@@ -160,6 +162,7 @@ static void move_packages(const char* path){
         move_file(files[i], target);
         // free memory
         free(target);
+        free(arch);
         package_unref(pkg);
         free(files[i]);
     }
@@ -187,6 +190,7 @@ static int repo_index(const char* path){
     for(size_t i=0; files[i]; i++){
         // filter non-ymp files
         if(!endswith(files[i], ".ymp")){
+            free(files[i]);
             continue;
         }
         out[cur].uri = files[i]+strlen(path);

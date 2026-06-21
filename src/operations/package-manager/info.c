@@ -15,7 +15,7 @@ static void dump_info(Package *pi){
     } else {
         color_print(BOLD, COLOR_CYAN, "package:\n");
     }
-    const char* desc = yaml_get_value(pi->metadata, "description");
+    char* desc = yaml_get_value(pi->metadata, "description");
     if(desc == NULL){
         return;
     }
@@ -27,6 +27,7 @@ static void dump_info(Package *pi){
     color_print(NORMAL, COLOR_DEFAULT, "%d\n", pi->release);
     color_print(BOLD, COLOR_YELLOW, "  description: ");
     color_print(NORMAL, COLOR_DEFAULT, "%s\n", desc);
+    free(desc);
     color_print(BOLD, COLOR_YELLOW, "  installed: ");
     if(package_is_installed(pi)){
         color_print(BOLD, COLOR_GREEN, "true\n");
