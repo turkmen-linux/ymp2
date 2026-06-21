@@ -22,6 +22,7 @@
 #include <utils/sandbox.h>
 
 #include <utils/tty.h>
+#include <utils/gui.h>
 
 #include <data/build.h>
 #include <config.h>
@@ -222,6 +223,13 @@ static void binary_process(const char* path){
 
 static char* hash_types[] = {"sha512sums", "sha256sums", "sha1sums", "md5sums", NULL};
 
+static void fetch_progress_cb(const char* url, size_t downloaded, size_t total, void* userdata) {
+    (void)url;
+    const char* id = (const char*)userdata;
+    gui_progress_update(id, downloaded, total);
+    gui_progress_draw();
+}
+
 static bool get_resource(const char* resource_path, const char* resource_name, size_t resource_type, const char* source_url, const char* expected_hash) {
     debug("Source: %s %s\n", source_url, expected_hash);
 
@@ -246,7 +254,14 @@ static bool get_resource(const char* resource_path, const char* resource_name, s
             target_file_path = build_string("%s/%s", cache_directory, source_file_name);
             operation_status = copy_file(local_file_path, target_file_path);
         } else {
-            operation_status = fetch(source_url, target_file_path);
+            if(isatty(STDOUT_FILENO)){
+                gui_progress_add(resource_name, "Downloading", source_url, 0);
+                operation_status = fetch_with_progress(source_url, target_file_path, fetch_progress_cb, (void*)resource_name);
+                gui_progress_remove(resource_name);
+                gui_end();
+            } else {
+                operation_status = fetch(source_url, target_file_path);
+            }
         }
 
         free(local_file_path);
