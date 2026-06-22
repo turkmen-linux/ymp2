@@ -100,6 +100,7 @@ static void list_directory(int client_fd, const char* dir_path, const char* serv
         const char* em = "&#x1F4C1;";
         char* file_path = build_string("%s/%s", dir_path, entry->d_name);
         char* file_link = build_string("/%s/%s", dir_path+strlen(serve), entry->d_name);
+        debug("%s %s\n", serve, file_link);
         if(isfile(file_path)){
             em = "&#x1F4C4;";
         }
@@ -135,6 +136,7 @@ static void* handle_client(void* arg){
     // Read the request from the client
     char* res;
     char* path = "/";
+    char* serve_path = realpath(serve, NULL);
     int bytes_read = read(client_fd, buffer, sizeof(buffer) - 1);
     if(bytes_read < 0){
         print(_("Failed to read from client"));
@@ -181,7 +183,7 @@ static void* handle_client(void* arg){
         }
         free(lines[i]);
     }
-    path = build_string("%s/%s", serve, path);
+    path = build_string("%s/%s", serve_path, path);
     path = realpath(path, NULL);
     if(path == NULL){
         res = "HTTP/1.1 404 Not Found\n";
@@ -201,7 +203,7 @@ static void* handle_client(void* arg){
         }
         goto free_handle_client;
     } else if(isdir(path)){
-        list_directory(client_fd, path, serve);
+        list_directory(client_fd, path, serve_path);
         goto free_handle_client;
     }
     res = "HTTP/1.1 200 OK\n" \
@@ -220,6 +222,7 @@ static void* handle_client(void* arg){
 
     // free memory
     free(path);
+    free(serve_path);
     close(client_fd);
     return NULL;
 }
