@@ -18,6 +18,10 @@ static label *labels;
 size_t label_max = 32;
 size_t label_cur = 0;
 
+static size_t* while_stack = NULL;
+static size_t while_stack_max = 32;
+static size_t while_depth = 0;
+
 static void labels_unref() {
     if (!labels) {
         return;
@@ -79,12 +83,7 @@ visible char** parse_args(char** args, bool free_strings) {
 
 static char** parse_line(const char* line){
     char* tmp = strip((char*)line);
-    char** stmp = split(tmp, " ");
-    char** ret = parse_args(stmp, true);
-    for(size_t i=0; stmp[i]; i++){
-        free(stmp[i]);
-    }
-    free(stmp);
+    char** ret = parse_args(split(tmp, " "), true);
     free(tmp);
     return ret;
 }
@@ -95,8 +94,12 @@ visible int run_script(const char* script){
     if(!labels) {
         labels = calloc(label_max, sizeof(label));
     }
+    if(!while_stack) {
+        while_stack = calloc(while_stack_max, sizeof(size_t));
+    }
     // search for labels
     for(size_t i=0; lines[i]; i++){
+        debug("%d: %s\n", i, lines[i]);
         char* ltmp = strip(lines[i]);
         free(lines[i]);
         lines[i] = ltmp;
@@ -143,15 +146,57 @@ visible int run_script(const char* script){
                 }
                 error_add(build_string("syntax error at line %d : endif missing", cur));
                 error(1);
+                for(size_t j=0; args[j]; j++){
+                    free(args[j]);
+                }
+                free(args);
                 return 1;
                 found_endif:
                 debug("endif found at :%s %d\n", lines[i], iflevel);
             }
         }
+        if (iseq(args[0], "while")) {
+            if (while_depth >= while_stack_max) {
+                while_stack_max += 32;
+                size_t* tmp = realloc(while_stack, while_stack_max * sizeof(size_t));
+                if (tmp) while_stack = tmp;
+            }
+            while_stack[while_depth++] = i;
+            if (operation_main(global->manager, args[1], args+2) != 0) {
+                int wl = 1;
+                for (i++; lines[i]; i++) {
+                    if (strlen(lines[i]) == 0) continue;
+                    if (startswith(lines[i], "while ")) wl++;
+                    if (startswith(lines[i], "endwhile")) {
+                        wl--;
+                        if (wl == 0) break;
+                    }
+                }
+                while_depth--;
+            }
+            goto args_cleanup;
+        }
+        if (iseq(args[0], "endwhile")) {
+            if (while_depth > 0) {
+                i = while_stack[--while_depth] - 1;
+            }
+            goto args_cleanup;
+        }
         rc = operation_main(global->manager, args[0], args+1);
+args_cleanup:
+        for(size_t j=0; args[j]; j++){
+            free(args[j]);
+        }
+        free(args);
     }
     // cleanup
     labels_unref();
+    if (while_stack) {
+        free(while_stack);
+        while_stack = NULL;
+        while_stack_max = 32;
+        while_depth = 0;
+    }
     for(size_t i=0; lines[i]; i++){
         free(lines[i]);
     }

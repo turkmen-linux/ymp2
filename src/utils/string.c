@@ -135,9 +135,11 @@ visible char* trim(char *content) {
 
 
 visible char* int_to_string(int num){
-    char *ret = calloc(((sizeof(num) - 1) / 3 + 2), sizeof(char));
-    sprintf(ret, "%d", num);
-    return ret;
+    char *ret = calloc(20, sizeof(char));
+    snprintf(ret, 20, "%d", num);
+    char* ret2 = strdup(ret);
+    free(ret);
+    return ret2;
 }
 
 /* Function to perform URL decoding */
