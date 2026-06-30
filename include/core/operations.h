@@ -137,4 +137,6 @@ void operation_manager_unref(OperationManager* manager);
  */
 int operation_main(OperationManager *manager, const char* name, void* args);
 
+Operation get_operation_by_name(OperationManager *manager, const char* name);
+
 #endif

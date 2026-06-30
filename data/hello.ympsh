@@ -1,7 +1,76 @@
-if eq 1 1
-    echo hello world
+#!/usr/bin/env ympsh
+# Ymp Shell syntax demonstration
+
+# --- Variables ---
+set name World
+echo Hello $name
+set greeting "Hello $name"
+echo $greeting
+
+# --- Command substitution ---
+set user $(whoami)
+echo Current user: $user
+set host `uname -n`
+echo Hostname: $host
+set dist "$(uname -o)"
+echo OS: $dist
+
+# --- Escaping and quotes ---
+echo Hello\ World
+echo 'Single quoted $name is not expanded'
+echo "Double quoted $name is expanded"
+
+# --- Stop expression ---
+echo -- $dollar is not expanded
+echo -- 'single' and "double" are also literal
+
+# --- Conditions ---
+set num 12
+if eq $num 12
+    echo num is 12
 endif
-if eq 1 0
-    echo hmmm
+
+if eq $num 12 and eq 1 1
+    echo both conditions true
 endif
-get
+
+if eq $num 0 or eq 1 1
+    echo or condition true
+endif
+
+if not eq 0 1
+    echo not false
+endif
+
+# --- Read ---
+echo "Type something:"
+read input
+echo You typed: $input
+
+# --- Exec operation (system commands) ---
+exec echo "running from exec operation"
+exec whoami
+
+# --- While loop ---
+set count 0
+label loop_start
+if not eq $count 3
+    echo count: $count
+    set count $(expr $count + 1)
+    goto loop_start
+endif
+echo loop done
+
+# --- Ret (function simulation) ---
+label print_msg
+    echo "=== $1 ==="
+ret
+
+set 1 "Hello from ret"
+goto print_msg
+set 1 "And again"
+goto print_msg
+
+# --- Exit ---
+echo All demonstrations passed
+exit 0

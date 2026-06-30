@@ -77,9 +77,7 @@ static void gettext_init(){
 visible Ymp* ymp_init(){
 #ifdef YMP_GETTEXT
     gettext_init();
-    if(setup_raw_mode()){
-        return NULL;
-    }
+    setup_raw_mode();
 #endif
     // Allocate memory for Ymp instance
 #ifndef NDEBUG

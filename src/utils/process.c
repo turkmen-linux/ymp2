@@ -59,7 +59,7 @@ visible char* which(char* cmd){
         token = strtok(NULL, ":"); /* next token */
     }
     free(fullfilename);
-    return (char*)cmd;
+    return strdup(cmd);
 }
 
 

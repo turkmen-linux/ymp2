@@ -11,10 +11,12 @@ static int shell_fn(char** args){
     int status = 0;
     for(size_t i=0; args[i]; i++){
         char* data = readfile(args[i]);
-        status = run_script(data);
-        free(data);
-        if(status){
-            return status;
+        if(data){
+            status = run_script(data);
+            free(data);
+            if(status){
+                return status;
+            }
         }
     }
     return status;

@@ -31,9 +31,10 @@ visible OperationManager* operation_manager_new() {
     }
 
     // Initialize the members of the OperationManager
-    manager->operations = NULL; // Initially set to NULL
-    manager->length = 0;        // Length is set to zero
-    manager->capacity = 0;      // Capacity is set to zero
+    manager->operations = NULL;
+    manager->length = 0;
+    manager->capacity = 0;
+    memset(&manager->on_error, 0, sizeof(Operation));
 
     // Private area
     OperationManagerPriv* priv = (OperationManagerPriv*)manager->priv_data;
@@ -52,6 +53,27 @@ visible void operation_manager_unref(OperationManager* manager){
     }
     free(manager->operations);
     free(manager);
+}
+
+Operation visible get_operation_by_name(OperationManager *manager, const char* name){
+    for (size_t i = 0; i < manager->length; i++) {
+        if (strcmp(manager->operations[i].name, name) == 0) {
+            return manager->operations[i];
+        }
+        if (manager->operations[i].alias) {
+            char** alias = split(manager->operations[i].alias, ":");
+            for (size_t a = 0; alias[a]; a++) {
+                if (strcmp(alias[a], name) == 0) {
+                    for (size_t b = 0; alias[b]; b++) free(alias[b]);
+                    free(alias);
+                    return manager->operations[i];
+                }
+            }
+            for (size_t b = 0; alias[b]; b++) free(alias[b]);
+            free(alias);
+        }
+    }
+    return (Operation){0};
 }
 
 void visible operation_register(OperationManager *manager, Operation new_op) {
@@ -80,62 +102,35 @@ int visible operation_main(OperationManager *manager, const char* name, void* ar
     if(!name){
         return 0;
     }
-    // calculate arg len
     size_t len = 0;
     for(len=0; ((char**)args)[len]; len++){}
-    int status = 0;
+    int status = 1;
     OperationManagerPriv* priv = (OperationManagerPriv*)manager->priv_data;
-    for (size_t i = 0; i < manager->length; i++) {
-        if (manager->operations[i].alias) {
-            char** alias = split(manager->operations[i].alias, ":");
-            size_t a;
-            for(a=0; alias[a]; a++){
-                if(strcmp(alias[a], name) == 0){
-                    for(size_t b=0; alias[b]; b++){
-                        free(alias[b]);
-                    }
-                    free(alias);
-                    goto operation_main_on_call;
-                }
-            }
-            for(size_t b=0; b<a; b++){
-                free(alias[b]);
-            }
-            free(alias);
-        }
-        debug("%s %s\n", manager->operations[i].name, name);
-        if (strcmp(manager->operations[i].name, name) == 0) {
-operation_main_on_call:
-            // --help check
-            if((strcmp(name, "help") != 0) && get_bool("help")){
-                char* fargs[] = {manager->operations[i].name, NULL};
-                return operation_main(manager, (char*)"help", (void*)fargs);
-            }
-            if(len < manager->operations[i].min_args){
-                debug("Min arguments error\n");
-                status = 1;
-                goto operation_main_on_error;
-            }
-            debug("Running:%s\n", name);
-            priv->running = true;
-            mode_t u = umask(0022);
-            set_value("OPERATION", manager->operations[i].name);
-            status = manager->operations[i].call(args);
-            set_value("OPERATION", "");
-            (void)umask(u);
-            priv->running = false;
-            if(status > 0){
+    Operation op = get_operation_by_name(manager, name);
+    if (!op.call) return status;
+    if((strcmp(name, "help") != 0) && get_bool("help")){
+        char* fargs[] = {op.name, NULL};
+        return operation_main(manager, (char*)"help", (void*)fargs);
+    }
+    if(len < op.min_args){
+        debug("Min arguments error\n");
+        goto operation_main_on_error;
+    }
+    priv->running = true;
+    mode_t u = umask(0022);
+    set_value("OPERATION", op.name);
+    status = op.call(args);
+    set_value("OPERATION", "");
+    (void)umask(u);
+    priv->running = false;
+    if(status > 0){
 operation_main_on_error:
-                warning("Operation failed: %s Exited with : %d\n", manager->operations[i].name, status);
-                if (manager->on_error.call){
-                    mode_t ue = umask(0022);
-                    manager->on_error.call(NULL);
-                    (void)umask(ue);
-                }
-                break;
-            }
+        warning("Operation failed: %s Exited with : %d\n", op.name, status);
+        if (manager->on_error.call){
+            mode_t ue = umask(0022);
+            manager->on_error.call(NULL);
+            (void)umask(ue);
         }
     }
-    debug("exit with:%d\n", status);
     return status;
 }
