@@ -68,7 +68,8 @@ static char** tokenize_line(const char* line, bool* stop_expr) {
                 tpos = 0;
                 if (cnt >= cap - 1) {
                     cap += 32;
-                    args = realloc(args, cap * sizeof(char*));
+                    char** tmp = realloc(args, cap * sizeof(char*));
+                    if (tmp) args = tmp;
                 }
             }
             continue;
@@ -99,6 +100,7 @@ static char** tokenize_line(const char* line, bool* stop_expr) {
                 }
                 size_t clen = line - start;
                 char* cmd = malloc(clen + 1);
+                if (!cmd) continue;
                 memcpy(cmd, start, clen); cmd[clen] = '\0';
                 if (*line == ')') line++;
                 char* out = exec_capture(cmd);
@@ -115,6 +117,7 @@ static char** tokenize_line(const char* line, bool* stop_expr) {
                 while (*line && *line != '}') line++;
                 size_t vlen = line - start;
                 char* vname = malloc(vlen + 1);
+                if (!vname) continue;
                 memcpy(vname, start, vlen); vname[vlen] = '\0';
                 const char* val = get_value(vname);
                 if (val) {
@@ -133,6 +136,7 @@ static char** tokenize_line(const char* line, bool* stop_expr) {
                 if (line > start) {
                     size_t vlen = line - start;
                     char* vname = malloc(vlen + 1);
+                    if (!vname) continue;
                     memcpy(vname, start, vlen); vname[vlen] = '\0';
                     const char* val = get_value(vname);
                     if (val) {
@@ -154,6 +158,7 @@ static char** tokenize_line(const char* line, bool* stop_expr) {
             while (*line && *line != '`') line++;
             size_t clen = line - start;
             char* cmd = malloc(clen + 1);
+            if (!cmd) continue;
             memcpy(cmd, start, clen); cmd[clen] = '\0';
             if (*line == '`') line++;
             char* out = exec_capture(cmd);
@@ -261,6 +266,7 @@ static int eval_cond_chain(char** args, size_t* pos) {
     while (args[start + count] && !is_cond_op(args[start + count])) count++;
 
     char** op_args = malloc((count + 1) * sizeof(char*));
+    if (!op_args) { *pos = start + count; return 1; }
     for (size_t i = 0; i < count; i++) op_args[i] = args[start + i];
     op_args[count] = NULL;
 

@@ -136,6 +136,7 @@ visible char* trim(char *content) {
 
 visible char* int_to_string(int num){
     char *ret = calloc(20, sizeof(char));
+    if (!ret) return NULL;
     snprintf(ret, 20, "%d", num);
     char* ret2 = strdup(ret);
     free(ret);
