@@ -79,5 +79,6 @@ visible void gui_msg(const char *title, const char *msg, msg_type_t type) {
 
     gui_message_draw();
     wgetch(win);
+    current_display = GUI_DISPLAY_NONE;
     gui_end();
 }

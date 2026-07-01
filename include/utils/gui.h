@@ -113,6 +113,11 @@ int gui_progress_add(const char *id, const char *title, const char *msg, size_t 
 void gui_progress_update(const char *id, size_t done, size_t total);
 
 /**
+ * @brief Handle terminal resize safely (call before ncurses drawing).
+ */
+void gui_handle_resize(void);
+
+/**
  * @brief Remove a progress bar.
  * @param id Identifier of the progress bar to remove.
  *

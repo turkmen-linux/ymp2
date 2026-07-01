@@ -110,6 +110,7 @@ visible bool gui_yes_no(const char *title, const char *msg, bool def) {
             break;
         }
     } while (1);
+    current_display = GUI_DISPLAY_NONE;
     gui_end();
     return ret;
 }

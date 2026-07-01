@@ -96,6 +96,7 @@ visible bool fetch_with_progress(const char* url, const char* path, FetchProgres
             fclose(fetch->fp);
             curl_slist_free_all(chunk);
             free(useragent);
+            curl_easy_cleanup(fetch->curl);
             free(fetch);
             return false;
         }

@@ -8,6 +8,8 @@
 
 #include <utils/gui.h>
 
+extern gui_display_t current_display;
+
 static WINDOW *p_win = NULL;
 static gui_progress_bar_t progress_bars[GUI_MAX_BARS];
 static int progress_bar_count = 0;
@@ -17,16 +19,16 @@ static void gui_progress_draw(void);
 
 static void format_size(char *buf, size_t buf_len, size_t bytes) {
     if (bytes >= 1024 * 1024 * 1024) {
-        snprintf(buf, buf_len+1, "%zu.%zuGB", bytes / (1024 * 1024 * 1024),
+        snprintf(buf, buf_len, "%zu.%zuGB", bytes / (1024 * 1024 * 1024),
                 (bytes % (1024 * 1024 * 1024)) / (1024 * 1024 * 102));
     } else if (bytes >= 1024 * 1024) {
-        snprintf(buf, buf_len+1, "%zu.%zuMB", bytes / (1024 * 1024),
+        snprintf(buf, buf_len, "%zu.%zuMB", bytes / (1024 * 1024),
                 (bytes % (1024 * 1024)) / (1024 * 102));
     } else if (bytes >= 1024) {
-        snprintf(buf, buf_len+1, "%zu.%zuKB", bytes / 1024,
+        snprintf(buf, buf_len, "%zu.%zuKB", bytes / 1024,
                 (bytes % 1024) / 102);
     } else {
-        snprintf(buf, buf_len+1, "%zuB", bytes);
+        snprintf(buf, buf_len, "%zuB", bytes);
     }
 }
 
@@ -67,7 +69,7 @@ static void draw_progress_bar(WINDOW *w, int y, const char *title, const char *m
     }
     waddstr(w, "]");
 
-    char done_str[16], total_str[16];
+    char done_str[32], total_str[32];
     format_size(done_str, sizeof(done_str), done);
     format_size(total_str, sizeof(total_str), total);
     mvwprintw(w, y + 2, w_w - 26, "%s/%s", done_str, total_str);
@@ -83,7 +85,10 @@ visible int gui_progress_add(const char *id, const char *title, const char *msg,
     if (!id)
         return -1;
 
-    gui_init();
+    if (progress_bar_count == 0){
+        current_display = GUI_DISPLAY_PROGRESS;
+        gui_init();
+    }
 
     pthread_mutex_lock(&p_mutex);
     if (progress_bar_count >= GUI_MAX_BARS) {
@@ -149,12 +154,17 @@ visible void gui_progress_remove(const char *id) {
             return;
         }
     }
+    if (progress_bar_count == 0){
+        current_display = GUI_DISPLAY_NONE;
+        gui_end();
+    }
     pthread_mutex_unlock(&p_mutex);
 }
 
 static void gui_progress_draw(void) {
     pthread_mutex_lock(&p_mutex);
 
+    gui_handle_resize();
     refresh();
 
     int active_count = 0;
@@ -180,8 +190,21 @@ static void gui_progress_draw(void) {
     getmaxyx(stdscr, screen_h, screen_w);
     if (w > screen_w)
         w = screen_w - 4;
+    if (w > screen_w)
+        w = screen_w;
     if (h > screen_h)
         h = screen_h - 4;
+    if (h > screen_h)
+        h = screen_h;
+
+    if (w < 30 || h < 8) {
+        if (p_win) {
+            delwin(p_win);
+            p_win = NULL;
+        }
+        pthread_mutex_unlock(&p_mutex);
+        return;
+    }
 
     int x = (screen_w - w) / 2;
     int y = (screen_h - h) / 2;

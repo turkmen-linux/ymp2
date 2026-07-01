@@ -23,13 +23,24 @@ extern void gui_yesno_draw();
 
 void gui_force_update(void);
 
+static volatile sig_atomic_t resize_pending = 0;
+
 static void handle_resize(int sig) {
     (void)sig;
-    endwin();
-    clear();
-    refresh();
-    gui_force_update();
-    ungetch(KEY_RESIZE);
+    resize_pending = 1;
+    if(current_display != GUI_DISPLAY_PROGRESS){
+        gui_handle_resize();
+    }
+}
+
+visible void gui_handle_resize(void) {
+    if (resize_pending) {
+        resize_pending = 0;
+        endwin();
+        refresh();
+        gui_force_update();
+        ungetch(KEY_RESIZE);
+    }
 }
 
 bool init_ncurses(void) {
@@ -127,10 +138,10 @@ visible bool gui_init(void) {
 
 visible void gui_end(void) {
     cleanup();
-    pthread_mutex_destroy(&gui_mutex);
 }
 
 void gui_force_update(void) {
+    gui_handle_resize();
     switch (current_display) {
     case GUI_DISPLAY_MESSAGE:
         gui_message_draw();
