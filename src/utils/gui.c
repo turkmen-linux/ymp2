@@ -37,6 +37,7 @@ visible void gui_handle_resize(void) {
     if (resize_pending) {
         resize_pending = 0;
         endwin();
+        clear();
         refresh();
         gui_force_update();
         ungetch(KEY_RESIZE);

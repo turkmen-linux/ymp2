@@ -48,7 +48,7 @@ static int fetch_fn(void** args){
     char **links = (char**)args;
 
     char curdir[PATH_MAX];
-    if(!target){
+    if(!target || strlen(target) == 0){
         if (getcwd(curdir, sizeof(curdir)) == NULL) {
             perror("getcwd() error");
             return 1;
