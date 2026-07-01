@@ -8,16 +8,12 @@
 
 static struct termios orig_termios;
 
-void disable_raw_mode(void) {
+visible void disable_raw_mode(void) {
     tcsetattr(STDIN_FILENO, TCSANOW, &orig_termios);
 }
 
-void enable_raw_mode(void) {
+visible void enable_raw_mode(void) {
     struct termios raw;
-    if (tcgetattr(STDIN_FILENO, &orig_termios) < 0) {
-        perror("tcgetattr");
-        exit(1);
-    }
     raw = orig_termios;
     cfmakeraw(&raw);
     if (tcsetattr(STDIN_FILENO, TCSANOW, &raw) < 0) {
@@ -25,7 +21,7 @@ void enable_raw_mode(void) {
         exit(1);
     }
 }
-int setup_raw_mode() {
+visible int setup_terminos() {
     struct termios term;
     if (tcgetattr(STDIN_FILENO, &term) < 0) {
         perror("tcgetattr");
@@ -40,6 +36,10 @@ int setup_raw_mode() {
     if (tcsetattr(STDIN_FILENO, TCSANOW, &term) < 0) {
         perror("tcsetattr");
         return -1;
+    }
+    if (tcgetattr(STDIN_FILENO, &orig_termios) < 0) {
+        perror("tcgetattr");
+        exit(1);
     }
     return 0;
 }
