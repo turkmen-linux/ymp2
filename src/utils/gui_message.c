@@ -78,9 +78,6 @@ visible void gui_msg(const char *title, const char *msg, msg_type_t type) {
     current_display = GUI_DISPLAY_MESSAGE;
 
     gui_message_draw();
-    int ch;
-    do {
-        ch = wgetch(win);
-    } while (ch == KEY_RESIZE);
+    wgetch(win);
     gui_end();
 }

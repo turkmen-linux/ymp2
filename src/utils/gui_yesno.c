@@ -108,8 +108,6 @@ visible bool gui_yes_no(const char *title, const char *msg, bool def) {
             break;
         } else if (ch == 27 || ch == 'q') {
             break;
-        } else if (ch == KEY_RESIZE) {
-            gui_yesno_draw();
         }
     } while (1);
     gui_end();
