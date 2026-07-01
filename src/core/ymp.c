@@ -77,8 +77,8 @@ static void gettext_init(){
 visible Ymp* ymp_init(){
 #ifdef YMP_GETTEXT
     gettext_init();
-    setup_raw_mode();
 #endif
+    setup_terminos();
     // Allocate memory for Ymp instance
 #ifndef NDEBUG
     size_t begin_time = get_epoch();

@@ -63,6 +63,28 @@ void gui_msg(const char *title, const char *msg, msg_type_t type);
 bool gui_yes_no(const char *title, const char *msg, bool def);
 
 /**
+ * @brief GUI display mode.
+ */
+typedef enum {
+    GUI_DISPLAY_NONE,
+    GUI_DISPLAY_MESSAGE,
+    GUI_DISPLAY_YESNO,
+    GUI_DISPLAY_PROGRESS
+} gui_display_t;
+
+/**
+ * @brief Progress bar state.
+ */
+typedef struct {
+    bool active;
+    char *id;
+    char *title;
+    char *msg;
+    size_t done;
+    size_t total;
+} gui_progress_bar_t;
+
+/**
  * @brief Maximum number of concurrent progress bars supported.
  */
 #define GUI_MAX_BARS 10

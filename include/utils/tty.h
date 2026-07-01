@@ -14,8 +14,8 @@ void disable_raw_mode(void);
 void enable_raw_mode(void);
 
 /**
- * @brief Sets up raw terminal mode.
+ * @brief Sets up terminal mode.
  *
  * @return 0 on success, or -1 if an error occurs.
  */
-int setup_raw_mode();
+int setup_terminos();
