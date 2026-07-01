@@ -17,7 +17,6 @@ static void fetch_progress_cb(const char* url, size_t downloaded, size_t total, 
     char* id = (char*)userdata;
 
     gui_progress_update(id, downloaded, total);
-    gui_progress_draw();
 }
 
 static int fetch_fn(void** args){

@@ -8,15 +8,12 @@
 
 #include <utils/gui.h>
 
-extern WINDOW *win;
-extern gui_progress_bar_t progress_bars[];
+static WINDOW *p_win = NULL;
+static gui_progress_bar_t progress_bars[GUI_MAX_BARS];
 static int progress_bar_count = 0;
-extern pthread_mutex_t gui_mutex;
-extern gui_display_t current_display;
+static pthread_mutex_t p_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-extern void center_window(int w, int h);
-
-void gui_progress_draw(void);
+static void gui_progress_draw(void);
 
 static void format_size(char *buf, size_t buf_len, size_t bytes) {
     if (bytes >= 1024 * 1024 * 1024) {
@@ -86,12 +83,11 @@ visible int gui_progress_add(const char *id, const char *title, const char *msg,
     if (!id)
         return -1;
 
-    pthread_mutex_lock(&gui_mutex);
-    if (progress_bar_count == 0){
-        gui_init();
-    }
+    gui_init();
+
+    pthread_mutex_lock(&p_mutex);
     if (progress_bar_count >= GUI_MAX_BARS) {
-        pthread_mutex_unlock(&gui_mutex);
+        pthread_mutex_unlock(&p_mutex);
         return -1;
     }
 
@@ -107,11 +103,11 @@ visible int gui_progress_add(const char *id, const char *title, const char *msg,
             progress_bars[i].total = total;
             progress_bars[i].active = true;
             progress_bar_count++;
-            pthread_mutex_unlock(&gui_mutex);
+            pthread_mutex_unlock(&p_mutex);
             return i;
         }
     }
-    pthread_mutex_unlock(&gui_mutex);
+    pthread_mutex_unlock(&p_mutex);
     return -1;
 }
 
@@ -119,23 +115,24 @@ visible void gui_progress_update(const char *id, size_t done, size_t total) {
     if (!id)
         return;
 
-    pthread_mutex_lock(&gui_mutex);
+    pthread_mutex_lock(&p_mutex);
     for (int i = 0; i < GUI_MAX_BARS; i++) {
         if (progress_bars[i].active && progress_bars[i].id && strcmp(progress_bars[i].id, id) == 0) {
             progress_bars[i].done = done;
             progress_bars[i].total = total;
-            pthread_mutex_unlock(&gui_mutex);
+            pthread_mutex_unlock(&p_mutex);
+            gui_progress_draw();
             return;
         }
     }
-    pthread_mutex_unlock(&gui_mutex);
+    pthread_mutex_unlock(&p_mutex);
 }
 
 visible void gui_progress_remove(const char *id) {
     if (!id)
         return;
 
-    pthread_mutex_lock(&gui_mutex);
+    pthread_mutex_lock(&p_mutex);
     for (int i = 0; i < GUI_MAX_BARS; i++) {
         if (progress_bars[i].active && progress_bars[i].id && strcmp(progress_bars[i].id, id) == 0) {
             free((void *)progress_bars[i].id);
@@ -146,20 +143,17 @@ visible void gui_progress_remove(const char *id) {
             progress_bars[i].title = NULL;
             progress_bars[i].msg = NULL;
             progress_bar_count--;
-            pthread_mutex_unlock(&gui_mutex);
+            pthread_mutex_unlock(&p_mutex);
             clear();
             gui_progress_draw();
             return;
         }
     }
-    if (progress_bar_count == 0){
-        gui_end();
-    }
-    pthread_mutex_unlock(&gui_mutex);
+    pthread_mutex_unlock(&p_mutex);
 }
 
-visible void gui_progress_draw(void) {
-    pthread_mutex_lock(&gui_mutex);
+static void gui_progress_draw(void) {
+    pthread_mutex_lock(&p_mutex);
 
     refresh();
 
@@ -170,7 +164,11 @@ visible void gui_progress_draw(void) {
     }
 
     if (active_count == 0) {
-        pthread_mutex_unlock(&gui_mutex);
+        if (p_win) {
+            delwin(p_win);
+            p_win = NULL;
+        }
+        pthread_mutex_unlock(&p_mutex);
         return;
     }
 
@@ -185,23 +183,30 @@ visible void gui_progress_draw(void) {
     if (h > screen_h)
         h = screen_h - 4;
 
-    center_window(w, h);
+    int x = (screen_w - w) / 2;
+    int y = (screen_h - h) / 2;
 
-    if (win) {
-        wbkgd(win, COLOR_PAIR(2));
-        box(win, 0, 0);
-
-        int y = 1;
-        for (int i = 0; i < GUI_MAX_BARS; i++) {
-            if (progress_bars[i].active) {
-                draw_progress_bar(win, y, progress_bars[i].title, progress_bars[i].msg,
-                               progress_bars[i].done, progress_bars[i].total);
-                y += bar_h;
-            }
-        }
-
-        wrefresh(win);
+    if (p_win)
+        delwin(p_win);
+    p_win = newwin(h, w, y, x);
+    if (!p_win) {
+        pthread_mutex_unlock(&p_mutex);
+        return;
     }
-    current_display = GUI_DISPLAY_PROGRESS;
-    pthread_mutex_unlock(&gui_mutex);
+
+    wbkgd(p_win, COLOR_PAIR(2));
+    keypad(p_win, true);
+    box(p_win, 0, 0);
+
+    int cur_y = 1;
+    for (int i = 0; i < GUI_MAX_BARS; i++) {
+        if (progress_bars[i].active) {
+            draw_progress_bar(p_win, cur_y, progress_bars[i].title, progress_bars[i].msg,
+                           progress_bars[i].done, progress_bars[i].total);
+            cur_y += bar_h;
+        }
+    }
+
+    wrefresh(p_win);
+    pthread_mutex_unlock(&p_mutex);
 }

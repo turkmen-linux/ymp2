@@ -108,8 +108,7 @@ int gui_progress_add(const char *id, const char *title, const char *msg, size_t 
  * @param done Number of units completed.
  * @param total Current total (may differ from initial total).
  *
- * Updates the displayed progress. Call gui_progress_draw() after updates
- * to refresh the display.
+ * Updates the displayed progress.
  */
 void gui_progress_update(const char *id, size_t done, size_t total);
 
@@ -120,15 +119,5 @@ void gui_progress_update(const char *id, size_t done, size_t total);
  * Cleans up and removes the specified progress bar from tracking.
  */
 void gui_progress_remove(const char *id);
-
-/**
- * @brief Redraw all active progress bars.
- *
- * Refreshes the terminal display showing all active progress bars.
- * Should be called after any gui_progress_add() or gui_progress_update()
- * to ensure changes are visible.
- */
-void gui_progress_draw(void);
-
 
 #endif

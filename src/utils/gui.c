@@ -9,18 +9,15 @@
 #include <core/ymp.h>
 
 #include <utils/gui.h>
-#include <utils/fetcher.h>
 
 WINDOW *win = NULL;
 int win_w = 0, win_h = 0;
 bool initialized = false;
-gui_progress_bar_t progress_bars[GUI_MAX_BARS];
 pthread_mutex_t gui_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 gui_display_t current_display = GUI_DISPLAY_NONE;
 
 
-extern void gui_progress_draw();
 extern void gui_message_draw();
 extern void gui_yesno_draw();
 
@@ -29,6 +26,7 @@ void gui_force_update(void);
 static void handle_resize(int sig) {
     (void)sig;
     endwin();
+    clear();
     refresh();
     gui_force_update();
     ungetch(KEY_RESIZE);
@@ -42,15 +40,6 @@ bool init_ncurses(void) {
     }
 
     signal(SIGWINCH, handle_resize);
-
-    for (int i = 0; i < GUI_MAX_BARS; i++) {
-        progress_bars[i].active = false;
-        progress_bars[i].id = NULL;
-        progress_bars[i].title = NULL;
-        progress_bars[i].msg = NULL;
-        progress_bars[i].done = 0;
-        progress_bars[i].total = 0;
-    }
 
     initscr();
     cbreak();
@@ -127,16 +116,6 @@ void cleanup(void) {
         endwin();
         initialized = false;
     }
-    for (int i = 0; i < GUI_MAX_BARS; i++) {
-        free((void *)progress_bars[i].id);
-        free((void *)progress_bars[i].title);
-        free((void *)progress_bars[i].msg);
-        progress_bars[i].active = false;
-        progress_bars[i].id = NULL;
-        progress_bars[i].title = NULL;
-        progress_bars[i].msg = NULL;
-    }
-
     current_display = GUI_DISPLAY_NONE;
 
     pthread_mutex_unlock(&gui_mutex);
@@ -160,8 +139,6 @@ void gui_force_update(void) {
         gui_yesno_draw();
         break;
     case GUI_DISPLAY_PROGRESS:
-        gui_progress_draw();
-        break;
     case GUI_DISPLAY_NONE:
         break;
     }

@@ -227,7 +227,6 @@ static void fetch_progress_cb(const char* url, size_t downloaded, size_t total, 
     (void)url;
     const char* id = (const char*)userdata;
     gui_progress_update(id, downloaded, total);
-    gui_progress_draw();
 }
 
 static bool get_resource(const char* resource_path, const char* resource_name, size_t resource_type, const char* source_url, const char* expected_hash) {
