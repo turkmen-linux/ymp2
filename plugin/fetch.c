@@ -2,13 +2,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <libgen.h>
 
 #include <core/ymp.h>
 #include <core/operations.h>
 
 #include <utils/fetcher.h>
 #include <utils/gui.h>
+#include <utils/jobs.h>
 
 static VariableManager* vars;
 
@@ -17,6 +17,30 @@ static void fetch_progress_cb(const char* url, size_t downloaded, size_t total, 
     char* id = (char*)userdata;
 
     gui_progress_update(id, downloaded, total);
+}
+
+typedef struct {
+    const char* url;
+    char* target_file;
+    char* id;
+} download_job_t;
+
+static int download_job_cb(void* ctx, void* args) {
+    (void)args;
+    download_job_t* dl = (download_job_t*)ctx;
+
+    char title[PATH_MAX];
+    const char* base = strrchr(dl->url, '/');
+    base = base ? base + 1 : dl->url;
+    snprintf(title, PATH_MAX, "%s : %s", _("Download"), base);
+    gui_progress_add(dl->id, title, base, 0);
+
+    bool ok = fetch_with_progress(dl->url, dl->target_file, fetch_progress_cb, dl->id);
+    gui_progress_remove(dl->id);
+    free(dl->target_file);
+    free(dl->id);
+    free(dl);
+    return ok ? 0 : 1;
 }
 
 static int fetch_fn(void** args){
@@ -34,29 +58,32 @@ static int fetch_fn(void** args){
 
     gui_init();
 
+    jobs* j = jobs_new();
+    if (!j) {
+        gui_end();
+        return 1;
+    }
+
     for(size_t i=0; links[i]; i++){
+        download_job_t* dl = malloc(sizeof(download_job_t));
+        dl->url = links[i];
+
+        const char* base = strrchr(links[i], '/');
+        base = base ? base + 1 : links[i];
+
+        char target_file[PATH_MAX + strlen(links[i]) + 1];
+        snprintf(target_file, sizeof(target_file), "%s/%s", target, base);
+        dl->target_file = strdup(target_file);
+
         char id[32];
         snprintf(id, sizeof(id), "fetch_%zu", i);
+        dl->id = strdup(id);
 
-        char title[PATH_MAX];
-        snprintf(title, PATH_MAX, "%s : %s", _("Download"), basename(links[i]));
-
-        gui_progress_add(id, title, basename(links[i]), 0);
-
+        jobs_add(j, (callback)download_job_cb, dl, NULL);
     }
-    for(size_t i=0; links[i]; i++){
-        char target_file[PATH_MAX+strlen(links[i])+1];
-        strcpy(target_file, target);
-        strcat(target_file, "/");
-        strcat(target_file, basename(links[i]));
 
-        char id[32];
-        snprintf(id, sizeof(id), "fetch_%zu", i);
-
-        fetch_with_progress(links[i], target_file, fetch_progress_cb, id);
-
-        gui_progress_remove(id);
-    }
+    jobs_run(j);
+    jobs_unref(j);
 
     gui_end();
     return 0;
