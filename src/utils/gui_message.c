@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include <ncurses.h>
 
 #include <core/ymp.h>
@@ -16,6 +18,15 @@ msg_type_t saved_msg_type;
 extern void center_window(int w, int h);
 extern void draw_text(const char *text, int y_start, bool center);
 
+#define count_line(A) do {\
+  for(size_t i=0; A[i]; i++) {\
+      if (A[i] == '\n'){ \
+            h++; \
+        } \
+  } \
+} while(0)
+
+
 visible void gui_message_draw() {
     clear();
     refresh();
@@ -23,6 +34,10 @@ visible void gui_message_draw() {
     int w = 50, h = 10;
     int screen_w, screen_h;
     getmaxyx(stdscr, screen_h, screen_w);
+
+    count_line(saved_title);
+    int hh = h;
+    count_line(saved_msg);
 
     if (w > screen_w)
         w = screen_w - 4;
@@ -58,12 +73,14 @@ visible void gui_message_draw() {
 
     if (saved_title) {
         wattron(win, A_BOLD);
-        mvwprintw(win, 1, 2, "[%c] %s", type_ch, saved_title);
+        char title[strlen(saved_title)+4];
+        snprintf(title, sizeof(title), "[%c] %s", type_ch, saved_title);
+        draw_text(title, 1, false);
         wattroff(win, A_BOLD);
     }
 
     if (saved_msg) {
-        draw_text(saved_msg, 3, true);
+        draw_text(saved_msg, hh - 8, true);
     }
 
     mvwaddstr(win, h - 3, win_w / 2 - 6, "[ Press Enter ]");

@@ -19,6 +19,14 @@ static bool saved_yesno;
 extern void center_window(int w, int h);
 extern void draw_text(const char *text, int y_start, bool center);
 
+#define count_line(A) do {\
+  for(size_t i=0; A[i]; i++) {\
+      if (A[i] == '\n'){ \
+            h++; \
+        } \
+  } \
+} while(0)
+
 visible void gui_yesno_draw() {
     clear();
     refresh();
@@ -29,6 +37,9 @@ visible void gui_yesno_draw() {
 
     int w = (max_len > 40 ? max_len + 12 : 52);
     int h = 12;
+    count_line(saved_title);
+    int hh = h;
+    count_line(saved_msg);
 
     int screen_w, screen_h;
     getmaxyx(stdscr, screen_h, screen_w);
@@ -44,12 +55,12 @@ visible void gui_yesno_draw() {
 
     if (saved_title) {
         wattron(win, A_BOLD);
-        mvwprintw(win, 1, 2, "%s", saved_title);
+        draw_text(saved_title, 0, false);
         wattroff(win, A_BOLD);
     }
 
     if (saved_msg) {
-        draw_text(saved_msg, 3, true);
+        draw_text(saved_msg, hh - 8, true);
     }
 
     mvwprintw(win, h - 4, 2, _("Select: "));
@@ -84,7 +95,7 @@ visible bool gui_yes_no(const char *title, const char *msg, bool def) {
     int sel = def ? 0 : 1;
     int ch;
 
-    gui_yesno_draw(title, msg, sel == 0);
+    gui_yesno_draw();
 
     do {
         ch = wgetch(win);
