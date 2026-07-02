@@ -55,7 +55,7 @@ visible void gui_yesno_draw() {
 
     if (saved_title) {
         wattron(win, A_BOLD);
-        draw_text(saved_title, 0, false);
+        draw_text(saved_title, 1, false);
         wattroff(win, A_BOLD);
     }
 
