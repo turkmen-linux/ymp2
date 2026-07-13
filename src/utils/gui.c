@@ -25,15 +25,7 @@ void gui_force_update(void);
 
 static volatile sig_atomic_t resize_pending = 0;
 
-static void handle_resize(int sig) {
-    (void)sig;
-    resize_pending = 1;
-    if(current_display != GUI_DISPLAY_PROGRESS){
-        gui_handle_resize();
-    }
-}
-
-visible void gui_handle_resize(void) {
+void gui_handle_resize(void) {
     if (resize_pending) {
         resize_pending = 0;
         endwin();
@@ -41,6 +33,14 @@ visible void gui_handle_resize(void) {
         refresh();
         gui_force_update();
         ungetch(KEY_RESIZE);
+    }
+}
+
+static void handle_resize(int sig) {
+    (void)sig;
+    resize_pending = 1;
+    if(current_display != GUI_DISPLAY_PROGRESS){
+        gui_handle_resize();
     }
 }
 

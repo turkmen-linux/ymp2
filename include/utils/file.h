@@ -121,6 +121,8 @@ char** listdir(const char* path);
  */
 char** find(const char* path);
 
+void format_size(char *buf, size_t buf_len, size_t bytes);
+
 /**
  * @brief Executes a command with arguments and captures its output.
  *

@@ -144,6 +144,22 @@ visible char** find(const char* path){
     return list;
 }
 
+visible void format_size(char *buf, size_t buf_len, size_t bytes) {
+    if (bytes >= 1024 * 1024 * 1024) {
+        snprintf(buf, buf_len, "%zu.%zuGB", bytes / (1024 * 1024 * 1024),
+                (bytes % (1024 * 1024 * 1024)) / (1024 * 1024 * 102));
+    } else if (bytes >= 1024 * 1024) {
+        snprintf(buf, buf_len, "%zu.%zuMB", bytes / (1024 * 1024),
+                (bytes % (1024 * 1024)) / (1024 * 102));
+    } else if (bytes >= 1024) {
+        snprintf(buf, buf_len, "%zu.%zuKB", bytes / 1024,
+                (bytes % 1024) / 102);
+    } else {
+        snprintf(buf, buf_len, "%zuB", bytes);
+    }
+}
+
+
 visible void writefile(const char* path, const char* data) {
     debug("write to file: %s\n", path);
     FILE *file = fopen(path, "w");

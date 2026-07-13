@@ -6,8 +6,10 @@
 
 #include <core/ymp.h>
 
+#include <utils/file.h>
 #include <utils/gui.h>
 
+extern void gui_handle_resize();
 extern gui_display_t current_display;
 
 static WINDOW *p_win = NULL;
@@ -17,20 +19,6 @@ static pthread_mutex_t p_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 static void gui_progress_draw(void);
 
-static void format_size(char *buf, size_t buf_len, size_t bytes) {
-    if (bytes >= 1024 * 1024 * 1024) {
-        snprintf(buf, buf_len, "%zu.%zuGB", bytes / (1024 * 1024 * 1024),
-                (bytes % (1024 * 1024 * 1024)) / (1024 * 1024 * 102));
-    } else if (bytes >= 1024 * 1024) {
-        snprintf(buf, buf_len, "%zu.%zuMB", bytes / (1024 * 1024),
-                (bytes % (1024 * 1024)) / (1024 * 102));
-    } else if (bytes >= 1024) {
-        snprintf(buf, buf_len, "%zu.%zuKB", bytes / 1024,
-                (bytes % 1024) / 102);
-    } else {
-        snprintf(buf, buf_len, "%zuB", bytes);
-    }
-}
 
 static void draw_progress_bar(WINDOW *w, int y, const char *title, const char *msg, size_t done, size_t total) {
     int w_w, w_h;

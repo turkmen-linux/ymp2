@@ -27,7 +27,7 @@ extern void draw_text(const char *text, int y_start, bool center);
   } \
 } while(0)
 
-visible void gui_yesno_draw() {
+void gui_yesno_draw() {
     clear();
     refresh();
 
