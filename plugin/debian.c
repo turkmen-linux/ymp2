@@ -10,10 +10,12 @@
 
 #include <utils/archive.h>
 #include <utils/file.h>
+#include <utils/debian.h>
 
 static VariableManager* vars;
 
-static int deb_extract(char** args){
+
+static int deb_fn(char** args){
     char* target = variable_get_value(vars, "target");
     char curdir[PATH_MAX];
     if(!target || strlen(target) == 0){
@@ -23,45 +25,16 @@ static int deb_extract(char** args){
         }
         target = curdir;
     }
-    for (size_t i=0; args[i]; i++){
-        // 1. extract deb package
-        Archive *deb = archive_new();
-        archive_load(deb, args[i]);
-        archive_set_target(deb, target);
-        archive_extract_all(deb);
-        archive_unref(deb);
-        // 2. extract package files
-        char** files = listdir(target);
-        char path[PATH_MAX+1];
-        char path2[PATH_MAX+8];
-        for (size_t j=0; files[j]; j++){
-            snprintf(path, sizeof(path), "%s/%s", target, files[j]);
-            if(strncmp(files[j], "control.tar.", 12) == 0){
-                Archive *control = archive_new();
-                archive_load(control, path);
-                snprintf(path2, sizeof(path2), "%s/DEBIAN", target);
-                archive_set_target(control, path2);
-                archive_extract_all(control);
-                archive_unref(control);
-                unlink(path);
-            } else if(strncmp(files[j], "data.tar.", 9) == 0){
-                Archive *data = archive_new();
-                archive_load(data, path);
-                archive_set_target(data, target);
-                archive_extract_all(data);
-                archive_unref(data);
+    int status = 0;
+    for(size_t i=0; args[i]; i++){
+        if (variable_get_value(vars, "extract")){
+            if (!deb_extract(args[i], target)){
+                status = 1;
+                break;
             }
-             unlink(path);
         }
     }
-    return 0;
-}
-
-static int deb_fn(char** args){
-    if (variable_get_value(vars, "extract")){
-        return deb_extract(args);
-    }
-    return 0;
+    return status;
 }
 
 visible void plugin_init(Ymp* ymp){
@@ -73,7 +46,7 @@ visible void plugin_init(Ymp* ymp){
     op.help = help_new();
     help_add_parameter(op.help, "--extract", _("Extract a deb package."));
     help_add_parameter(op.help, "--target", _("Extract directory target."));
-    op.min_args = 0;
+    op.min_args = 1;
     op.call = (callback) deb_fn;
     operation_register(ymp->manager, op);
 }

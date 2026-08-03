@@ -1,0 +1,1 @@
+bool deb_extract(const char* package, const char* target);
