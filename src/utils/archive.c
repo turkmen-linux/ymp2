@@ -25,6 +25,7 @@ visible Archive* archive_new(){
     data->add_list_size = 0;
     data->errors = array_new();
     data->a = array_new();
+    data->preserve_perm = false;
     return data;
 }
 
@@ -166,8 +167,13 @@ static void archive_extract_fn(Archive *data, const char *path, bool all) {
             while ((size = archive_read_data(data->archive, buffer, sizeof(buffer))) > 0) {
                 fwrite(buffer, 1, size, file);
             }
+            mode_t perm = archive_entry_perm(entry);
             fclose(file);
-            chmod(target_file, 0755);
+            if (data->preserve_perm){
+                chmod(target_file, perm);
+            }else {
+                chmod(target_file, 0755);
+	          }
             free(target_file);
         } else {
             print(_("Skip unsupported archive entry: %s\n"), entry_path);

@@ -29,6 +29,7 @@ visible bool deb_extract(const char* package, const char* target){
             Archive *data = archive_new();
             archive_load(data, path);
             archive_set_target(data, target);
+            data->preserve_perm = true;
             archive_extract_all(data);
             archive_unref(data);
         }

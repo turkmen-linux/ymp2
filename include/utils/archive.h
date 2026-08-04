@@ -25,6 +25,7 @@ typedef struct {
     int add_list_size;           /**< Size of the list of files to be added to the archive. */
     int aformat;                 /**< Format of the archive (e.g., zip, tar). */
     int afilter;                 /**< Filter options for the archive (e.g., compression level). */
+    bool preserve_perm;          /**< Preserve permission. If false used 755 for all. */
     /** @cond */
     array *a;                    /** Pointer to an array structure containing files to be added. */
     /** @endcond */
