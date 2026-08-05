@@ -74,6 +74,21 @@ static void gettext_init(){
 }
 #endif
 
+static void load_default_variables(VariableManager *manager){
+    variable_set_value_read_only(manager, "VERSION", VERSION);
+    #ifdef PLUGIN_SUPPORT
+    variable_set_value_read_only(manager, "plugindir", PLUGINDIR);
+    #endif
+    // build
+    variable_set_value(manager, "build:cc", "gcc");
+    variable_set_value(manager, "build:cflags", "-O2 -s");
+    variable_set_value(manager, "build:cxxflags", "-O2 -s");
+    variable_set_value(manager, "build:ldflags", "");
+    // install
+    variable_set_value(manager, "DESTDIR", "/");
+    variable_set_value(manager, "no-emerge", "false");
+}
+
 visible Ymp* ymp_init(){
 #ifdef YMP_GETTEXT
     gettext_init();
@@ -92,6 +107,7 @@ visible Ymp* ymp_init(){
     }
     ymp->manager = operation_manager_new(); // Operation manager.
     ymp->variables = variable_manager_new();
+    load_default_variables(ymp->variables);
     ymp->errors = array_new();
     // Fill private space
     ymp->priv_data = (void*) queue_init();
@@ -100,6 +116,7 @@ visible Ymp* ymp_init(){
         global = ymp;
     }
     if(getenv("DEBUG")){
+        variable_set_value(ymp->variables, "debug", "true");
         logger_set_status(DEBUG, true);
     }
     struct sigaction sigact;
@@ -108,7 +125,6 @@ visible Ymp* ymp_init(){
     sigact.sa_flags = 0;
     sigaction(SIGSEGV, &sigact, NULL);
     #ifdef PLUGIN_SUPPORT
-    variable_set_value_read_only(ymp->variables, "plugindir", PLUGINDIR);
     char** plugins = find(PLUGINDIR);
     size_t i = 0;
     while(plugins[i]){
