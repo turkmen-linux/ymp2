@@ -55,7 +55,9 @@ void logger_set_status(int type, bool status);
  * This function prints a formatted message to the log based on the
  * specified log type. It supports variable arguments similar to printf.
  *
- * @param caller string. It can be __func__.
+ * @param caller string. It can be __func__ or NULL.
+ * @param file string. It can be __FILE__ or NULL.
+ * @param line integer. It can be __LINE__ or 0.
  * @param type The log type for the message. This should be one of the
  *             defined log levels (PRINT, DEBUG, WARNING, INFO).
  * @param format The format string for the message, similar to printf.
