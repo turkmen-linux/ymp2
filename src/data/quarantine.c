@@ -300,19 +300,20 @@ visible int quarantine_sync(const char* name){
             offset++;
         }
         line[offset]='\0';
-        strcpy(source, rootfs_path);
-        strcat(source, line);
         strcpy(target, destdir);
         strcat(target, line);
-        debug("file: %s -> %s\n", source, target);
+        debug("file: %s -> %s\n", line+offset+1, target);
         // create parent directory if not exists
         strcpy(tmp, target);
         (void)dirname(tmp);
         create_dir(tmp);
-        // move symlink
-        status = ! move_file(source, target);
+        // create symlink
+        if(issymlink(target)){
+            unlink(target);
+        }
+        status = symlink(target, line+offset+1);
         if(status != 0){
-            warning("failed to sync: %s => %s\n", source, target);
+            warning("failed to sync: %s => %s\n", target, line+offset+1);
             goto free_quarantine_sync;
         }
     }
