@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libgen.h>
 
 #include <utils/string.h>
 #include <utils/process.h>
@@ -28,7 +29,7 @@ visible void logger_set_status(int type, bool status){
 
 static size_t cur_time = 0;
 
-visible int print_fn(const char* caller, int type, const char* format, ...){
+visible int print_fn(const char* caller, const char* filename, int line, int type, const char* format, ...){
     (void)caller;
     if(print_functions[type] == NULL){
         return 0;
@@ -40,7 +41,7 @@ visible int print_fn(const char* caller, int type, const char* format, ...){
         if(cur_time == 0){
             cur_time = get_epoch();
         }
-        color_print(NORMAL, COLOR_MAGENTA, "[%s:%ld]: ", caller, get_epoch() - cur_time);
+        color_print(NORMAL, COLOR_MAGENTA, "[%s:%d (%s) %ld]: ", basename((char*)filename), line, caller, get_epoch() - cur_time);
         cur_time = get_epoch();
     }else if(type == WARNING){
         color_print(BOLD, COLOR_YELLOW, "%s: ", "Warning");

@@ -62,7 +62,7 @@ void logger_set_status(int type, bool status);
  * @param ... Additional arguments for the format string.
  * @return An integer indicating the success or failure of the print operation.
  */
-int print_fn(const char* caller, int type, const char* format, ...);
+int print_fn(const char* caller, const char* file, int line, int type, const char* format, ...);
 
 /**
  * @brief Macro for printing general messages.
@@ -72,7 +72,7 @@ int print_fn(const char* caller, int type, const char* format, ...);
  * @param A The format string for the message.
  * @param ... Additional arguments for the format string.
  */
-#define print(A, ...) print_fn(__func__, PRINT, A, ##__VA_ARGS__)
+#define print(A, ...) print_fn(NULL, NULL, 0, PRINT, A, ##__VA_ARGS__)
 
 #ifndef NDEBUG
 /**
@@ -83,7 +83,7 @@ int print_fn(const char* caller, int type, const char* format, ...);
  * @param A The format string for the message.
  * @param ... Additional arguments for the format string.
  */
-#define debug(A, ...)   print_fn(__func__, DEBUG, A, ##__VA_ARGS__)
+#define debug(A, ...)   print_fn(__func__, __FILE__, __LINE__, DEBUG, A, ##__VA_ARGS__)
 #else
 #define debug(A, ...)
 #endif
@@ -96,7 +96,7 @@ int print_fn(const char* caller, int type, const char* format, ...);
  * @param A The format string for the message.
  * @param ... Additional arguments for the format string.
  */
-#define info(A, ...)    print_fn(__func__, INFO, A, ##__VA_ARGS__)
+#define info(A, ...)    print_fn(NULL, NULL, 0, INFO, A, ##__VA_ARGS__)
 
 /**
  * @brief Macro for printing warning messages.
@@ -106,6 +106,6 @@ int print_fn(const char* caller, int type, const char* format, ...);
  * @param A The format string for the message.
  * @param ... Additional arguments for the format string.
  */
-#define warning(A, ...) print_fn(__func__, WARNING, A, ##__VA_ARGS__)
+#define warning(A, ...) print_fn(NULL, NULL, 0, WARNING, A, ##__VA_ARGS__)
 
 #endif

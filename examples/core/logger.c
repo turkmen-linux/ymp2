@@ -25,7 +25,7 @@ int main() {
     debug("Debugging value: %d\n", 42);
 
     // Log a debug message
-    print_fn(__func__, PRINT,"print value: %d\n", 42);
+    print_fn(__func__, __FILE__, __LINE__, PRINT,"print value: %d\n", 42);
 
     // Log an informational message
     info("Informational message: %s\n", "Everything is running smoothly.");

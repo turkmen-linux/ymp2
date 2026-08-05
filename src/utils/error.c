@@ -17,7 +17,7 @@ visible void error_fn(array* error, int status){
     char** errs = array_get(error, &len);
     for(i=0;i<len;i++){
         if(errs[i] != NULL){
-            print_fn("",ERROR,errs[i]);
+            print_fn(NULL, NULL, 0, ERROR,errs[i]);
         }
         free(errs[i]);
     }
