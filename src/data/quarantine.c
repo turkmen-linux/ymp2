@@ -311,7 +311,7 @@ visible int quarantine_sync(const char* name){
         if(issymlink(target)){
             unlink(target);
         }
-        status = symlink(target, line+offset+1);
+        status = symlink(line+offset+1, target);
         if(status != 0){
             warning("failed to sync: %s => %s\n", target, line+offset+1);
             goto free_quarantine_sync;
