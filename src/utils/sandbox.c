@@ -5,14 +5,20 @@
 #include <sched.h>
 
 #include <utils/sandbox.h>
+#include <core/variable.h>
 
 visible void sandbox(){
+    if(get_bool("no-sandbox")){
+        return;
+    }
     uid_t uid = getuid();
     gid_t gid = getgid();
     if (unshare(UNSHARE_FLAGS) < 0) {
+        perror("unshare");
         exit(1);
     }
     if(sethostname("sandbox",7) < 0){
+        perror("hostname");
         exit(1);
     }
     FILE *uid_map = fopen("/proc/self/uid_map", "w");

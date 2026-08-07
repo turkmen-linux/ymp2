@@ -10,6 +10,7 @@
 #define invisible ;//
 #endif
 
+#include <string.h>
 #include <stddef.h>
 /** @endcond */
 

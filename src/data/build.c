@@ -163,6 +163,7 @@ visible int ympbuild_run_function(ympbuild* ymp, const char* name) {
         );
         char* args[] = {"/bin/bash", "-c", command, NULL};
         if(chdir(ymp->path) < 0){
+            warning("Build path is broken!");
             free(command);
             return -1;
         }
@@ -173,6 +174,7 @@ visible int ympbuild_run_function(ympbuild* ymp, const char* name) {
         };
         sandbox();
         execve(args[0], args, envs);
+        warning("Failed to exec command!");
         free(command);
         exit(1);
     } else {
@@ -592,6 +594,7 @@ visible char *build_binary_from_path(const char* path) {
 
     // Construct the path to the ympbuild file
     char* ympfile = build_string("%s/ympbuild", path);
+    debug("ympfile: %s\n", ympfile);
 
     // Check if the ympbuild file exists
     if (!isfile(ympfile)) {
@@ -664,6 +667,7 @@ visible char *build_binary_from_path(const char* path) {
 
     // Execute actions defined in the actions array
     for (size_t i = 0; actions[i]; i++) {
+        debug("ymp run function: %s %s\n", actions[i], ympfile);
         int status = ympbuild_run_function(ymp, actions[i]);
         if (status != 0) {
             archive_unref(a);
