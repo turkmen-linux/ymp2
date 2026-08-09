@@ -1,15 +1,29 @@
 #include <stdio.h>
 #include <core/ymp.h>
 #include <core/logger.h>
+
 #include <utils/string.h>
+#include <utils/color.h>
 
 static int set_fn(char** args){
     set_value(args[0], args[1]);
     return 0;
 }
 static int get_fn(char** args){
-    const char* value = get_value(args[0]);
-    print("%s\n", value);
+    if(!args[0]){
+        char** names = variable_get_names(global->variables);
+        for(size_t i=0; names[i]; i++){
+            const char* value = get_value(names[i]);
+            color_print(NORMAL, COLOR_BLUE, "%s", names[i]);
+            print(" = %s\n", value);
+        }
+    } else {
+        for(size_t i=0; args[i]; i++){
+            const char* value = get_value(args[i]);
+            color_print(NORMAL, COLOR_BLUE, "%s", args[i]);
+            print(" = %s\n", value);
+        }
+    }
     return 0;
 }
 
@@ -39,7 +53,7 @@ void setget_init(OperationManager* manager){
     get.name = "get";
     get.alias = NULL;
     get.description = _("Get ymp variable");
-    get.min_args = 1;
+    get.min_args = 0;
     get.help = NULL;
     get.call = (callback) get_fn;
     operation_register(manager, get);

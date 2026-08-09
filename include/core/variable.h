@@ -113,4 +113,16 @@ invisible char* get_value(const char* name);
 #define get_bool(A) (strcmp(get_value(A), "true") == 0)
 /** @endcond */
 
+
+/**
+ * @brief Get variable names list.
+ *
+ * This function retrieves list of variable names.
+ *
+ * @param variables Pointer to the `VariableManager` instance.
+ * @return A pointer of variable name list.
+ *
+ */
+char** variable_get_names(VariableManager* variables);
+
 #endif

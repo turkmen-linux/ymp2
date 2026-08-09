@@ -99,6 +99,24 @@ visible char* variable_get_value(VariableManager* variables, const char* name) {
     return ""; // Return empty string if not found
 }
 
+visible char** variable_get_names(VariableManager* variables){
+    if (!variables) {
+        print(_("Invalid VariableManager\n"));
+        return NULL;
+    }
+    YmpVariable* vars = (YmpVariable*)variables->priv_data;
+    array *a = array_new();
+    for (size_t i = 0; i < variables->length; i++) {
+        debug("variable : %s\n", vars[i].name);
+        array_add(a, vars[i].name);
+    }
+    array_sort(a);
+    char** ret = array_get(a, NULL);
+    array_unref(a);
+    return ret;
+
+}
+
 char* get_value(const char* name) {
     if (!global) {
         global = ymp_init();
