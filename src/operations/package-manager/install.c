@@ -1,5 +1,6 @@
 #include <config.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <core/logger.h>
 #include <core/variable.h>
@@ -11,6 +12,10 @@
 #include <utils/jobs.h>
 #include <utils/string.h>
 #include <utils/yaml.h>
+
+static int install_upgrade();
+
+static bool in_upgrade = false;
 
 static int download_cb(Package *p, int num) {
     print("%s: %s\n", "Downloading", p->name);
@@ -38,6 +43,14 @@ static int install_cb(Package *p, int num) {
 }
 
 static int install_main(char **args) {
+    int status = 0;
+    if (get_bool("upgrade") && !in_upgrade) {
+        status = install_upgrade();
+        if (status != 0) {
+            return status;
+        }
+    }
+
     // Begin resolver and init job manager
     Repository **repos = resolve_begin();
     if (repos == NULL) {
@@ -49,7 +62,6 @@ static int install_main(char **args) {
     if (get_bool("sync-single") || !get_bool("no-emerge")) {
         install_jobs->parallel = 1;
     }
-    int status = 0;
 
     for (size_t r = 0; args[r]; r++) {
         // Resolve dependencies
@@ -90,6 +102,25 @@ install_main_free:
     resolve_end(repos);
     jobs_unref(download_jobs);
     jobs_unref(install_jobs);
+    return status;
+}
+
+static int install_upgrade() {
+    // Begin resolver and init job manager
+    Repository **repos = resolve_begin();
+    if (repos == NULL) {
+        return 2;
+    }
+    char **need_upgrade = resolve_upgrade(repos);
+    in_upgrade = true;                        // semaphore
+    int status = install_main(need_upgrade);  // first upgrade packages
+    in_upgrade = false;
+    // Clean up
+    for (size_t i = 0; need_upgrade[i]; i++) {
+        free(need_upgrade[i]);
+    }
+    free(need_upgrade);
+    resolve_end(repos);
     return status;
 }
 

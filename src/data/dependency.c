@@ -177,6 +177,36 @@ static void resolve_reverse_dependency_fn(char *name) {
     info("Resolved: %s depth:%d\n", name, depth);
 }
 
+visible char **resolve_upgrade(Repository **repos) {
+    // load installed package object
+    bool emerge = !get_bool("no-emerge");
+    char *metadata_dir = build_string("%s/%s/metadata", get_value("DESTDIR"), STORAGE);
+    char **packages = listdir(metadata_dir);
+    array *need_upgrade = array_new();
+    for (size_t i = 0; repos[i]; i++) {
+        for (size_t j = 0; packages[j]; j++) {
+            if (array_has(need_upgrade, packages[j])) {
+                continue;
+            }
+            Package *p = repository_get(repos[i], packages[j], emerge);  // Get the package from the repository
+            if (!p) {
+                continue;
+            }
+            if (!package_is_installed(p)) {  // check upgrade
+                info("%s is need upgrade\n", packages[j]);
+                array_add(need_upgrade, packages[j]);
+            }
+        }
+    }
+    for (size_t j = 0; packages[j]; j++) {
+        free(packages[j]);
+    }
+    free(packages);
+    char **ret = array_get(need_upgrade, NULL);
+    array_unref(need_upgrade);
+    return ret;
+}
+
 // Function to initialize the resolution process
 visible Repository **resolve_begin() {
 
