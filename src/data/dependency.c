@@ -210,6 +210,10 @@ visible char **resolve_upgrade(Repository **repos) {
 // Function to initialize the resolution process
 visible Repository **resolve_begin() {
 
+    if (repos) {
+        return repos;
+    }
+
     // Build the path to the repository index
     char *repodir = build_string("%s/%s/index", get_value("DESTDIR"), STORAGE);
     char **dirs = listdir(repodir);  // List the directories in the repository
@@ -256,15 +260,15 @@ visible Repository **resolve_begin() {
 }
 
 // Function to clean up resources after dependency resolution
-visible void resolve_end(Repository **repos) {
-    if (repos == NULL) {
+visible void resolve_end(Repository **frepos) {
+    if (frepos == NULL) {
         return;
     }
     // Unreference and free each repository
-    for (size_t i = 0; repos[i]; i++) {
-        repository_unref(repos[i]);
+    for (size_t i = 0; frepos[i]; i++) {
+        repository_unref(frepos[i]);
     }
-    free(repos);  // Free the repository pointer array
+    free(frepos);  // Free the repository pointer array
     // Free packages not owned by any repository (created by resolve_reverse_dependency_fn)
     if (resolved) {
         for (size_t i = 0; i < resolved_count; i++) {

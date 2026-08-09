@@ -13,8 +13,6 @@
 #include <utils/string.h>
 #include <utils/yaml.h>
 
-static bool in_upgrade = false;
-
 static int download_cb(Package *p, int num) {
     print("%s: %s\n", "Downloading", p->name);
     Repository *r = (Repository *) p->repo;
@@ -72,14 +70,12 @@ static int install_main(char **args) {
     }
 
     // Upgrade installed packages first
-    if (get_bool("upgrade") && !in_upgrade) {
+    if (get_bool("upgrade")) {
         char **need_upgrade = resolve_upgrade(repos);
         if (need_upgrade) {
-            in_upgrade = true;  // semaphore
             for (size_t u = 0; need_upgrade[u]; u++) {
                 install_schedule(need_upgrade[u], download_jobs, install_jobs);
             }
-            in_upgrade = false;
             // Clean up
             for (size_t i = 0; need_upgrade[i]; i++) {
                 free(need_upgrade[i]);
