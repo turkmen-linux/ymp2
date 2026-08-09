@@ -1,17 +1,16 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <curl/curl.h>
-#include <string.h>
+#include <config.h>
 #include <libgen.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include <core/ymp.h>
 #include <core/logger.h>
+#include <core/ymp.h>
+#include <curl/curl.h>
 #include <utils/fetcher.h>
 #include <utils/file.h>
 #include <utils/string.h>
-
-#include <config.h>
 
 typedef struct {
     CURL *curl;
@@ -20,45 +19,45 @@ typedef struct {
     size_t cur_size;
     size_t total_size;
     FetchProgressCallback progress_cb;
-    void* userdata;
-    char* url;
+    void *userdata;
+    char *url;
 } fetcher;
 
 static size_t write_data(const void *ptr, size_t size, size_t nmemb, void *stream) {
-    size_t copy = fwrite(ptr, size, nmemb, ((fetcher*)stream)->fp);
-    ((fetcher*)stream)->cur_size += copy;
+    size_t copy = fwrite(ptr, size, nmemb, ((fetcher *) stream)->fp);
+    ((fetcher *) stream)->cur_size += copy;
     return copy;
 }
 
 static int progress_callback(void *clientp, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow) {
-    (void)ultotal;
-    (void)ulnow;
-    fetcher* f = (fetcher*)clientp;
+    (void) ultotal;
+    (void) ulnow;
+    fetcher *f = (fetcher *) clientp;
     if (f && f->progress_cb) {
-        f->progress_cb(f->url, (size_t)dlnow, (size_t)dltotal, f->userdata);
+        f->progress_cb(f->url, (size_t) dlnow, (size_t) dltotal, f->userdata);
     }
     return 0;
 }
 
-visible bool fetch_with_progress(const char* url, const char* path, FetchProgressCallback cb, void* userdata) {
+visible bool fetch_with_progress(const char *url, const char *path, FetchProgressCallback cb, void *userdata) {
     debug("Fetch: %s -> %s\n", url, path);
-    fetcher* fetch = malloc(sizeof(fetcher));
+    fetcher *fetch = malloc(sizeof(fetcher));
 
-    if(!fetch) {
+    if (!fetch) {
         perror("malloc");
         return false;
     }
 
     fetch->progress_cb = cb;
     fetch->userdata = userdata;
-    fetch->url = (char*)url;
+    fetch->url = (char *) url;
     fetch->cur_size = 0;
     fetch->total_size = 0;
 
     CURL *curl = curl_easy_init();
     fetch->curl = curl;
     if (fetch->curl) {
-        char* dir = strdup(path);
+        char *dir = strdup(path);
         dirname(dir);
         create_dir(dir);
         free(dir);
@@ -77,7 +76,7 @@ visible bool fetch_with_progress(const char* url, const char* path, FetchProgres
         chunk = curl_slist_append(chunk, "Sec-GPC: 1");
         chunk = curl_slist_append(chunk, "Ymp: \"NE MUTLU TURKUM DIYENE\"");
         curl_easy_setopt(fetch->curl, CURLOPT_HTTPHEADER, chunk);
-        char* useragent = build_string("Ymp fetcher/%s", VERSION);
+        char *useragent = build_string("Ymp fetcher/%s", VERSION);
         curl_easy_setopt(fetch->curl, CURLOPT_USERAGENT, useragent);
         curl_easy_setopt(fetch->curl, CURLOPT_URL, url);
         curl_easy_setopt(fetch->curl, CURLOPT_WRITEFUNCTION, write_data);
@@ -103,7 +102,7 @@ visible bool fetch_with_progress(const char* url, const char* path, FetchProgres
 
         curl_off_t clen = 0;
         curl_easy_getinfo(fetch->curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD_T, &clen);
-        fetch->total_size = (size_t)clen;
+        fetch->total_size = (size_t) clen;
         if (cb) {
             cb(url, fetch->cur_size, fetch->total_size, userdata);
         }
@@ -119,4 +118,3 @@ visible bool fetch_with_progress(const char* url, const char* path, FetchProgres
     free(fetch);
     return false;
 }
-

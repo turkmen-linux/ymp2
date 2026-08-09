@@ -1,22 +1,22 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
+#include <core/logger.h>
 #include <core/ymp.h>
 #include <utils/array.h>
-#include <core/logger.h>
 
-#define csort(A, B) qsort(A, B, sizeof(const char*), (int (*)(const void *, const void *))strcmp)
+#define csort(A, B) qsort(A, B, sizeof(const char *), (int (*)(const void *, const void *)) strcmp)
 
 visible array *array_new() {
-    array *arr = (array *)malloc(sizeof(array));
-    if(!arr){
+    array *arr = (array *) malloc(sizeof(array));
+    if (!arr) {
         print(_("memory allocation failed"));
         return NULL;
     }
-    arr->data = (char**)malloc(1024* sizeof(char*));
-    if(!arr->data){
+    arr->data = (char **) malloc(1024 * sizeof(char *));
+    if (!arr->data) {
         print(_("memory allocation failed"));
         free(arr);
         return NULL;
@@ -24,23 +24,23 @@ visible array *array_new() {
     arr->size = 0;
     arr->capacity = 1024;
     arr->removed = 0;
-    arr->lock = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
+    arr->lock = (pthread_mutex_t) PTHREAD_MUTEX_INITIALIZER;
     size_t start;
-    for(start=0;start<arr->capacity;start++){
+    for (start = 0; start < arr->capacity; start++) {
         arr->data[start] = NULL;
     }
     return arr;
 }
 
 visible void array_add(array *arr, const char *value) {
-    if(!arr){
+    if (!arr) {
         return;
     }
     pthread_mutex_lock(&arr->lock);
     // Check if we need to increase capacity
     if (arr->size >= arr->capacity) {
         arr->capacity += 1024;
-        arr->data = (char **)realloc(arr->data, arr->capacity * sizeof(char *));
+        arr->data = (char **) realloc(arr->data, arr->capacity * sizeof(char *));
         if (!arr->data) {
             // Handle memory allocation failure
             pthread_mutex_unlock(&arr->lock);
@@ -59,39 +59,39 @@ visible void array_add(array *arr, const char *value) {
     pthread_mutex_unlock(&arr->lock);
 }
 
-visible void array_set(array *arr, char** new_data){
+visible void array_set(array *arr, char **new_data) {
     pthread_mutex_lock(&arr->lock);
     for (size_t i = 0; i < arr->size; i++) {
-        if(arr->data[i]){
+        if (arr->data[i]) {
             free(arr->data[i]);
         }
     }
     free(arr->data);
-    arr->data = calloc(arr->capacity, sizeof(char*));
+    arr->data = calloc(arr->capacity, sizeof(char *));
     arr->size = 0;
     arr->removed = 0;
     size_t start;
-    for(start=0;start<arr->capacity;start++){
-            arr->data[start] = NULL;
+    for (start = 0; start < arr->capacity; start++) {
+        arr->data[start] = NULL;
     }
     pthread_mutex_unlock(&arr->lock);
     array_adds(arr, new_data);
 }
 
-visible char* array_get_string(array *arr){
+visible char *array_get_string(array *arr) {
     pthread_mutex_lock(&arr->lock);
     size_t tot_len = 0;
     size_t start = 0;
-    while(start < arr->capacity){
-        if(arr->data[start] != NULL){
+    while (start < arr->capacity) {
+        if (arr->data[start] != NULL) {
             tot_len += strlen(arr->data[start]);
         }
         start++;
     }
-    char* ret = calloc(tot_len+1, sizeof(char));
+    char *ret = calloc(tot_len + 1, sizeof(char));
     start = 0;
-    while(start < arr->size+arr->removed+1){
-        if(arr->data[start] != NULL){
+    while (start < arr->size + arr->removed + 1) {
+        if (arr->data[start] != NULL) {
             strcat(ret, arr->data[start]);
         }
         start++;
@@ -101,35 +101,35 @@ visible char* array_get_string(array *arr){
 }
 
 visible void array_adds(array *arr, char **value) {
-    for(size_t i=0;value[i];i++){
+    for (size_t i = 0; value[i]; i++) {
         array_add(arr, value[i]);
     }
 }
 
-visible void array_remove(array* arr, const char* item){
+visible void array_remove(array *arr, const char *item) {
     pthread_mutex_lock(&arr->lock);
     size_t start = 0;
-    while(start < arr->capacity){
-        if(arr->data[start] != NULL && strcmp(arr->data[start],item)==0){
+    while (start < arr->capacity) {
+        if (arr->data[start] != NULL && strcmp(arr->data[start], item) == 0) {
             free(arr->data[start]);
             arr->data[start] = NULL;
             arr->size -= 1;
-            arr->removed +=1;
+            arr->removed += 1;
         }
         start++;
     }
     pthread_mutex_unlock(&arr->lock);
 }
 
-visible bool array_has(array* arr, const char* name){
+visible bool array_has(array *arr, const char *name) {
     pthread_mutex_lock(&arr->lock);
     size_t start = 0;
-    while(start < arr->size + arr->removed){
-        if(arr->data[start]){
-           if (strcmp(arr->data[start], name) == 0){
-               pthread_mutex_unlock(&arr->lock);
-               return true;
-           }
+    while (start < arr->size + arr->removed) {
+        if (arr->data[start]) {
+            if (strcmp(arr->data[start], name) == 0) {
+                pthread_mutex_unlock(&arr->lock);
+                return true;
+            }
         }
         start++;
     }
@@ -137,20 +137,20 @@ visible bool array_has(array* arr, const char* name){
     return false;
 }
 
-visible void array_uniq(array* arr){
+visible void array_uniq(array *arr) {
     pthread_mutex_lock(&arr->lock);
     size_t start = 1;
     size_t i = 0;
     size_t removed = 0;
-    while(start < arr->capacity){
-        if(arr->data[start] == NULL){
+    while (start < arr->capacity) {
+        if (arr->data[start] == NULL) {
             start++;
             continue;
         }
-        for(i=0;i<start-1;i++){
-             if(arr->data[i] != NULL && strcmp(arr->data[i],arr->data[start])==0){
-                 arr->data[i] = NULL;
-                 removed++;
+        for (i = 0; i < start - 1; i++) {
+            if (arr->data[i] != NULL && strcmp(arr->data[i], arr->data[start]) == 0) {
+                arr->data[i] = NULL;
+                removed++;
             }
         }
         start++;
@@ -160,34 +160,33 @@ visible void array_uniq(array* arr){
     pthread_mutex_unlock(&arr->lock);
 }
 
-visible void array_pop(array* arr, size_t index){
+visible void array_pop(array *arr, size_t index) {
     pthread_mutex_lock(&arr->lock);
     arr->data[index] = NULL;
     arr->size -= 1;
-    arr->removed +=1;
+    arr->removed += 1;
     pthread_mutex_unlock(&arr->lock);
 }
 
-
-visible void array_insert(array* arr, const char* value, size_t index){
+visible void array_insert(array *arr, const char *value, size_t index) {
     pthread_mutex_lock(&arr->lock);
     if (arr->size >= arr->capacity) {
         array_add(arr, NULL);
     }
-    if (arr->data[index] == NULL){
+    if (arr->data[index] == NULL) {
         arr->data[index] = strdup(value);
         arr->size++;
         pthread_mutex_unlock(&arr->lock);
         return;
     }
-    char* tmp = arr->data[index];
-    char* tmp2 = NULL;
+    char *tmp = arr->data[index];
+    char *tmp2 = NULL;
     arr->data[index] = strdup(value);
-    size_t start = index+1;
-    while(start < arr->capacity){
-        if(arr->data[start] == NULL){
+    size_t start = index + 1;
+    while (start < arr->capacity) {
+        if (arr->data[start] == NULL) {
             arr->data[start] = tmp;
-            arr->size+=1;
+            arr->size += 1;
             pthread_mutex_unlock(&arr->lock);
             return;
         }
@@ -201,26 +200,26 @@ visible void array_insert(array* arr, const char* value, size_t index){
     pthread_mutex_unlock(&arr->lock);
 }
 
-visible void array_sort(array* arr){
+visible void array_sort(array *arr) {
     pthread_mutex_lock(&arr->lock);
-    char** new_data = (char**)calloc(arr->capacity,sizeof(char*));
-    if(!new_data){
+    char **new_data = (char **) calloc(arr->capacity, sizeof(char *));
+    if (!new_data) {
         return;
     }
     size_t start = 0;
     size_t skip = 0;
-    while(start < arr->size+arr->removed+1){
-        if(arr->data[start] == NULL){
+    while (start < arr->size + arr->removed + 1) {
+        if (arr->data[start] == NULL) {
             start++;
             skip++;
             continue;
         }
-        new_data[start-skip]=strdup(arr->data[start]);
+        new_data[start - skip] = strdup(arr->data[start]);
         start++;
     }
     csort(new_data, arr->size);
     for (size_t i = 0; i < arr->size; i++) {
-        if(arr->data[i]){
+        if (arr->data[i]) {
             free(arr->data[i]);
         }
     }
@@ -229,7 +228,7 @@ visible void array_sort(array* arr){
     pthread_mutex_unlock(&arr->lock);
 }
 
-visible char **array_get(array *arr, size_t* len) {
+visible char **array_get(array *arr, size_t *len) {
     if (!arr) {
         return NULL;
     }
@@ -238,14 +237,14 @@ visible char **array_get(array *arr, size_t* len) {
 
     // Allocate memory for the return array
     size_t count = arr->size > arr->removed ? arr->size - arr->removed : 0;
-    char** ret = malloc((count + 1) * sizeof(char*));
+    char **ret = malloc((count + 1) * sizeof(char *));
     if (!ret) {
         pthread_mutex_unlock(&arr->lock);
-        return NULL; // Handle memory allocation failure
+        return NULL;  // Handle memory allocation failure
     }
 
     size_t start = 0;
-    size_t ret_index = 0; // Index for ret array
+    size_t ret_index = 0;  // Index for ret array
     while (start < arr->size) {
         if (arr->data[start] != NULL) {
             ret[ret_index] = strdup(arr->data[start]);
@@ -258,7 +257,7 @@ visible char **array_get(array *arr, size_t* len) {
                 }
                 free(ret);
                 pthread_mutex_unlock(&arr->lock);
-                return NULL; // Return NULL on failure
+                return NULL;  // Return NULL on failure
             }
             ret_index++;
         }
@@ -268,15 +267,14 @@ visible char **array_get(array *arr, size_t* len) {
     if (len) {
         *len = ret_index;
     }
-    ret[ret_index]=NULL;
+    ret[ret_index] = NULL;
     pthread_mutex_unlock(&arr->lock);
-    return ret; // Caller is responsible for freeing this memory
+    return ret;  // Caller is responsible for freeing this memory
 }
 
 visible size_t array_length(const array *arr) {
-    return arr->size-arr->removed;
+    return arr->size - arr->removed;
 }
-
 
 visible void array_reverse(array *arr) {
     pthread_mutex_lock(&arr->lock);
@@ -287,17 +285,17 @@ visible void array_reverse(array *arr) {
 
     size_t start = 0;
     size_t tot = arr->size + arr->removed;
-    while (start < tot/2) {
+    while (start < tot / 2) {
         /* Swap elements at start and end indices */
         const char *temp = arr->data[start];
-        const char* temp2 = arr->data[tot-start-1];
-        if(temp2 != NULL){
+        const char *temp2 = arr->data[tot - start - 1];
+        if (temp2 != NULL) {
             arr->data[start] = strdup(temp2);
         }
-        if(temp != NULL){
-            arr->data[tot-start-1] = strdup(temp);
-        }else{
-            arr->data[tot-start-1] = NULL;
+        if (temp != NULL) {
+            arr->data[tot - start - 1] = strdup(temp);
+        } else {
+            arr->data[tot - start - 1] = NULL;
         }
 
         /* Move towards the center */
@@ -308,13 +306,13 @@ visible void array_reverse(array *arr) {
 
 visible void array_unref(array *arr) {
     if (arr == NULL) {
-        return; // Nothing to free
+        return;  // Nothing to free
     }
 
     // Free each string in the array
     for (size_t i = 0; i < arr->size; i++) {
-        if(arr->data[i]){
-            free(arr->data[i]); // Free each string
+        if (arr->data[i]) {
+            free(arr->data[i]);  // Free each string
         }
     }
 
@@ -328,20 +326,19 @@ visible void array_unref(array *arr) {
     free(arr);
 }
 
-visible void array_clear(array* arr){
+visible void array_clear(array *arr) {
     if (arr == NULL) {
-        return; // Nothing to free
+        return;  // Nothing to free
     }
     // Free each string in the array
     for (size_t i = 0; i < arr->size; i++) {
-        if(arr->data[i]){
-            free(arr->data[i]); // Free each string
+        if (arr->data[i]) {
+            free(arr->data[i]);  // Free each string
         }
     }
     free(arr->data);
-    arr->data = (char**)malloc(1024* sizeof(char*));
+    arr->data = (char **) malloc(1024 * sizeof(char *));
     arr->size = 0;
     arr->capacity = 1024;
     arr->removed = 0;
 }
-

@@ -1,16 +1,16 @@
 #include <string.h>
 
-#include <core/ymp.h>
 #include <core/logger.h>
+#include <core/ymp.h>
 #include <utils/archive.h>
 
-static VariableManager* vars;
+static VariableManager *vars;
 
-static int extract_main(char**args){
-    for(size_t i=0; args[i]; i++){
+static int extract_main(char **args) {
+    for (size_t i = 0; args[i]; i++) {
         Archive *arr = archive_new();
         archive_load(arr, args[i]);
-        if(strcmp(variable_get_value(vars, "target"), "") == 0){
+        if (strcmp(variable_get_value(vars, "target"), "") == 0) {
             archive_set_target(arr, "./");
         } else {
             archive_set_target(arr, variable_get_value(vars, "target"));
@@ -21,7 +21,7 @@ static int extract_main(char**args){
     return 0;
 }
 
-visible void plugin_init(Ymp* ymp){
+visible void plugin_init(Ymp *ymp) {
     vars = ymp->variables;
     Operation op;
     op.name = "extract";

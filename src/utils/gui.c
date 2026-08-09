@@ -1,13 +1,11 @@
-#include <signal.h>
-#include <string.h>
-#include <stdlib.h>
-#include <pthread.h>
-
 #include <ncurses.h>
 #include <panel.h>
+#include <pthread.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include <core/ymp.h>
-
 #include <utils/gui.h>
 
 WINDOW *win = NULL;
@@ -16,7 +14,6 @@ bool initialized = false;
 pthread_mutex_t gui_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 gui_display_t current_display = GUI_DISPLAY_NONE;
-
 
 extern void gui_message_draw();
 extern void gui_yesno_draw();
@@ -37,9 +34,9 @@ void gui_handle_resize(void) {
 }
 
 static void handle_resize(int sig) {
-    (void)sig;
+    (void) sig;
     resize_pending = 1;
-    if(current_display != GUI_DISPLAY_PROGRESS){
+    if (current_display != GUI_DISPLAY_PROGRESS) {
         gui_handle_resize();
     }
 }

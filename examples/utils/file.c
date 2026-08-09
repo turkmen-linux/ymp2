@@ -1,14 +1,14 @@
+#include <dirent.h>
+#include <limits.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
 #include <string.h>
-#include <stdbool.h>
+#include <unistd.h>
+
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <dirent.h>
-#include <unistd.h>
-#include <limits.h>
-
 #include <utils/file.h>
 
 int main() {
@@ -55,25 +55,25 @@ int main() {
     }
 
     // List directory
-    char** dirs = listdir("/");
-    size_t i=0;
-    while(dirs[i]){
+    char **dirs = listdir("/");
+    size_t i = 0;
+    while (dirs[i]) {
         // dont print hidden
-        if(dirs[i][0] != '.') {
+        if (dirs[i][0] != '.') {
             printf("%s\n", dirs[i]);
         }
         i++;
     }
     // Find (list files recursivelly)
-    char** files = find("./");
-    i=0;
-    while(files[i]){
+    char **files = find("./");
+    i = 0;
+    while (files[i]) {
         printf("%s\n", files[i]);
         i++;
     }
     // command output
-    char* args[] = {"/bin/cat", "/etc/os-release", NULL};
-    char* out = getoutput(args);
+    char *args[] = { "/bin/cat", "/etc/os-release", NULL };
+    char *out = getoutput(args);
     printf("%s\n", out);
 
     const char *source = file_path;
@@ -96,7 +96,7 @@ int main() {
     create_dir("dir1/45");
     writefile("dir1/23/test.txt", "Test123");
     writefile("dir1/45/test2.txt", "Test123");
-    if(!remove_all("dir1")){
+    if (!remove_all("dir1")) {
         return 1;
     }
 

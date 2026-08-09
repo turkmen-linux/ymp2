@@ -1,7 +1,7 @@
+#include "utils/gpg.h"
+
 #include <stdio.h>
 #include <stdlib.h>
-
-#include "utils/gpg.h"
 
 int main(int argc, char *argv[]) {
     // Check for the correct number of arguments
@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
     const char *keyring_path = argv[4];
     const char *repicent = argv[5];
 
-    set_gpg_repicent((char*)repicent);
+    set_gpg_repicent((char *) repicent);
 
     // Sign the file
     if (gpg_sign_file(file_to_sign)) {

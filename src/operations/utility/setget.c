@@ -1,25 +1,25 @@
 #include <stdio.h>
-#include <core/ymp.h>
+
 #include <core/logger.h>
-
-#include <utils/string.h>
+#include <core/ymp.h>
 #include <utils/color.h>
+#include <utils/string.h>
 
-static int set_fn(char** args){
+static int set_fn(char **args) {
     set_value(args[0], args[1]);
     return 0;
 }
-static int get_fn(char** args){
-    if(!args[0]){
-        char** names = variable_get_names(global->variables);
-        for(size_t i=0; names[i]; i++){
-            const char* value = get_value(names[i]);
+static int get_fn(char **args) {
+    if (!args[0]) {
+        char **names = variable_get_names(global->variables);
+        for (size_t i = 0; names[i]; i++) {
+            const char *value = get_value(names[i]);
             color_print(NORMAL, COLOR_BLUE, "%s", names[i]);
             print(" = %s\n", value);
         }
     } else {
-        for(size_t i=0; args[i]; i++){
-            const char* value = get_value(args[i]);
+        for (size_t i = 0; args[i]; i++) {
+            const char *value = get_value(args[i]);
             color_print(NORMAL, COLOR_BLUE, "%s", args[i]);
             print(" = %s\n", value);
         }
@@ -27,26 +27,26 @@ static int get_fn(char** args){
     return 0;
 }
 
-static int eq_fn(char** args){
-    if(iseq(args[0], args[1])){
+static int eq_fn(char **args) {
+    if (iseq(args[0], args[1])) {
         return 0;
     } else {
         return 1;
     }
 }
 
-static int dummy_fn(char** args){
-    (void)args;
+static int dummy_fn(char **args) {
+    (void) args;
     return 0;
 }
-void setget_init(OperationManager* manager){
+void setget_init(OperationManager *manager) {
     Operation set;
     set.name = "set";
     set.alias = NULL;
     set.help = NULL;
     set.description = _("Set ymp variable");
     set.min_args = 2;
-    set.call = (callback)set_fn;
+    set.call = (callback) set_fn;
     operation_register(manager, set);
 
     Operation get;

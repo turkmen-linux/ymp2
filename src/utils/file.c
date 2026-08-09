@@ -1,33 +1,32 @@
 #define _GNU_SOURCE
-#include <stdio.h>
-#include <stdbool.h>
-#include <sys/stat.h>
-#include <sys/types.h>
 #include <dirent.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdint.h>
-#include <limits.h>
-#include <string.h>
-#include <sys/wait.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <libgen.h>
+#include <limits.h>
 #include <sched.h>
-#include <errno.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
+#include <core/logger.h>
+#include <core/ymp.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <utils/array.h>
 #include <utils/string.h>
-#include <core/ymp.h>
-#include <core/logger.h>
 
-visible uint64_t filesize(const char* path) {
+visible uint64_t filesize(const char *path) {
     struct stat st;
     if (stat(path, &st) == 0) {
         debug("file size: %s %lld\n", path, st.st_size);
         return st.st_size;
     }
-    return 0; // Return 0 if the file does not exist or an error occurs
+    return 0;  // Return 0 if the file does not exist or an error occurs
 }
 
 visible bool isfile(const char *filename) {
@@ -48,7 +47,7 @@ visible bool issymlink(const char *filename) {
     return (lstat(filename, &st) == 0) && S_ISLNK(st.st_mode);
 }
 
-visible bool isexists(const char* path) {
+visible bool isexists(const char *path) {
     debug("check is exists: %s\n", path);
     struct stat path_stat;
     return (stat(path, &path_stat) == 0);
@@ -59,14 +58,13 @@ visible bool isdir(const char *path) {
     if (path == NULL || issymlink(path)) {
         return false;
     }
-    DIR* dir = opendir(path);
+    DIR *dir = opendir(path);
     if (dir) {
         closedir(dir);
         return true;
     }
     return false;
 }
-
 
 visible void create_dir(const char *dir) {
     debug("create directory: %s\n", dir);
@@ -85,44 +83,44 @@ visible void create_dir(const char *dir) {
     // Create directories in the path
     for (p = tmp + 1; *p; p++) {
         if (*p == '/') {
-            *p = '\0'; // Temporarily terminate the string
-            mkdir(tmp, 0755); // Create the directory
-            *p = '/'; // Restore the string
+            *p = '\0';         // Temporarily terminate the string
+            mkdir(tmp, 0755);  // Create the directory
+            *p = '/';          // Restore the string
         }
     }
-    mkdir(tmp, 0755); // Create the final directory
+    mkdir(tmp, 0755);  // Create the final directory
 }
 
-visible char** listdir(const char* path){
+visible char **listdir(const char *path) {
     debug("list directory: %s\n", path);
     DIR *dp;
-    dp = opendir (path);
+    dp = opendir(path);
     array *a = array_new();
     if (dp != NULL) {
         struct dirent *ep;
-        while ((ep = readdir (dp))) {
-            array_add(a,ep->d_name);
+        while ((ep = readdir(dp))) {
+            array_add(a, ep->d_name);
         }
-        (void) closedir (dp);
+        (void) closedir(dp);
     }
     size_t len = 0;
-    char** dirs = array_get(a, &len);
+    char **dirs = array_get(a, &len);
     array_unref(a);
     return dirs;
 }
 
-static void find_operation(array* array, const char* path){
+static void find_operation(array *array, const char *path) {
     debug("find files from: %s\n", path);
-    char** inodes = listdir(path);
-    int i=0;
-    while(inodes[i]){
-        if(iseq(inodes[i], "..") || iseq(inodes[i], ".")){
+    char **inodes = listdir(path);
+    int i = 0;
+    while (inodes[i]) {
+        if (iseq(inodes[i], "..") || iseq(inodes[i], ".")) {
             free(inodes[i]);
             i++;
             continue;
         }
-        char* inode = build_string("%s/%s", path, inodes[i]);
-        if(isdir(inode)){
+        char *inode = build_string("%s/%s", path, inodes[i]);
+        if (isdir(inode)) {
             find_operation(array, inode);
         } else {
             array_add(array, inode);
@@ -134,12 +132,12 @@ static void find_operation(array* array, const char* path){
     free(inodes);
 }
 
-visible char** find(const char* path){
+visible char **find(const char *path) {
     debug("find files: %s\n", path);
-    array* a = array_new();
+    array *a = array_new();
     find_operation(a, path);
     size_t len;
-    char** list = array_get(a, &len);
+    char **list = array_get(a, &len);
     array_unref(a);
     return list;
 }
@@ -147,20 +145,19 @@ visible char** find(const char* path){
 visible void format_size(char *buf, size_t buf_len, size_t bytes) {
     if (bytes >= 1024 * 1024 * 1024) {
         snprintf(buf, buf_len, "%zu.%zuGB", bytes / (1024 * 1024 * 1024),
-                (bytes % (1024 * 1024 * 1024)) / (1024 * 1024 * 102));
+                 (bytes % (1024 * 1024 * 1024)) / (1024 * 1024 * 102));
     } else if (bytes >= 1024 * 1024) {
         snprintf(buf, buf_len, "%zu.%zuMB", bytes / (1024 * 1024),
-                (bytes % (1024 * 1024)) / (1024 * 102));
+                 (bytes % (1024 * 1024)) / (1024 * 102));
     } else if (bytes >= 1024) {
         snprintf(buf, buf_len, "%zu.%zuKB", bytes / 1024,
-                (bytes % 1024) / 102);
+                 (bytes % 1024) / 102);
     } else {
         snprintf(buf, buf_len, "%zuB", bytes);
     }
 }
 
-
-visible void writefile(const char* path, const char* data) {
+visible void writefile(const char *path, const char *data) {
     debug("write to file: %s\n", path);
     FILE *file = fopen(path, "w");
     if (file == NULL) {
@@ -176,7 +173,7 @@ visible void writefile(const char* path, const char* data) {
 
     fclose(file);
 }
-visible char* getoutput_unshare(char* argv[], int flags) {
+visible char *getoutput_unshare(char *argv[], int flags) {
     int pipefd[2];
     if (pipe(pipefd) == -1) {
         perror("pipe");
@@ -187,16 +184,16 @@ visible char* getoutput_unshare(char* argv[], int flags) {
         perror("fork");
         return NULL;
     }
-    if (pid == 0) { // Child process
+    if (pid == 0) {  // Child process
         // Close the read end of the pipe
         close(pipefd[0]);
 
         // Redirect stdout to the write end of the pipe
         dup2(pipefd[1], STDOUT_FILENO);
-        close(pipefd[1]); // Close the original write end
+        close(pipefd[1]);  // Close the original write end
 
         // unshare flags
-        if(unshare(flags) < 0){
+        if (unshare(flags) < 0) {
             exit(EXIT_FAILURE);
         }
         // Execute the command
@@ -205,12 +202,12 @@ visible char* getoutput_unshare(char* argv[], int flags) {
         // If execvp returns, it must have failed
         perror("execvp");
         exit(EXIT_FAILURE);
-    } else { // Parent process
+    } else {  // Parent process
         // Close the write end of the pipe
         close(pipefd[1]);
 
         // Read the output from the read end of the pipe
-        char* ret = NULL;
+        char *ret = NULL;
         size_t bufsize = 1024;
         ret = calloc(bufsize, sizeof(char));
         if (!ret) {
@@ -222,13 +219,13 @@ visible char* getoutput_unshare(char* argv[], int flags) {
         char buff[1024];
         ssize_t bytes_read;
         while ((bytes_read = read(pipefd[0], buff, sizeof(buff) - 1)) > 0) {
-            buff[bytes_read] = '\0'; // Null-terminate the buffer
+            buff[bytes_read] = '\0';  // Null-terminate the buffer
             size_t len = total_read + bytes_read + 1;
             if (len > bufsize) {
                 // Resize buffer if needed
                 bufsize = len * 2;
-                char* tmp = realloc(ret, bufsize);
-                if(!tmp) {
+                char *tmp = realloc(ret, bufsize);
+                if (!tmp) {
                     perror("Memory reallocation error");
                     free(ret);
                     close(pipefd[0]);
@@ -242,15 +239,15 @@ visible char* getoutput_unshare(char* argv[], int flags) {
             total_read += bytes_read;
         }
 
-        close(pipefd[0]); // Close the read end of the pipe
+        close(pipefd[0]);  // Close the read end of the pipe
 
         // Wait for the child process to finish
         int status;
         wait(&status);
 
         // Trim the buffer to the actual size needed
-        char* trimmed = realloc(ret, (strlen(ret) + 1) * sizeof(char));
-        if(trimmed){
+        char *trimmed = realloc(ret, (strlen(ret) + 1) * sizeof(char));
+        if (trimmed) {
             ret = trimmed;
         }
 
@@ -261,7 +258,7 @@ visible char* getoutput_unshare(char* argv[], int flags) {
 visible bool copy_file(const char *sourceFile, const char *destFile) {
     debug("Copy file: %s -> %s\n", sourceFile, destFile);
     int source, dest;
-    char buffer[1024 * 1024]; // Buffer to hold data (1MB)
+    char buffer[1024 * 1024];  // Buffer to hold data (1MB)
     ssize_t bytesRead;
 
     struct stat statbuf;
@@ -327,7 +324,6 @@ visible bool copy_file(const char *sourceFile, const char *destFile) {
     return true;
 }
 
-
 // Function to copy a directory recursively
 visible bool copy_directory(const char *sourceDir, const char *destDir) {
     struct stat st;
@@ -380,11 +376,11 @@ visible bool copy_directory(const char *sourceDir, const char *destDir) {
     return true;
 }
 
-visible bool move_file(const char* src, const char* dest){
+visible bool move_file(const char *src, const char *dest) {
     debug("Move file: %s -> %s\n", src, dest);
     int status = rename(src, dest);
-    if(status < 0){
-        if(copy_file(src, dest)){
+    if (status < 0) {
+        if (copy_file(src, dest)) {
             unlink(src);
         } else {
             perror("Failed to move file!");
@@ -394,27 +390,27 @@ visible bool move_file(const char* src, const char* dest){
     return true;
 }
 
-visible char* sreadlink(const char* path) {
+visible char *sreadlink(const char *path) {
     // Buffer size for the target path
-    ssize_t bufsize = 1024; // You can adjust this size as needed
-    char* buf = malloc(bufsize);
+    ssize_t bufsize = 1024;  // You can adjust this size as needed
+    char *buf = malloc(bufsize);
     if (buf == NULL) {
         perror("malloc");
-        return NULL; // Return NULL if memory allocation fails
+        return NULL;  // Return NULL if memory allocation fails
     }
 
     ssize_t len = readlink(path, buf, bufsize - 1);
     if (len == -1) {
         perror("readlink");
-        free(buf); // Free the allocated memory on error
-        return NULL; // Return NULL on error
+        free(buf);    // Free the allocated memory on error
+        return NULL;  // Return NULL on error
     }
 
-    buf[len] = '\0'; // Null-terminate the string
-    return buf; // Return the dynamically allocated string
+    buf[len] = '\0';  // Null-terminate the string
+    return buf;       // Return the dynamically allocated string
 }
 
-visible	bool remove_all(const char *path) {
+visible bool remove_all(const char *path) {
     struct stat st;
     if (stat(path, &st) != 0) {
         print(_("Cannot access: %s\n"), path);
@@ -425,7 +421,7 @@ visible	bool remove_all(const char *path) {
     if (S_ISDIR(st.st_mode)) {
         DIR *dir = opendir(path);
         if (!dir) {
-            perror(path); // Failed to open directory
+            perror(path);  // Failed to open directory
             return false;
         }
 
@@ -449,32 +445,30 @@ visible	bool remove_all(const char *path) {
 
         // Remove empty directory
         if (rmdir(path) != 0) {
-            perror(path); // remove error
+            perror(path);  // remove error
             return false;
         }
     } else {
         // Remove file
         if (unlink(path) != 0) {
-            perror(path); // remove error
+            perror(path);  // remove error
             return false;
         }
     }
     return true;
-
 }
 
-visible bool is_elf(const char* path){
+visible bool is_elf(const char *path) {
     debug("is elf: %s\n", path);
-    FILE *f = fopen(path,"r");
-    if (f == NULL){
+    FILE *f = fopen(path, "r");
+    if (f == NULL) {
         return false;
     }
     char buf[4];
     int rc = fread(&buf, sizeof(char), 4, f);
-    (void)rc;
+    (void) rc;
 
-    bool ret = (buf[0] == '\x7f' && buf[1] =='E' && buf[2] == 'L' && buf[3] == 'F');
+    bool ret = (buf[0] == '\x7f' && buf[1] == 'E' && buf[2] == 'L' && buf[3] == 'F');
     fclose(f);
     return ret;
-
 }

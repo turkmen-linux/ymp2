@@ -3,22 +3,19 @@
 #include <string.h>
 #include <unistd.h>
 
-#include <core/ymp.h>
 #include <core/logger.h>
 #include <core/operations.h>
-
-
+#include <core/ymp.h>
 #include <utils/archive.h>
-#include <utils/file.h>
 #include <utils/debian.h>
+#include <utils/file.h>
 
-static VariableManager* vars;
+static VariableManager *vars;
 
-
-static int deb_fn(char** args){
-    char* target = variable_get_value(vars, "target");
+static int deb_fn(char **args) {
+    char *target = variable_get_value(vars, "target");
     char curdir[PATH_MAX];
-    if(!target || strlen(target) == 0){
+    if (!target || strlen(target) == 0) {
         if (getcwd(curdir, sizeof(curdir)) == NULL) {
             perror("getcwd() error");
             return 1;
@@ -26,9 +23,9 @@ static int deb_fn(char** args){
         target = curdir;
     }
     int status = 0;
-    for(size_t i=0; args[i]; i++){
-        if (variable_get_value(vars, "extract")){
-            if (!deb_extract(args[i], target)){
+    for (size_t i = 0; args[i]; i++) {
+        if (variable_get_value(vars, "extract")) {
+            if (!deb_extract(args[i], target)) {
                 status = 1;
                 break;
             }
@@ -37,7 +34,7 @@ static int deb_fn(char** args){
     return status;
 }
 
-visible void plugin_init(Ymp* ymp){
+visible void plugin_init(Ymp *ymp) {
     vars = ymp->variables;
     Operation op;
     op.name = "debian";

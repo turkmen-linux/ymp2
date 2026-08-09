@@ -1,13 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <utils/array.h>
-
 
 #include <core/ymp.h>
+#include <utils/array.h>
 
 int main() {
-    (void)ymp_init();
+    (void) ymp_init();
     // Create a new dynamic array
     array *myArray = array_new();
     if (myArray == NULL) {
@@ -19,7 +18,7 @@ int main() {
     array_add(myArray, "apple");
     array_add(myArray, "banana");
     array_add(myArray, "orange");
-    array_add(myArray, "banana"); // Adding a duplicate for testing
+    array_add(myArray, "banana");  // Adding a duplicate for testing
     array_add(myArray, "grape");
 
     // Get the current contents of the array
@@ -50,7 +49,7 @@ int main() {
     char *concatenated = array_get_string(myArray);
     if (concatenated) {
         printf("\nConcatenated string:\n%s\n", concatenated);
-        free(concatenated); // Free the concatenated string
+        free(concatenated);  // Free the concatenated string
     }
 
     // Clean up and free the dynamic array

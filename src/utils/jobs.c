@@ -1,31 +1,30 @@
+#include <limits.h>
+#include <pthread.h>
+#include <stdarg.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
-#include <pthread.h>
 #include <string.h>
-#include <stdarg.h>
-#include <sys/sysinfo.h>
 
-#include <limits.h>
-
-#include <core/ymp.h>
-#include <utils/jobs.h>
 #include <core/variable.h>
+#include <core/ymp.h>
+#include <sys/sysinfo.h>
+#include <utils/jobs.h>
 
 typedef struct _worker_job {
-    jobs* j;
+    jobs *j;
     int id;
 } worker_job;
 
-static void* worker_thread(void* arg) {
-    worker_job* jb= (worker_job*)arg;
+static void *worker_thread(void *arg) {
+    worker_job *jb = (worker_job *) arg;
     jobs *j = jb->j;
     int i;
-    for (i = jb->id; i < j->total; i+=j->parallel) {
-        if(j->failed){
+    for (i = jb->id; i < j->total; i += j->parallel) {
+        if (j->failed) {
             return NULL;
         }
-        if(j->jobs[i].call((void*)j->jobs[i].ctx, (void*)j->jobs[i].args) > 0){
+        if (j->jobs[i].call((void *) j->jobs[i].ctx, (void *) j->jobs[i].args) > 0) {
             j->failed = true;
             return NULL;
         }
@@ -40,10 +39,10 @@ visible void jobs_unref(jobs *j) {
     free(j);
 }
 
-visible void jobs_add(jobs* j, callback call, void* ctx, void* args, ...) {
+visible void jobs_add(jobs *j, callback call, void *ctx, void *args, ...) {
     if (j->total >= j->max) {
         j->max += 32;
-        j->jobs = (job*)realloc(j->jobs, sizeof(job)* j->max);
+        j->jobs = (job *) realloc(j->jobs, sizeof(job) * j->max);
     }
     job new_job;
     new_job.call = call;
@@ -55,18 +54,18 @@ visible void jobs_add(jobs* j, callback call, void* ctx, void* args, ...) {
     pthread_cond_signal(&j->cond);
 }
 
-visible void jobs_run(jobs* j) {
-    pthread_t* threads = (pthread_t*)calloc(j->parallel, sizeof(pthread_t));
-    if(!threads){
+visible void jobs_run(jobs *j) {
+    pthread_t *threads = (pthread_t *) calloc(j->parallel, sizeof(pthread_t));
+    if (!threads) {
         return;
     }
     worker_job *jb[j->parallel];
     int i;
     for (i = 0; i < j->parallel; ++i) {
-        jb[i] = (worker_job*)calloc(1,sizeof(worker_job));
+        jb[i] = (worker_job *) calloc(1, sizeof(worker_job));
         jb[i]->j = j;
         jb[i]->id = i;
-        pthread_create(&threads[i], NULL, worker_thread, (void*)jb[i]);
+        pthread_create(&threads[i], NULL, worker_thread, (void *) jb[i]);
     }
     for (i = 0; i < j->parallel; ++i) {
         pthread_join(threads[i], NULL);
@@ -77,9 +76,9 @@ visible void jobs_run(jobs* j) {
     free(threads);
 }
 
-visible jobs* jobs_new() {
-    jobs* j = (jobs*)malloc(sizeof(jobs));
-    if(!j){
+visible jobs *jobs_new() {
+    jobs *j = (jobs *) malloc(sizeof(jobs));
+    if (!j) {
         return NULL;
     }
     j->max = 32;
@@ -88,7 +87,7 @@ visible jobs* jobs_new() {
     j->total = 0;
     j->parallel = get_nprocs_conf();
     j->failed = false;
-    j->jobs = (job*)malloc(j->max * sizeof(job));
+    j->jobs = (job *) malloc(j->max * sizeof(job));
     pthread_cond_init(&j->cond, NULL);
     return j;
 }

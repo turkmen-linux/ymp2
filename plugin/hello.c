@@ -1,19 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <core/ymp.h>
 #include <core/logger.h>
 #include <core/operations.h>
+#include <core/ymp.h>
 
-static int hello_fn(void** args){
-    (void)args;
+static int hello_fn(void **args) {
+    (void) args;
     print(_("Hello World\n"));
     return 0;
 }
 
-visible void plugin_init(Ymp* ymp){
+visible void plugin_init(Ymp *ymp) {
     // too simple plugin
-    if(getenv("hello")){
+    if (getenv("hello")) {
         Operation op;
         op.name = "hello";
         op.description = _("Simple hello world plugin");

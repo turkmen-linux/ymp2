@@ -1,59 +1,57 @@
 #define _GNU_SOURCE
-#include <sys/time.h>
-#include <fcntl.h>
-#include <stdlib.h>
-#include <sys/file.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
-
+#include <sys/file.h>
+#include <sys/stat.h>
+#include <sys/time.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <sys/stat.h>
-
 #include <utils/error.h>
 
-visible size_t get_epoch(){
+visible size_t get_epoch() {
     struct timeval tv;
     gettimeofday(&tv, NULL);
     return 1000000 * tv.tv_sec + tv.tv_usec;
 }
 static bool locked = false;
-visible void single_instance(){
-    if(locked){
+visible void single_instance() {
+    if (locked) {
         return;
     }
     int pid_file = open("/tmp/ymp.pid", O_CREAT | O_RDWR, 0666);
     int rc = flock(pid_file, LOCK_EX | LOCK_NB);
     locked = true;
-    if(rc) {
-        if(EWOULDBLOCK == errno){
+    if (rc) {
+        if (EWOULDBLOCK == errno) {
             close(pid_file);
             error_add("Another ymp instance is already running");
             exit(31);
         }
     }
 }
-visible char* which(char* cmd){
-    char* fullPath = getenv("PATH");
+visible char *which(char *cmd) {
+    char *fullPath = getenv("PATH");
 
     struct stat buffer;
-    const char* fileOrDirectory = cmd;
+    const char *fileOrDirectory = cmd;
     char *fullfilename = calloc(1024, sizeof(char));
-    if(!fullfilename){
+    if (!fullfilename) {
         return NULL;
     }
 
     const char *token = strtok(fullPath, ":");
 
     /* walk through other tokens */
-    while( token != NULL ){
+    while (token != NULL) {
         sprintf(fullfilename, "%s/%s", token, fileOrDirectory);
-        int exists = stat( fullfilename, &buffer );
-        if ( exists == 0 && ( S_IFREG & buffer.st_mode ) ) {
-            return (char*)fullfilename;
+        int exists = stat(fullfilename, &buffer);
+        if (exists == 0 && (S_IFREG & buffer.st_mode)) {
+            return (char *) fullfilename;
         }
 
         token = strtok(NULL, ":"); /* next token */
@@ -62,8 +60,7 @@ visible char* which(char* cmd){
     return strdup(cmd);
 }
 
-
-extern char** environ;
+extern char **environ;
 visible int run_args(char *args[]) {
     pid_t pid = fork();
     int status = 0;
@@ -76,4 +73,3 @@ visible int run_args(char *args[]) {
     }
     return status;
 }
-

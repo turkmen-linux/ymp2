@@ -1,35 +1,35 @@
 #include <stdbool.h>
-#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-#include <core/variable.h>
 #include <core/logger.h>
+#include <core/variable.h>
 #include <core/ymp.h>
 
 typedef struct {
-    char* name;
-    char* value;
+    char *name;
+    char *value;
     bool read_only;
 } YmpVariable;
 
-visible VariableManager* variable_manager_new() {
-    VariableManager *variables = (VariableManager*)malloc(sizeof(VariableManager));
+visible VariableManager *variable_manager_new() {
+    VariableManager *variables = (VariableManager *) malloc(sizeof(VariableManager));
     if (!variables) {
-        return NULL; // Handle memory allocation failure
+        return NULL;  // Handle memory allocation failure
     }
-    variables->capacity = 32; // Initialize with a reasonable capacity
+    variables->capacity = 32;  // Initialize with a reasonable capacity
     variables->length = 0;
     variables->priv_data = malloc(sizeof(YmpVariable) * variables->capacity);
     if (!variables->priv_data) {
         free(variables);
-        return NULL; // Handle memory allocation failure
+        return NULL;  // Handle memory allocation failure
     }
     return variables;
 }
 
-visible void variable_manager_unref(VariableManager* variables){
-    YmpVariable* vars = (YmpVariable*)variables->priv_data;
+visible void variable_manager_unref(VariableManager *variables) {
+    YmpVariable *vars = (YmpVariable *) variables->priv_data;
     for (size_t i = 0; i < variables->length; i++) {
         free(vars[i].value);
         free(vars[i].name);
@@ -38,12 +38,12 @@ visible void variable_manager_unref(VariableManager* variables){
     free(variables);
 }
 
-static void variable_set_value_fn(VariableManager* variables, const char* name, const char* value, bool read_only) {
+static void variable_set_value_fn(VariableManager *variables, const char *name, const char *value, bool read_only) {
     if (!variables) {
         print(_("Invalid VariableManager\n"));
         return;
     }
-    YmpVariable* vars = (YmpVariable*)variables->priv_data;
+    YmpVariable *vars = (YmpVariable *) variables->priv_data;
 
     // Search for existing variable
     for (size_t i = 0; i < variables->length; i++) {
@@ -51,8 +51,8 @@ static void variable_set_value_fn(VariableManager* variables, const char* name, 
             continue;
         }
         if (strcmp(name, vars[i].name) == 0) {
-            free(vars[i].value); // Free old value
-            vars[i].value = strdup(value); // Allocate new memory for the value
+            free(vars[i].value);            // Free old value
+            vars[i].value = strdup(value);  // Allocate new memory for the value
             return;
         }
     }
@@ -60,64 +60,63 @@ static void variable_set_value_fn(VariableManager* variables, const char* name, 
     if (variables->length >= variables->capacity) {
         // Reallocate variable storage
         variables->capacity += 32;
-        YmpVariable* new_vars = realloc(variables->priv_data, sizeof(YmpVariable) * variables->capacity);
+        YmpVariable *new_vars = realloc(variables->priv_data, sizeof(YmpVariable) * variables->capacity);
         if (!new_vars) {
             print(_("Memory allocation failed\n"));
             return;
         }
         variables->priv_data = new_vars;
-        vars = new_vars; // Update local pointer
+        vars = new_vars;  // Update local pointer
     }
 
     debug("variable set: %s => %s\n", name, value);
-    vars[variables->length].name = strdup(name); // Allocate memory for the name
-    vars[variables->length].value = strdup(value); // Allocate memory for the value
+    vars[variables->length].name = strdup(name);    // Allocate memory for the name
+    vars[variables->length].value = strdup(value);  // Allocate memory for the value
     vars[variables->length].read_only = read_only;
     variables->length++;
 }
 
-void visible variable_set_value(VariableManager* variables, const char* name, const char* value) {
+void visible variable_set_value(VariableManager *variables, const char *name, const char *value) {
     variable_set_value_fn(variables, name, value, false);
 }
 
-void visible variable_set_value_read_only(VariableManager* variables, const char* name, const char* value) {
+void visible variable_set_value_read_only(VariableManager *variables, const char *name, const char *value) {
     variable_set_value_fn(variables, name, value, true);
 }
 
-visible char* variable_get_value(VariableManager* variables, const char* name) {
+visible char *variable_get_value(VariableManager *variables, const char *name) {
     if (!variables) {
         print(_("Invalid VariableManager\n"));
         return "";
     }
-    YmpVariable* vars = (YmpVariable*)variables->priv_data;
+    YmpVariable *vars = (YmpVariable *) variables->priv_data;
     debug("variable get: %s\n", name);
     for (size_t i = 0; i < variables->length; i++) {
         if (strcmp(name, vars[i].name) == 0) {
-            return vars[i].value; // Return the value if found
+            return vars[i].value;  // Return the value if found
         }
     }
-    return ""; // Return empty string if not found
+    return "";  // Return empty string if not found
 }
 
-visible char** variable_get_names(VariableManager* variables){
+visible char **variable_get_names(VariableManager *variables) {
     if (!variables) {
         print(_("Invalid VariableManager\n"));
         return NULL;
     }
-    YmpVariable* vars = (YmpVariable*)variables->priv_data;
+    YmpVariable *vars = (YmpVariable *) variables->priv_data;
     array *a = array_new();
     for (size_t i = 0; i < variables->length; i++) {
         debug("variable : %s\n", vars[i].name);
         array_add(a, vars[i].name);
     }
     array_sort(a);
-    char** ret = array_get(a, NULL);
+    char **ret = array_get(a, NULL);
     array_unref(a);
     return ret;
-
 }
 
-char* get_value(const char* name) {
+char *get_value(const char *name) {
     if (!global) {
         global = ymp_init();
         warning("please call ymp_init after use get_value");
@@ -125,7 +124,7 @@ char* get_value(const char* name) {
     return variable_get_value(global->variables, name);
 }
 
-void set_value(const char* name, const char* value) {
+void set_value(const char *name, const char *value) {
     if (!global) {
         global = ymp_init();
         warning("please call ymp_init after use set_value");
@@ -133,11 +132,10 @@ void set_value(const char* name, const char* value) {
     variable_set_value(global->variables, name, value);
 }
 
-void set_value_read_only(const char* name, const char* value) {
+void set_value_read_only(const char *name, const char *value) {
     if (!global) {
         global = ymp_init();
         warning("please call ymp_init after use set_value_read_only");
     }
     variable_set_value_read_only(global->variables, name, value);
 }
-

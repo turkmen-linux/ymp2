@@ -1,21 +1,20 @@
+#include <dlfcn.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <dlfcn.h>
 #include <unistd.h>
-#include <signal.h>
 
 #if __GNU_LIBRARY__
 #include <execinfo.h>
-#endif 
-
-#include <core/ymp.h>
-#include <core/logger.h>
+#endif
 
 #include <config.h>
 
-#include <utils/process.h>
+#include <core/logger.h>
+#include <core/ymp.h>
 #include <utils/error.h>
 #include <utils/file.h>
+#include <utils/process.h>
 #include <utils/string.h>
 #include <utils/tty.h>
 
@@ -24,8 +23,8 @@ void ctx_init(OperationManager *manager);
 visible ErrorContext exception;
 
 typedef struct {
-    const char* name;
-    void* args;
+    const char *name;
+    void *args;
 } OperationJob;
 
 typedef struct {
@@ -34,19 +33,19 @@ typedef struct {
     size_t capacity;
 } YmpPrivate;
 
-Ymp* global;
+Ymp *global;
 
-static YmpPrivate* queue_init(){
-    YmpPrivate *queue = (YmpPrivate*) malloc(sizeof(YmpPrivate));
-    if(!queue){
+static YmpPrivate *queue_init() {
+    YmpPrivate *queue = (YmpPrivate *) malloc(sizeof(YmpPrivate));
+    if (!queue) {
         return NULL;
     }
     queue->length = 0;
     queue->capacity = 32;
-    queue->item = malloc(sizeof(OperationJob)*32);
+    queue->item = malloc(sizeof(OperationJob) * 32);
     return queue;
 }
-static void sigsegv_event(int signal){
+static void sigsegv_event(int signal) {
 #if __GNU_LIBRARY__
     void *array[10];
     size_t size;
@@ -67,18 +66,18 @@ static void sigsegv_event(int signal){
     longjmp(exception.buf, signal);
 }
 #ifdef YMP_GETTEXT
-static void gettext_init(){
-    setlocale(LC_ALL,"");
-    bindtextdomain("ymp",LOCALEDIR);
+static void gettext_init() {
+    setlocale(LC_ALL, "");
+    bindtextdomain("ymp", LOCALEDIR);
     textdomain("ymp");
 }
 #endif
 
-static void load_default_variables(VariableManager *manager){
+static void load_default_variables(VariableManager *manager) {
     variable_set_value_read_only(manager, "VERSION", VERSION);
-    #ifdef PLUGIN_SUPPORT
+#ifdef PLUGIN_SUPPORT
     variable_set_value_read_only(manager, "plugindir", PLUGINDIR);
-    #endif
+#endif
     // build
     variable_set_value(manager, "build:cc", "gcc");
     variable_set_value(manager, "build:cflags", "-O2 -s");
@@ -89,7 +88,7 @@ static void load_default_variables(VariableManager *manager){
     variable_set_value(manager, "no-emerge", "false");
 }
 
-visible Ymp* ymp_init(){
+visible Ymp *ymp_init() {
 #ifdef YMP_GETTEXT
     gettext_init();
 #endif
@@ -98,24 +97,24 @@ visible Ymp* ymp_init(){
 #ifndef NDEBUG
     size_t begin_time = get_epoch();
 #endif
-    Ymp* ymp = (Ymp*)malloc(sizeof(Ymp));
-    if(ymp == NULL){
-        return NULL; // Memory allocation failed!
+    Ymp *ymp = (Ymp *) malloc(sizeof(Ymp));
+    if (ymp == NULL) {
+        return NULL;  // Memory allocation failed!
     }
-    if(!isatty(fileno(stdout))){
-        ; // is not interactive
+    if (!isatty(fileno(stdout))) {
+        ;  // is not interactive
     }
-    ymp->manager = operation_manager_new(); // Operation manager.
+    ymp->manager = operation_manager_new();  // Operation manager.
     ymp->variables = variable_manager_new();
     load_default_variables(ymp->variables);
     ymp->errors = array_new();
     // Fill private space
-    ymp->priv_data = (void*) queue_init();
-    ctx_init(ymp->manager); // Load from ctx
-    if(global == NULL) {
+    ymp->priv_data = (void *) queue_init();
+    ctx_init(ymp->manager);  // Load from ctx
+    if (global == NULL) {
         global = ymp;
     }
-    if(getenv("DEBUG")){
+    if (getenv("DEBUG")) {
         variable_set_value(ymp->variables, "debug", "true");
         logger_set_status(DEBUG, true);
     }
@@ -124,29 +123,29 @@ visible Ymp* ymp_init(){
     sigemptyset(&sigact.sa_mask);
     sigact.sa_flags = 0;
     sigaction(SIGSEGV, &sigact, NULL);
-    #ifdef PLUGIN_SUPPORT
-    char** plugins = find(PLUGINDIR);
+#ifdef PLUGIN_SUPPORT
+    char **plugins = find(PLUGINDIR);
     size_t i = 0;
-    while(plugins[i]){
-        if(endswith(plugins[i], ".so")){
+    while (plugins[i]) {
+        if (endswith(plugins[i], ".so")) {
             load_plugin(ymp, plugins[i]);
         }
         free(plugins[i]);
         i++;
     }
     free(plugins);
-    #endif
+#endif
 #ifndef NDEBUG
     size_t done_time = get_epoch() - begin_time;
     debug("ymp init done in %ld µs\n", done_time);
 #endif
 
-    return ymp; // Return the pointer to the newly created instance
+    return ymp;  // Return the pointer to the newly created instance
 }
 
-visible void ymp_unref(Ymp* ymp){
-    YmpPrivate *queue = (YmpPrivate*)ymp->priv_data;
-    for(size_t i=0; i< queue->length; i++){
+visible void ymp_unref(Ymp *ymp) {
+    YmpPrivate *queue = (YmpPrivate *) ymp->priv_data;
+    for (size_t i = 0; i < queue->length; i++) {
         free(queue->item[i].args);
     }
     free(queue->item);
@@ -157,9 +156,9 @@ visible void ymp_unref(Ymp* ymp){
     free(ymp);
 }
 
-visible void ymp_add(Ymp* ymp, const char* name, void* args) {
-    YmpPrivate *queue = (YmpPrivate*)ymp->priv_data;
-    if(queue->length >= queue->capacity){
+visible void ymp_add(Ymp *ymp, const char *name, void *args) {
+    YmpPrivate *queue = (YmpPrivate *) ymp->priv_data;
+    if (queue->length >= queue->capacity) {
         queue->capacity += 32;
         queue->item = realloc(queue->item, sizeof(OperationJob) * queue->capacity);
         if (queue->item == NULL) {
@@ -173,52 +172,49 @@ visible void ymp_add(Ymp* ymp, const char* name, void* args) {
     queue->length++;
 }
 
-static void ymp_set_logger_status(){
+static void ymp_set_logger_status() {
     logger_set_status(DEBUG, get_bool("debug"));
     logger_set_status(INFO, get_bool("verbose"));
 }
 
-visible int ymp_run(Ymp* ymp){
+visible int ymp_run(Ymp *ymp) {
 #ifndef NDEBUG
     size_t begin_time = get_epoch();
 #endif
     ymp_set_logger_status();
-    YmpPrivate *queue = (YmpPrivate*)ymp->priv_data;
+    YmpPrivate *queue = (YmpPrivate *) ymp->priv_data;
     int rc = 0;
-    for(size_t i=0; i< queue->length; i++){
+    for (size_t i = 0; i < queue->length; i++) {
         rc = operation_main(ymp->manager, queue->item[i].name, queue->item[i].args);
-        if(rc > 0){
+        if (rc > 0) {
             break;
         }
     }
     free(queue->item);
     free(queue);
-    ymp->priv_data = (void*) queue_init();
+    ymp->priv_data = (void *) queue_init();
 #ifndef NDEBUG
     debug("ymp run done in %ld µs\n", get_epoch() - begin_time);
 #endif
     return rc;
 }
-visible void load_plugin(Ymp* ymp, const char* path){
-    (void)ymp; (void) path;
-    #ifdef PLUGIN_SUPPORT
+visible void load_plugin(Ymp *ymp, const char *path) {
+    (void) ymp;
+    (void) path;
+#ifdef PLUGIN_SUPPORT
     void *handle;
     handle = dlopen(path, RTLD_LAZY);
     if (!handle) {
-        error_add(build_string("Failed to load plugin: %s from %s\n",dlerror(), path));
+        error_add(build_string("Failed to load plugin: %s from %s\n", dlerror(), path));
         return;
     }
     dlerror();
-    void (*plugin_func)(Ymp* ymp);
-    *(void**)(&plugin_func) = dlsym(handle, "plugin_init");
-    if(!plugin_func){
+    void (*plugin_func)(Ymp *ymp);
+    *(void **) (&plugin_func) = dlsym(handle, "plugin_init");
+    if (!plugin_func) {
         dlclose(handle);
         return;
     }
     plugin_func(ymp);
-    #endif
+#endif
 }
-
-
-
-

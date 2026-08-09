@@ -1,17 +1,16 @@
-#include <stdio.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 #include <core/logger.h>
 #include <core/ymp.h>
 
 int main() {
-    (void)ymp_init();
+    (void) ymp_init();
     // Set the logging status
-    logger_set_status(PRINT, false);  // Disable debug logging
-    logger_set_status(DEBUG, true);  // Enable debug logging
-    logger_set_status(INFO, true);    // Enable info logging
-    logger_set_status(WARNING, false); // Disable warning logging
-
+    logger_set_status(PRINT, false);    // Disable debug logging
+    logger_set_status(DEBUG, true);     // Enable debug logging
+    logger_set_status(INFO, true);      // Enable info logging
+    logger_set_status(WARNING, false);  // Disable warning logging
 
     // Log a print message
     print("Printing value: %d\n", 42);
@@ -25,7 +24,7 @@ int main() {
     debug("Debugging value: %d\n", 42);
 
     // Log a debug message
-    print_fn(__func__, __FILE__, __LINE__, PRINT,"print value: %d\n", 42);
+    print_fn(__func__, __FILE__, __LINE__, PRINT, "print value: %d\n", 42);
 
     // Log an informational message
     info("Informational message: %s\n", "Everything is running smoothly.");

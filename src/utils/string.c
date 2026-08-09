@@ -1,24 +1,21 @@
 #ifndef _string
 #define _string
 #include <ctype.h>
-#include <stddef.h>
-#include <stdlib.h>
 #include <stdarg.h>
-#include <stdio.h>
 #include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 #include <core/logger.h>
-
-#include <utils/string.h>
 #include <utils/array.h>
+#include <utils/string.h>
 
-extern char* resource(const char* path);
+extern char *resource(const char *path);
 
-visible char* readfile(const char *path) {
-    if(strlen(path) > 2){
-        if(path[0] == ':' && path[1] == '/'){
+visible char *readfile(const char *path) {
+    if (strlen(path) > 2) {
+        if (path[0] == ':' && path[1] == '/') {
             return resource(path);
         }
     }
@@ -32,8 +29,8 @@ visible char* readfile(const char *path) {
     long length = ftell(file);
     fseek(file, 0, SEEK_SET);
 
-    char* data = malloc(sizeof(char)*(length + 1));
-    if(!data){
+    char *data = malloc(sizeof(char) * (length + 1));
+    if (!data) {
         goto readfile_err;
     }
     long read_items = fread(data, 1, length, file);
@@ -50,7 +47,7 @@ readfile_err:
     return NULL;
 }
 
-visible long count_tab(const char* data){
+visible long count_tab(const char *data) {
     int cnt = 0;
     while (*data == ' ') {
         cnt++;
@@ -59,101 +56,101 @@ visible long count_tab(const char* data){
     return cnt;
 }
 
-visible char* join(const char* f, char** array){
+visible char *join(const char *f, char **array) {
     int i = 0;
     int len = 0;
     /* find output size */
-    while(array[i]){
+    while (array[i]) {
         len += strlen(array[i]) + strlen(f);
         i++;
     }
     /* allocate memory */
-    char* ret = calloc(len+1, sizeof(char));
-    if(!ret){
+    char *ret = calloc(len + 1, sizeof(char));
+    if (!ret) {
         return NULL;
     }
-    strcpy(ret,"");
+    strcpy(ret, "");
     /* copy item len and reset value */
     int cnt = i;
     i = 0;
     /* copy items */
-    while(array[i]){
-        strcat(ret,array[i]);
-        if(i<cnt-1){
-            strcat(ret,f);
+    while (array[i]) {
+        strcat(ret, array[i]);
+        if (i < cnt - 1) {
+            strcat(ret, f);
         }
-	i++;
+        i++;
     }
     return ret;
 }
 
-visible char* str_add(const char* str1, const char* str2){
-    char* ret = calloc( (strlen(str1)+strlen(str2)+1),sizeof(char) );
-    if(!ret){
+visible char *str_add(const char *str1, const char *str2) {
+    char *ret = calloc((strlen(str1) + strlen(str2) + 1), sizeof(char));
+    if (!ret) {
         return NULL;
     }
-    strcpy(ret,str1);
-    strcat(ret,str2);
+    strcpy(ret, str1);
+    strcat(ret, str2);
     return ret;
 }
 
-visible char* trim(char *content) {
+visible char *trim(char *content) {
     // Create a copy of the content to modify
     char *trimmed_content = content;
     if (trimmed_content == NULL) {
-        return NULL; // Memory allocation failed
+        return NULL;  // Memory allocation failed
     }
 
-    char *line = strtok(trimmed_content, "\n"); // Tokenize the content by new lines
+    char *line = strtok(trimmed_content, "\n");  // Tokenize the content by new lines
     if (line == NULL) {
-        return trimmed_content; // No content to process
+        return trimmed_content;  // No content to process
     }
 
     // Determine the number of leading whitespace characters in the first line
     size_t n = count_tab(line);
-    
+
     // Process the first line
     if (strlen(line) > n) {
-        memmove(trimmed_content, line + n, strlen(line) - n + 1); // Trim the first line
+        memmove(trimmed_content, line + n, strlen(line) - n + 1);  // Trim the first line
     } else {
-        line[0] = '\0'; // If n is greater than or equal to line length, set line to empty
+        line[0] = '\0';  // If n is greater than or equal to line length, set line to empty
     }
-    size_t cur = strlen(line) - n +1;
+    size_t cur = strlen(line) - n + 1;
     // Process the remaining lines
     while ((line = strtok(NULL, "\n")) != NULL) {
         if (strlen(line) > n) {
-            trimmed_content[cur+1] = '\n';
-            memmove(trimmed_content+cur+2, line + n, strlen(line) - n); // Trim the line
-            cur+=strlen(line) -n+1;
+            trimmed_content[cur + 1] = '\n';
+            memmove(trimmed_content + cur + 2, line + n, strlen(line) - n);  // Trim the line
+            cur += strlen(line) - n + 1;
         } else {
-            line[0] = '\0'; // Set line to empty if n is greater than or equal to line length
+            line[0] = '\0';  // Set line to empty if n is greater than or equal to line length
         }
     }
-    trimmed_content[cur+1] = '\0';
-    return trimmed_content; // Return the trimmed content
+    trimmed_content[cur + 1] = '\0';
+    return trimmed_content;  // Return the trimmed content
 }
 
-
-visible char* int_to_string(int num){
+visible char *int_to_string(int num) {
     char *ret = calloc(20, sizeof(char));
-    if (!ret) return NULL;
+    if (!ret)
+        return NULL;
     snprintf(ret, 20, "%d", num);
-    char* ret2 = strdup(ret);
+    char *ret2 = strdup(ret);
     free(ret);
     return ret2;
 }
 
 /* Function to perform URL decoding */
-visible char* url_decode(const char *input) {
+visible char *url_decode(const char *input) {
     int cnt = 0;
     int i;
     for (i = 0; input[i] != '\0'; i++) {
-        if (input[i] == '%'){
-           if (isHexDigit(input[i + 1])){
-               if (isHexDigit(input[i + 2])) {
-                   /* Skip '%', and the next two characters (assuming they are valid hexadecimal digits) */
-                   i += 2;
-                   cnt++;
+        if (input[i] == '%') {
+            if (isHexDigit(input[i + 1])) {
+                if (isHexDigit(input[i + 2])) {
+                    /* Skip '%', and the next two characters (assuming they are valid hexadecimal digits) */
+                    i += 2;
+                    cnt++;
                 }
             }
         } else {
@@ -162,20 +159,20 @@ visible char* url_decode(const char *input) {
     }
 
     /* +1 for null-terminator */
-    char *output = (char *)calloc((cnt + 1), sizeof(char));
+    char *output = (char *) calloc((cnt + 1), sizeof(char));
 
     if (output == NULL) {
         perror("Memory allocation failed\n");
-        return (char*) input;
+        return (char *) input;
     }
 
     int j = 0;
     for (i = 0; input[i] != '\0'; i++) {
         if (input[i] == '%') {
-            if (isHexDigit(input[i + 1])){
+            if (isHexDigit(input[i + 1])) {
                 if (isHexDigit(input[i + 2])) {
-                    const char hex[3] = {input[i + 1], input[i + 2], '\0'};
-                    output[j++] = (char)strtol(hex, NULL, 16);
+                    const char hex[3] = { input[i + 1], input[i + 2], '\0' };
+                    output[j++] = (char) strtol(hex, NULL, 16);
                     /* Skip '%', and the next two characters */
                     i += 2;
                 }
@@ -191,7 +188,7 @@ visible char* url_decode(const char *input) {
 }
 
 /* Function to perform URL encoding */
-visible char* url_encode(const char *input) {
+visible char *url_encode(const char *input) {
     int cnt = 0;
     int i;
     for (i = 0; input[i] != '\0'; i++) {
@@ -204,11 +201,11 @@ visible char* url_encode(const char *input) {
     }
 
     /* +1 for null-terminator */
-    char *output = (char *)malloc((cnt + 1) * sizeof(char));
+    char *output = (char *) malloc((cnt + 1) * sizeof(char));
 
     if (output == NULL) {
-        perror( "Memory allocation failed\n");
-        return (char*) input;
+        perror("Memory allocation failed\n");
+        return (char *) input;
     }
 
     int j = 0;
@@ -216,7 +213,7 @@ visible char* url_encode(const char *input) {
         if (isalnum_c(input[i])) {
             output[j++] = input[i];
         } else {
-            sprintf(output + j, "%%%02X", (unsigned char)input[i]);
+            sprintf(output + j, "%%%02X", (unsigned char) input[i]);
             /* Move to the next position in the output string */
             j += 3;
         }
@@ -227,8 +224,7 @@ visible char* url_encode(const char *input) {
     return output;
 }
 
-
-visible char* build_string(char* format, ...) {
+visible char *build_string(char *format, ...) {
     va_list args;
     va_start(args, format);
 
@@ -237,7 +233,7 @@ visible char* build_string(char* format, ...) {
     va_end(args);
 
     /* Allocate memory for the string */
-    char* result = (char*)malloc(size);
+    char *result = (char *) malloc(size);
     if (result == NULL) {
         return NULL;
     }
@@ -250,8 +246,8 @@ visible char* build_string(char* format, ...) {
     return result;
 }
 
-visible char* str_replace(const char* str, const char* oldSub, const char* newSub) {
-    if(!str || !oldSub || !newSub){
+visible char *str_replace(const char *str, const char *oldSub, const char *newSub) {
+    if (!str || !oldSub || !newSub) {
         return NULL;
     }
     // Calculate lengths
@@ -261,21 +257,21 @@ visible char* str_replace(const char* str, const char* oldSub, const char* newSu
 
     // Count occurrences of oldSub in str
     int count = 0;
-    const char* temp = str;
+    const char *temp = str;
     while ((temp = strstr(temp, oldSub)) != NULL) {
         count++;
-        temp += oldSubLen; // Move past the last found occurrence
+        temp += oldSubLen;  // Move past the last found occurrence
     }
 
     // Allocate memory for the new string
     size_t newStrLen = strLen + count * (newSubLen - oldSubLen);
-    char* newStr = (char*)malloc(newStrLen + 1); // +1 for the null terminator
+    char *newStr = (char *) malloc(newStrLen + 1);  // +1 for the null terminator
     if (!newStr) {
-        return NULL; // Memory allocation failed
+        return NULL;  // Memory allocation failed
     }
 
     // Replace occurrences
-    char* pos = newStr;
+    char *pos = newStr;
     while (*str) {
         if (strstr(str, oldSub) == str) {
             // Found oldSub, replace it
@@ -287,57 +283,56 @@ visible char* str_replace(const char* str, const char* oldSub, const char* newSu
             *pos++ = *str++;
         }
     }
-    *pos = '\0'; // Null-terminate the new string
+    *pos = '\0';  // Null-terminate the new string
 
     return newStr;
 }
 
-visible char** split(const char* data, const char* f) {
+visible char **split(const char *data, const char *f) {
     if (strlen(data) == 0) {
-        char** ret = malloc(sizeof(char*));
-        if(!ret){
+        char **ret = malloc(sizeof(char *));
+        if (!ret) {
             return NULL;
         }
         ret[0] = NULL;
         return ret;
     }
     array *a = array_new();
-    size_t cur=0;
-    size_t i=0;
-    size_t s=strlen(f);
-    for (i=0; data[i];i++){
-        if (strncmp(data+i, f,  s) == 0){
+    size_t cur = 0;
+    size_t i = 0;
+    size_t s = strlen(f);
+    for (i = 0; data[i]; i++) {
+        if (strncmp(data + i, f, s) == 0) {
             char word[i - cur + 1];
-            strncpy(word, &data[cur], i-cur);
-            word[i-cur] = '\0';
+            strncpy(word, &data[cur], i - cur);
+            word[i - cur] = '\0';
             array_add(a, word);
-            cur=i+s;
+            cur = i + s;
         }
     }
     char word[i - cur + 1];
-    strncpy(word, &data[cur], i-cur);
-    word[i-cur] = '\0';
+    strncpy(word, &data[cur], i - cur);
+    word[i - cur] = '\0';
     array_add(a, word);
-    char** ret = array_get(a, &i);
+    char **ret = array_get(a, &i);
     array_unref(a);
     return ret;
 }
 
-
-visible char* strip(const char* str) {
+visible char *strip(const char *str) {
     if (str == NULL) {
-        return NULL; // Handle NULL input
+        return NULL;  // Handle NULL input
     }
 
     // Trim leading whitespace
-    const char* src = str;
-    while (isspace((unsigned char)*src)) {
+    const char *src = str;
+    while (isspace((unsigned char) *src)) {
         src++;
     }
 
     // Trim trailing whitespace
-    const char* end = src + strlen(src) - 1;
-    while (end > src && isspace((unsigned char)*end)) {
+    const char *end = src + strlen(src) - 1;
+    while (end > src && isspace((unsigned char) *end)) {
         end--;
     }
 
@@ -345,9 +340,9 @@ visible char* strip(const char* str) {
     size_t length = end - src + 1;
 
     // Allocate memory for the new string
-    char* trimmed = (char*)malloc(length + 1);
+    char *trimmed = (char *) malloc(length + 1);
     if (trimmed == NULL) {
-        return NULL; // Handle memory allocation failure
+        return NULL;  // Handle memory allocation failure
     }
 
     // Copy the trimmed string and null-terminate it
@@ -359,24 +354,24 @@ visible char* strip(const char* str) {
 }
 
 static char alphabet[] = "0123456789abcdef";
-visible char* generate_uuid(){
-    char* ret = calloc(37, sizeof(char));
-    if(!ret){
+visible char *generate_uuid() {
+    char *ret = calloc(37, sizeof(char));
+    if (!ret) {
         return NULL;
     }
     size_t j = 0;
     srand(time(NULL));
-    for(size_t i=0; i< 8; i++){
+    for (size_t i = 0; i < 8; i++) {
         ret[j++] = alphabet[rand() % 16];
     }
     ret[j++] = '-';
-    for(size_t k=0; k<3; k++){
-        for(size_t i=0; i< 4; i++){
+    for (size_t k = 0; k < 3; k++) {
+        for (size_t i = 0; i < 4; i++) {
             ret[j++] = alphabet[rand() % 16];
         }
         ret[j++] = '-';
     }
-    for(size_t i=0; i< 12; i++){
+    for (size_t i = 0; i < 12; i++) {
         ret[j++] = alphabet[rand() % 16];
     }
     return ret;

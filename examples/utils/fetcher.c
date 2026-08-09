@@ -4,8 +4,8 @@
 
 // Main function to demonstrate usage of fetch
 int main(void) {
-    const char *url = "http://example.com"; // URL of the file to download
-    const char *path = "index.html"; // Output filename
+    const char *url = "http://example.com";  // URL of the file to download
+    const char *path = "index.html";         // Output filename
 
     // Call the fetch function
     if (fetch(url, path)) {

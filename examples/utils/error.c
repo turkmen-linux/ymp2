@@ -3,14 +3,13 @@
 #include <string.h>
 
 #include <core/ymp.h>
-
 #include <utils/array.h>
 #include <utils/error.h>
 
 int main() {
-    
+
     // Create an error array
-    array* error_array = array_new(); // Assuming array_create initializes an empty array
+    array *error_array = array_new();  // Assuming array_create initializes an empty array
 
     // Simulate error handling
     error_add_fn(error_array, "Failed to complete some_operation.");
@@ -23,8 +22,7 @@ int main() {
     }
 
     // Clean up
-    array_unref(error_array); // Assuming array_destroy frees the allocated memory for the array
+    array_unref(error_array);  // Assuming array_destroy frees the allocated memory for the array
 
     return 1;
 }
-

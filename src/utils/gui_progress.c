@@ -1,11 +1,9 @@
-#include <string.h>
+#include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#include <ncurses.h>
+#include <string.h>
 
 #include <core/ymp.h>
-
 #include <utils/file.h>
 #include <utils/gui.h>
 
@@ -19,11 +17,10 @@ static pthread_mutex_t p_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 static void gui_progress_draw(void);
 
-
 static void draw_progress_bar(WINDOW *w, int y, const char *title, const char *msg, size_t done, size_t total) {
     int w_w, w_h;
     getmaxyx(w, w_h, w_w);
-    (void)w_h;
+    (void) w_h;
 
     if (title) {
         wattron(w, A_BOLD);
@@ -73,7 +70,7 @@ visible int gui_progress_add(const char *id, const char *title, const char *msg,
     if (!id)
         return -1;
 
-    if (progress_bar_count == 0){
+    if (progress_bar_count == 0) {
         current_display = GUI_DISPLAY_PROGRESS;
         gui_init();
     }
@@ -128,9 +125,9 @@ visible void gui_progress_remove(const char *id) {
     pthread_mutex_lock(&p_mutex);
     for (int i = 0; i < GUI_MAX_BARS; i++) {
         if (progress_bars[i].active && progress_bars[i].id && strcmp(progress_bars[i].id, id) == 0) {
-            free((void *)progress_bars[i].id);
-            free((void *)progress_bars[i].title);
-            free((void *)progress_bars[i].msg);
+            free((void *) progress_bars[i].id);
+            free((void *) progress_bars[i].title);
+            free((void *) progress_bars[i].msg);
             progress_bars[i].active = false;
             progress_bars[i].id = NULL;
             progress_bars[i].title = NULL;
@@ -142,7 +139,7 @@ visible void gui_progress_remove(const char *id) {
             return;
         }
     }
-    if (progress_bar_count == 0){
+    if (progress_bar_count == 0) {
         current_display = GUI_DISPLAY_NONE;
         gui_end();
     }
@@ -213,7 +210,7 @@ static void gui_progress_draw(void) {
     for (int i = 0; i < GUI_MAX_BARS; i++) {
         if (progress_bars[i].active) {
             draw_progress_bar(p_win, cur_y, progress_bars[i].title, progress_bars[i].msg,
-                           progress_bars[i].done, progress_bars[i].total);
+                              progress_bars[i].done, progress_bars[i].total);
             cur_y += bar_h;
         }
     }

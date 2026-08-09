@@ -1,35 +1,32 @@
+#include <config.h>
 #include <libgen.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <sys/stat.h>
-
-#include <config.h>
-#include <core/ymp.h>
-#include <core/variable.h>
 #include <core/logger.h>
-
+#include <core/variable.h>
+#include <core/ymp.h>
 #include <data/quarantine.h>
-
+#include <sys/stat.h>
 #include <utils/file.h>
-#include <utils/string.h>
 #include <utils/hash.h>
 #include <utils/jobs.h>
+#include <utils/string.h>
 #include <utils/yaml.h>
 
 // Function to validate metadata
-static int quarantine_validate_metadata(const char* name){
+static int quarantine_validate_metadata(const char *name) {
     print(_("Validating metadata: %s\n"), name);
     // Get the destination directory from global variables
-    char* destdir = variable_get_value(global->variables, "DESTDIR");
+    char *destdir = variable_get_value(global->variables, "DESTDIR");
 
     // Initialize status to indicate success or failure
     int status = 0;
 
-    char* metadata_path = build_string("%s/%s/quarantine/metadata/%s.yaml", destdir, STORAGE, name);
-    char* metadata = readfile(metadata_path);
+    char *metadata_path = build_string("%s/%s/quarantine/metadata/%s.yaml", destdir, STORAGE, name);
+    char *metadata = readfile(metadata_path);
     char *data = yaml_get_area(metadata, "ymp");
-    if(!data){
+    if (!data) {
         warning(_("Invalid metadata: %s\n"), metadata_path);
         status = 1;
         free(metadata);
@@ -37,9 +34,9 @@ static int quarantine_validate_metadata(const char* name){
     }
     char *area_data = NULL;
     // read package / source area
-    if(yaml_has_area(data, "package")){
+    if (yaml_has_area(data, "package")) {
         area_data = yaml_get_area(data, "package");
-    } else if(yaml_has_area(data, "source")){
+    } else if (yaml_has_area(data, "source")) {
         area_data = yaml_get_area(data, "source");
     } else {
         warning(_("Unsupported package format: %s\n"), metadata_path);
@@ -51,8 +48,8 @@ static int quarantine_validate_metadata(const char* name){
     }
     // check package is unsafe
     char *unsafe = yaml_get_value(data, "unsafe");
-    if(unsafe && strcmp(unsafe, "true") == 0){
-        if(strcmp(get_value("allow-unsafe"), "true") != 0){
+    if (unsafe && strcmp(unsafe, "true") == 0) {
+        if (strcmp(get_value("allow-unsafe"), "true") != 0) {
             status = 1;
         }
         free(unsafe);
@@ -66,17 +63,17 @@ static int quarantine_validate_metadata(const char* name){
 }
 
 // Function to validate files in the quarantine directory
-static int quarantine_validate_files(const char* name) {
+static int quarantine_validate_files(const char *name) {
     print(_("Validating files: %s\n"), name);
     // Get the destination directory from global variables
-    char* destdir = variable_get_value(global->variables, "DESTDIR");
+    char *destdir = variable_get_value(global->variables, "DESTDIR");
 
     // Initialize status to indicate success or failure
     int status = 0;
 
     // Build the path to the files in quarantine
-    char* files_path = build_string("%s/%s/quarantine/files/%s", destdir, STORAGE, name);
-    char* rootfs_path = build_string("%s/%s/quarantine/rootfs/", destdir, STORAGE);
+    char *files_path = build_string("%s/%s/quarantine/files/%s", destdir, STORAGE, name);
+    char *rootfs_path = build_string("%s/%s/quarantine/rootfs/", destdir, STORAGE);
 
     // Check if the files_path is a valid file
     if (!isfile(files_path)) {
@@ -88,14 +85,14 @@ static int quarantine_validate_files(const char* name) {
 
     // Open the files for reading
     FILE *files = fopen(files_path, "r");
-    if(!files){
+    if (!files) {
         warning(_("Failed to open package files\n"));
         free(files_path);
         free(rootfs_path);
         return 0;
     }
-    char line[PATH_MAX + 41]; // Buffer for reading lines (max file name length is PATH_MAX)
-    char actual_file[PATH_MAX +	strlen(rootfs_path)]; // Buffer for actual file path (max file name length is PATH_MAX)
+    char line[PATH_MAX + 41];                          // Buffer for reading lines (max file name length is PATH_MAX)
+    char actual_file[PATH_MAX + strlen(rootfs_path)];  // Buffer for actual file path (max file name length is PATH_MAX)
 
     // Read each line from the files
     while (fgets(line, sizeof(line), files)) {
@@ -114,9 +111,9 @@ static int quarantine_validate_files(const char* name) {
         strncpy(actual_file, rootfs_path, strlen(actual_file));
         strncat(actual_file, line + 41, strlen(actual_file));
 
-        debug("Validate file: %s\n", actual_file+strlen(rootfs_path));
+        debug("Validate file: %s\n", actual_file + strlen(rootfs_path));
 
-        if(strlen(actual_file) == 0){
+        if (strlen(actual_file) == 0) {
             continue;
         }
 
@@ -126,7 +123,7 @@ static int quarantine_validate_files(const char* name) {
             status = 1;
         } else {
             // Calculate the SHA1 hash of the actual file
-            char* actual_sha1 = calculate_sha1(actual_file);
+            char *actual_sha1 = calculate_sha1(actual_file);
             // Compare the calculated hash with the expected hash
             status = strncmp(actual_sha1, line, 40);
             free(actual_sha1);
@@ -146,17 +143,17 @@ free_quarantine_validate_files:
     return status;
 }
 
-static int quarantine_validate_links(const char* name){
+static int quarantine_validate_links(const char *name) {
     print(_("Validating links: %s\n"), name);
     // Get the destination directory from global variables
-    char* destdir = variable_get_value(global->variables, "DESTDIR");
+    char *destdir = variable_get_value(global->variables, "DESTDIR");
 
     // Initialize status to indicate success or failure
     int status = 0;
 
     // Build the path to the files in quarantine
-    char* links_path = build_string("%s/%s/quarantine/links/%s", destdir, STORAGE, name);
-    char* rootfs_path = build_string("%s/%s/quarantine/rootfs/", destdir, STORAGE);
+    char *links_path = build_string("%s/%s/quarantine/links/%s", destdir, STORAGE, name);
+    char *rootfs_path = build_string("%s/%s/quarantine/rootfs/", destdir, STORAGE);
 
     // Check if the files_path is a valid file
     if (!isfile(links_path)) {
@@ -168,10 +165,10 @@ static int quarantine_validate_links(const char* name){
 
     // Open the files for reading
     FILE *links = fopen(links_path, "r");
-    char line[PATH_MAX]; // Buffer for reading lines (max file name length is PATH_MAX)
-    char actual_link[PATH_MAX + strlen(rootfs_path)]; // Buffer for actual file path (max file name length is PATH_MAX)
-    char link_target[PATH_MAX]; // Buffer for actual file path (max file name length is PATH_MAX)
-    if(!links){
+    char line[PATH_MAX];                               // Buffer for reading lines (max file name length is PATH_MAX)
+    char actual_link[PATH_MAX + strlen(rootfs_path)];  // Buffer for actual file path (max file name length is PATH_MAX)
+    char link_target[PATH_MAX];                        // Buffer for actual file path (max file name length is PATH_MAX)
+    if (!links) {
         warning(_("Failed to open package links\n"));
         free(links_path);
         free(rootfs_path);
@@ -185,33 +182,33 @@ static int quarantine_validate_links(const char* name){
             line[strlen(line) - 1] = '\0';
         }
         // calcuate offset of link - path seperator
-        size_t offset=0;
-        while(line[offset] && line[offset] != ' ') {
+        size_t offset = 0;
+        while (line[offset] && line[offset] != ' ') {
             offset++;
         }
         memset(actual_link, 0, sizeof(actual_link));
         memset(link_target, 0, sizeof(link_target));
         // Build link target
-        line[offset]='\0';
+        line[offset] = '\0';
         // Build actual_link
         strcpy(actual_link, rootfs_path);
         strcat(actual_link, line);
         ssize_t rc = readlink(actual_link, link_target, PATH_MAX);
-        if(rc <0){
+        if (rc < 0) {
             warning("Error reading symlink: %s\n", actual_link);
             perror(link_target);
             status = 1;
             goto free_quarantine_validate_links;
         }
-        debug("Validate link: %s => %s %s\n", line, link_target, line+offset+1);
+        debug("Validate link: %s => %s %s\n", line, link_target, line + offset + 1);
         // check links are same
-        status = strcmp(link_target, line+offset+1);
-        if (status){
+        status = strcmp(link_target, line + offset + 1);
+        if (status) {
             warning("link check failed %s\n", actual_link);
             goto free_quarantine_validate_links;
         }
         // check link is absolute path
-        if(line[offset+1] == '/'){
+        if (line[offset + 1] == '/') {
             status = 1;
             warning("absolute path symlink found %s\n", actual_link);
             goto free_quarantine_validate_links;
@@ -226,31 +223,32 @@ free_quarantine_validate_links:
 }
 
 // Function to sync quarantine validated files
-visible int quarantine_sync(const char* name){
+visible int quarantine_sync(const char *name) {
     print(_("Syncing: %s\n"), name);
     int status = 0;
     // Get the destination directory from global variables
-    char* destdir = variable_get_value(global->variables, "DESTDIR");
-    char* rootfs_path = build_string("%s/%s/quarantine/rootfs/", destdir, STORAGE);
+    char *destdir = variable_get_value(global->variables, "DESTDIR");
+    char *rootfs_path = build_string("%s/%s/quarantine/rootfs/", destdir, STORAGE);
 
     // Build the path to the files and links in quarantine
-    char* metadata_path = build_string("%s/%s/quarantine/metadata/%s.yaml", destdir, STORAGE, name);
-    char* files_path = build_string("%s/%s/quarantine/files/%s", destdir, STORAGE, name);
-    char* links_path = build_string("%s/%s/quarantine/links/%s", destdir, STORAGE, name);
+    char *metadata_path = build_string("%s/%s/quarantine/metadata/%s.yaml", destdir, STORAGE, name);
+    char *files_path = build_string("%s/%s/quarantine/files/%s", destdir, STORAGE, name);
+    char *links_path = build_string("%s/%s/quarantine/links/%s", destdir, STORAGE, name);
 
     // Open the files for reading
     FILE *links = fopen(links_path, "r");
     FILE *files = fopen(files_path, "r");
-    char line[PATH_MAX]; // Buffer for reading lines (max file name length is PATH_MAX)
-    char source[PATH_MAX + strlen(rootfs_path)]; // Buffer for source path (max file name length is PATH_MAX)
-    char target[PATH_MAX + strlen(rootfs_path)]; // Buffer for target path (max file name length is PATH_MAX)
+    char line[PATH_MAX];                          // Buffer for reading lines (max file name length is PATH_MAX)
+    char source[PATH_MAX + strlen(rootfs_path)];  // Buffer for source path (max file name length is PATH_MAX)
+    char target[PATH_MAX + strlen(rootfs_path)];  // Buffer for target path (max file name length is PATH_MAX)
 
+    char tmp[PATH_MAX + strlen(rootfs_path)];  // Temporary buffer
 
-    char tmp[PATH_MAX + strlen(rootfs_path)]; // Temporary buffer
-
-    if(!links || !files){
-        if(files) fclose(files);
-        if(links) fclose(links);
+    if (!links || !files) {
+        if (files)
+            fclose(files);
+        if (links)
+            fclose(links);
         status = 0;
         goto free_quarantine_sync_no_fclose;
     }
@@ -264,24 +262,24 @@ visible int quarantine_sync(const char* name){
         line[40] = '/';
         // Build source & target path
         strcpy(source, rootfs_path);
-        strcat(source, line+40);
+        strcat(source, line + 40);
         strcpy(target, destdir);
-        strcat(target, line+40);
+        strcat(target, line + 40);
         debug("file: %s -> %s\n", source, target);
         // create parent directory if not exists
         strcpy(tmp, target);
-        (void)dirname(tmp);
+        (void) dirname(tmp);
         create_dir(tmp);
         // move file
-        int stat = ! move_file(source, target);
+        int stat = !move_file(source, target);
         // set permission
-        if(chmod(target, 0755)){
+        if (chmod(target, 0755)) {
             stat += 1;
         }
-        if(chown(target, 0,0)){
+        if (chown(target, 0, 0)) {
             stat += 1;
         }
-        if(stat != 0){
+        if (stat != 0) {
             warning("failed to sync: %s => %s\n", source, target);
             status = stat;
             goto free_quarantine_sync;
@@ -295,25 +293,25 @@ visible int quarantine_sync(const char* name){
             line[strlen(line) - 1] = '\0';
         }
         // calcuate offset of link - path seperator
-        size_t offset=0;
-        while(line[offset] && line[offset] != ' ') {
+        size_t offset = 0;
+        while (line[offset] && line[offset] != ' ') {
             offset++;
         }
-        line[offset]='\0';
+        line[offset] = '\0';
         strcpy(target, destdir);
         strcat(target, line);
-        debug("file: %s -> %s\n", line+offset+1, target);
+        debug("file: %s -> %s\n", line + offset + 1, target);
         // create parent directory if not exists
         strcpy(tmp, target);
-        (void)dirname(tmp);
+        (void) dirname(tmp);
         create_dir(tmp);
         // create symlink
-        if(issymlink(target)){
+        if (issymlink(target)) {
             unlink(target);
         }
-        status = symlink(line+offset+1, target);
-        if(status != 0){
-            warning("failed to sync: %s => %s\n", target, line+offset+1);
+        status = symlink(line + offset + 1, target);
+        if (status != 0) {
+            warning("failed to sync: %s => %s\n", target, line + offset + 1);
             goto free_quarantine_sync;
         }
     }
@@ -324,8 +322,8 @@ visible int quarantine_sync(const char* name){
     strcat(target, STORAGE);
     strcat(target, "/files/");
     strcat(target, name);
-    int stat = ! move_file(files_path, target);
-    if(stat){
+    int stat = !move_file(files_path, target);
+    if (stat) {
         warning("failed to sync: %s\n", files_path);
         status += stat;
     }
@@ -336,8 +334,8 @@ visible int quarantine_sync(const char* name){
     strcat(target, STORAGE);
     strcat(target, "/links/");
     strcat(target, name);
-    stat = ! move_file(links_path, target);
-    if(stat){
+    stat = !move_file(links_path, target);
+    if (stat) {
         warning("failed to sync: %s\n", links_path);
         status += stat;
     }
@@ -349,17 +347,18 @@ visible int quarantine_sync(const char* name){
     strcat(target, "/metadata/");
     strcat(target, name);
     strcat(target, ".yaml");
-    stat = ! move_file(metadata_path, target);
-    if(stat){
+    stat = !move_file(metadata_path, target);
+    if (stat) {
         warning("failed to sync: %s\n", metadata_path);
         status += stat;
     }
 
-
     // Cleanup: free memory
 free_quarantine_sync:
-    if(files) fclose(files);
-    if(links) fclose(links);
+    if (files)
+        fclose(files);
+    if (links)
+        fclose(links);
 free_quarantine_sync_no_fclose:
     free(rootfs_path);
     free(files_path);
@@ -368,29 +367,30 @@ free_quarantine_sync_no_fclose:
     return status;
 }
 
-static void calculate_leftovers(array* arr, const char* name){
-    char* destdir = variable_get_value(global->variables, "DESTDIR");
+static void calculate_leftovers(array *arr, const char *name) {
+    char *destdir = variable_get_value(global->variables, "DESTDIR");
     array *list = array_new();
-    char* files = build_string("%s/%s/files/%s", destdir, STORAGE, name);
-    char* links = build_string("%s/%s/links/%s", destdir, STORAGE, name);
-    char* files_new = build_string("%s/%s/quarantine/files/%s", destdir, STORAGE, name);
-    char* links_new = build_string("%s/%s/quarantine/links/%s", destdir, STORAGE, name);
+    char *files = build_string("%s/%s/files/%s", destdir, STORAGE, name);
+    char *links = build_string("%s/%s/links/%s", destdir, STORAGE, name);
+    char *files_new = build_string("%s/%s/quarantine/files/%s", destdir, STORAGE, name);
+    char *links_new = build_string("%s/%s/quarantine/links/%s", destdir, STORAGE, name);
 
-    char line[PATH_MAX+41];
+    char line[PATH_MAX + 41];
     // read files
     FILE *ffiles = fopen(files, "r");
-    if(ffiles){
+    if (ffiles) {
         while (fgets(line, sizeof(line), ffiles)) {
-            array_add(list, line+41);
+            array_add(list, line + 41);
         }
         fclose(ffiles);
     }
     // read links
     FILE *flinks = fopen(links, "r");
-    if(flinks){
+    if (flinks) {
         while (fgets(line, sizeof(line), flinks)) {
             size_t offset = 0;
-            for(offset=0; line[offset] && line[offset] != ' '; offset++);
+            for (offset = 0; line[offset] && line[offset] != ' '; offset++)
+                ;
             line[offset] = '\n';
             array_add(list, line);
         }
@@ -398,18 +398,19 @@ static void calculate_leftovers(array* arr, const char* name){
     }
     // read new files
     FILE *ffiles_new = fopen(files_new, "r");
-    if(ffiles_new){
+    if (ffiles_new) {
         while (fgets(line, sizeof(line), ffiles_new)) {
-            array_remove(list, line+41);
+            array_remove(list, line + 41);
         }
         fclose(ffiles_new);
     }
     // read links
     FILE *flinks_new = fopen(links_new, "r");
-    if(flinks_new){
+    if (flinks_new) {
         while (fgets(line, sizeof(line), flinks_new)) {
-            size_t offset=0;
-            for(offset=0; line[offset] && line[offset] != ' '; offset++);
+            size_t offset = 0;
+            for (offset = 0; line[offset] && line[offset] != ' '; offset++)
+                ;
             line[offset] = '\n';
             array_remove(list, line);
         }
@@ -430,16 +431,16 @@ static void calculate_leftovers(array* arr, const char* name){
 visible bool quarantine_validate() {
     debug("validate event\n");
     // Get the destination directory from global variables
-    char* destdir = variable_get_value(global->variables, "DESTDIR");
+    char *destdir = variable_get_value(global->variables, "DESTDIR");
 
     // Build the path to the metadata directory
-    char* metadata = build_string("%s/%s/quarantine/metadata", destdir, STORAGE);
+    char *metadata = build_string("%s/%s/quarantine/metadata", destdir, STORAGE);
 
     // Find all metadata files in the directory
-    char** metadatas = find(metadata);
+    char **metadatas = find(metadata);
 
     // Create a new job queue
-    jobs* j = jobs_new();
+    jobs *j = jobs_new();
 
     // Iterate through each metadata file
     for (size_t i = 0; metadatas[i]; i++) {
@@ -448,42 +449,41 @@ visible bool quarantine_validate() {
             // Remove the .yaml extension for processing
             metadatas[i][strlen(metadatas[i]) - 5] = '\0';
             // Add a job to validate the corresponding files
-            jobs_add(j, (callback)quarantine_validate_metadata, basename(metadatas[i]), NULL);
-            jobs_add(j, (callback)quarantine_validate_files,    basename(metadatas[i]), NULL);
-            jobs_add(j, (callback)quarantine_validate_links,    basename(metadatas[i]), NULL);
+            jobs_add(j, (callback) quarantine_validate_metadata, basename(metadatas[i]), NULL);
+            jobs_add(j, (callback) quarantine_validate_files, basename(metadatas[i]), NULL);
+            jobs_add(j, (callback) quarantine_validate_links, basename(metadatas[i]), NULL);
         }
     }
 
     // Run the jobs and check for failures
     jobs_run(j);
-    bool status = j->failed; // Capture the failure status
-    jobs_unref(j); // Unreference the job queue
-
+    bool status = j->failed;  // Capture the failure status
+    jobs_unref(j);            // Unreference the job queue
 
     // create leftover array
     array *leftover = array_new();
 
     // Sync if validation sucessfully
-    if(!status){
+    if (!status) {
         j = jobs_new();
         // Iterate through each metadata file
         for (size_t i = 0; metadatas[i]; i++) {
             calculate_leftovers(leftover, basename(metadatas[i]));
-            jobs_add(j, (callback)quarantine_sync, basename(metadatas[i]), NULL);
+            jobs_add(j, (callback) quarantine_sync, basename(metadatas[i]), NULL);
         }
         // Run the jobs and check for failures
         jobs_run(j);
         status = j->failed;  // Capture the failure status
-        jobs_unref(j); // Unreference the job queue
+        jobs_unref(j);       // Unreference the job queue
     }
 
     // remove leftovers
     size_t len;
-    char** left = array_get(leftover, &len);
+    char **left = array_get(leftover, &len);
     char target[PATH_MAX];
-    for(size_t i=0; i < len; i++){
+    for (size_t i = 0; i < len; i++) {
         strcpy(target, destdir);
-        strcat(target,"/");
+        strcat(target, "/");
         strcat(target, left[i]);
         unlink(target);
         free(left[i]);
@@ -491,9 +491,8 @@ visible bool quarantine_validate() {
     free(left);
     array_unref(leftover);
 
-
     // Reset after sync
-    if(strcmp(variable_get_value(global->variables, "no-reset"), "true") != 0){
+    if (strcmp(variable_get_value(global->variables, "no-reset"), "true") != 0) {
         quarantine_reset();
     }
 
@@ -506,14 +505,13 @@ visible bool quarantine_validate() {
     return !status;
 }
 
-
-visible void quarantine_reset(){
+visible void quarantine_reset() {
     debug("reset event\n");
     // Build quarantine directory
-    char* destdir = variable_get_value(global->variables, "DESTDIR");
-    char* path = build_string("%s/%s/quarantine/", destdir, STORAGE);
+    char *destdir = variable_get_value(global->variables, "DESTDIR");
+    char *path = build_string("%s/%s/quarantine/", destdir, STORAGE);
     // remove if exists
-    if(isdir(path)){
+    if (isdir(path)) {
         remove_all(path);
     }
     // recreate again

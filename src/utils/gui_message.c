@@ -1,9 +1,7 @@
+#include <ncurses.h>
 #include <string.h>
 
-#include <ncurses.h>
-
 #include <core/ymp.h>
-
 #include <utils/gui.h>
 
 extern WINDOW *win;
@@ -18,14 +16,14 @@ msg_type_t saved_msg_type;
 extern void center_window(int w, int h);
 extern void draw_text(const char *text, int y_start, bool center);
 
-#define count_line(A) do {\
-  for(size_t i=0; A[i]; i++) {\
-      if (A[i] == '\n'){ \
-            h++; \
-        } \
-  } \
-} while(0)
-
+#define count_line(A)                   \
+    do {                                \
+        for (size_t i = 0; A[i]; i++) { \
+            if (A[i] == '\n') {         \
+                h++;                    \
+            }                           \
+        }                               \
+    } while (0)
 
 void gui_message_draw() {
     clear();
@@ -73,7 +71,7 @@ void gui_message_draw() {
 
     if (saved_title) {
         wattron(win, A_BOLD);
-        char title[strlen(saved_title)+4];
+        char title[strlen(saved_title) + 4];
         snprintf(title, sizeof(title), "[%c] %s", type_ch, saved_title);
         draw_text(title, 1, false);
         wattroff(win, A_BOLD);
@@ -89,8 +87,8 @@ void gui_message_draw() {
 
 visible void gui_msg(const char *title, const char *msg, msg_type_t type) {
     gui_init();
-    saved_title = (char *)title;
-    saved_msg = (char *)msg;
+    saved_title = (char *) title;
+    saved_msg = (char *) msg;
     saved_msg_type = type;
     current_display = GUI_DISPLAY_MESSAGE;
 

@@ -1,19 +1,19 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
-#include <core/ymp.h>
-#include <utils/string.h>
-#include <utils/array.h>
 #include <core/logger.h>
+#include <core/ymp.h>
+#include <utils/array.h>
+#include <utils/string.h>
 
 #define MAX_LINE_LENGTH 1024
 
 visible bool yaml_has_area(const char *data, const char *path) {
-    debug("%s\n",path);
+    debug("%s\n", path);
     char line[MAX_LINE_LENGTH];
-    FILE *stream = fmemopen((void *)data, strlen(data), "r");
+    FILE *stream = fmemopen((void *) data, strlen(data), "r");
     while (fgets(line, sizeof(line), stream)) {
         if (strncmp(line, path, strlen(path)) == 0 && line[strlen(path)] == ':') {
             fclose(stream);
@@ -25,7 +25,7 @@ visible bool yaml_has_area(const char *data, const char *path) {
 }
 
 visible char *yaml_get_area(const char *data, const char *path) {
-    debug("%s\n",path);
+    debug("%s\n", path);
     char line[MAX_LINE_LENGTH];
     bool in_area = false;
     size_t area_data_size = strlen(data) + 1;
@@ -33,17 +33,17 @@ visible char *yaml_get_area(const char *data, const char *path) {
 
     area_data[0] = '\0';
 
-    FILE *stream = fmemopen((void *)data, strlen(data), "r");
+    FILE *stream = fmemopen((void *) data, strlen(data), "r");
     if (!stream) {
-        return NULL; // Check for stream creation failure
+        return NULL;  // Check for stream creation failure
     }
 
-    size_t current_length = 0; // Track the current length of area_data
+    size_t current_length = 0;  // Track the current length of area_data
 
     while (fgets(line, sizeof(line), stream)) {
         if (line[0] != ' ' && strstr(line, ":")) {
             if (in_area) {
-                break; // Exit if we reach a new area
+                break;  // Exit if we reach a new area
             }
             if (strncmp(line, path, strlen(path)) == 0 && line[strlen(path)] == ':') {
                 in_area = true;
@@ -56,7 +56,7 @@ visible char *yaml_get_area(const char *data, const char *path) {
             if (current_length + line_length < area_data_size) {
                 memcpy(area_data + current_length, line, line_length);
                 current_length += line_length;
-                area_data[current_length] = '\0'; // Null-terminate the string
+                area_data[current_length] = '\0';  // Null-terminate the string
             }
         }
     }
@@ -67,34 +67,33 @@ visible char *yaml_get_area(const char *data, const char *path) {
     return area;
 }
 
-
 visible char *yaml_get_value(const char *data, const char *name) {
-    debug("%s\n",name);
+    debug("%s\n", name);
     char line[MAX_LINE_LENGTH];
     bool in_value = false;
     char value[MAX_LINE_LENGTH];
 
     value[0] = '\0';
 
-    FILE *stream = fmemopen((void *)data, strlen(data), "r");
-    if(!stream){
+    FILE *stream = fmemopen((void *) data, strlen(data), "r");
+    if (!stream) {
         return NULL;
     }
     while (fgets(line, sizeof(line), stream)) {
         if (strncmp(line, name, strlen(name)) == 0 && line[strlen(name)] == ':') {
             strcpy(value, line + strlen(name) + 1);
-            value[strcspn(value, "\n")] = 0; // Remove newline
+            value[strcspn(value, "\n")] = 0;  // Remove newline
             in_value = true;
             break;
         }
     }
     fclose(stream);
-    char* ret = in_value ? strip(value) : NULL;
+    char *ret = in_value ? strip(value) : NULL;
     return ret;
 }
 
 visible char **yaml_get_array(const char *data, const char *name, int *count) {
-    debug("%s\n",name);
+    debug("%s\n", name);
     char line[MAX_LINE_LENGTH];
     array *a = array_new();
 
@@ -106,7 +105,7 @@ visible char **yaml_get_array(const char *data, const char *name, int *count) {
     FILE *stream = fmemopen(area_data, strlen(area_data), "r");
     while (fgets(line, sizeof(line), stream)) {
         if (line[0] == '-') {
-            char* tmp = strip(line+2);
+            char *tmp = strip(line + 2);
             array_add(a, tmp);
             free(tmp);
         }
@@ -114,7 +113,7 @@ visible char **yaml_get_array(const char *data, const char *name, int *count) {
     fclose(stream);
     free(area_data);
     size_t len;
-    char** ret = array_get(a, &len);
+    char **ret = array_get(a, &len);
     if (*count) {
         *count = len;
     }
@@ -123,29 +122,29 @@ visible char **yaml_get_array(const char *data, const char *name, int *count) {
 }
 
 // Function to get the area list
-visible char** yaml_get_area_list(const char* fdata, const char* path, int* area_count) {
-    debug("%s\n",path);
+visible char **yaml_get_area_list(const char *fdata, const char *path, int *area_count) {
+    debug("%s\n", path);
     int max = 32;
-    char** ret = malloc(max * sizeof(char*));
+    char **ret = malloc(max * sizeof(char *));
 
-    array * area = array_new();
+    array *area = array_new();
     char line[MAX_LINE_LENGTH];
     bool e = false;
     *area_count = 0;
 
-    FILE *stream = fmemopen((void *)fdata, strlen(fdata), "r");
+    FILE *stream = fmemopen((void *) fdata, strlen(fdata), "r");
     while (fgets(line, sizeof(line), stream)) {
-        while(line[strlen(line)-1] == '\n'){
-            line[strlen(line)-1] = '\0';
+        while (line[strlen(line) - 1] == '\n') {
+            line[strlen(line) - 1] = '\0';
         }
-        if(e){
-            if(line[0] != ' ') {
+        if (e) {
+            if (line[0] != ' ') {
                 // Flush memory to array
-               // Check if we need to resize the array
+                // Check if we need to resize the array
                 if (*area_count >= max) {
-                    max += 32; // Increase size by 32
-                    char**tmp = realloc(ret, max * sizeof(char*));
-                    if(tmp){
+                    max += 32;  // Increase size by 32
+                    char **tmp = realloc(ret, max * sizeof(char *));
+                    if (tmp) {
                         ret = tmp;
                     }
                     if (ret == NULL) {
@@ -156,18 +155,18 @@ visible char** yaml_get_area_list(const char* fdata, const char* path, int* area
                 ret[*area_count] = trim(array_get_string(area));
                 (*area_count)++;
                 array_clear(area);
-                const char* name = strtok(line, ":");
+                const char *name = strtok(line, ":");
                 e = (strcmp(name, path) == 0);
                 continue;
             } else if (strlen(line) > 0) {
-                array_add(area,line);
-                array_add(area,"\n");
+                array_add(area, line);
+                array_add(area, "\n");
             }
         } else {
-            if(line[0] == ' ' || !strstr(line, ":")){
+            if (line[0] == ' ' || !strstr(line, ":")) {
                 continue;
             }
-            const char* name = strtok(line, ":");
+            const char *name = strtok(line, ":");
             e = (strcmp(name, path) == 0);
             continue;
         }
@@ -177,8 +176,8 @@ visible char** yaml_get_area_list(const char* fdata, const char* path, int* area
     if (e) {
         // Check if we need to resize the array
         if (*area_count >= max) {
-            max += 32; // Increase size by 32
-            ret = realloc(ret, max * sizeof(char*));
+            max += 32;  // Increase size by 32
+            ret = realloc(ret, max * sizeof(char *));
             if (ret == NULL) {
                 print(_("Memory allocation failed\n"));
                 return NULL;

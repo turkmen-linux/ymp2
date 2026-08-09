@@ -8,9 +8,9 @@ visible void color_print(bool bold, int color, const char *fmt, ...) {
             printf("\x1b[;1m");
         }
     } else if (bold) {
-        printf("\x1b[%d;1m", color+30);
-    }  else {
-        printf("\x1b[%dm", color+30);
+        printf("\x1b[%d;1m", color + 30);
+    } else {
+        printf("\x1b[%dm", color + 30);
     }
 
     va_start(ap, fmt);

@@ -1,13 +1,13 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
-#include <data/build.h>
 #include <core/logger.h>
 #include <core/ymp.h>
+#include <data/build.h>
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
     // Check if the user provided a path as an argument
-    (void)ymp_init();
+    (void) ymp_init();
     if (argc < 2) {
         fprintf(stderr, "Usage: %s <path>\n", argv[0]);
         return 0;
@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
 
     logger_set_status(DEBUG, true);
 
-    const char* path = argv[1];
+    const char *path = argv[1];
 
     // Call the build_from_path function
     if (build_from_path(path)) {
@@ -27,4 +27,3 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
-

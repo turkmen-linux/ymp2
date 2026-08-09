@@ -1,7 +1,7 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
 #include <utils/yaml.h>
 
@@ -28,7 +28,7 @@ int main() {
     char *area_data = yaml_get_area(data, path);
     if (area_data) {
         printf("Data in '%s':\n%s", path, area_data);
-        free(area_data); // Don't forget to free the allocated memory
+        free(area_data);  // Don't forget to free the allocated memory
     }
 
     // Get a specific value
@@ -45,9 +45,9 @@ int main() {
         printf("Items in 'area1':\n");
         for (int i = 0; i < count; i++) {
             printf("  %s\n", array[i]);
-            free(array[i]); // Free each item
+            free(array[i]);  // Free each item
         }
-        free(array); // Free the array itself
+        free(array);  // Free the array itself
     }
 
     // Get a list of areas
@@ -57,9 +57,9 @@ int main() {
         printf("Areas found: %d\n", area_count);
         for (int i = 0; i < area_count; i++) {
             printf("  %s\n", area_list[i]);
-            free(area_list[i]); // Free each area
+            free(area_list[i]);  // Free each area
         }
-        free(area_list); // Free the area list
+        free(area_list);  // Free the area list
     }
 
     return 0;

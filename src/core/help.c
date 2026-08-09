@@ -1,15 +1,14 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
-#include <core/ymp.h>
 #include <core/help.h>
 #include <core/logger.h>
-
-#include <utils/string.h>
+#include <core/ymp.h>
 #include <utils/color.h>
+#include <utils/string.h>
 
 // Function to create a new Help structure
-visible Help* help_new() {
+visible Help *help_new() {
     // Allocate memory for the Help structure
     Help *h = malloc(sizeof(Help));
     if (h == NULL) {
@@ -22,18 +21,18 @@ visible Help* help_new() {
     h->max = 32;
 
     // Allocate memory for the parameters array
-    h->parameters = malloc(h->max * sizeof(char*));
+    h->parameters = malloc(h->max * sizeof(char *));
     if (h->parameters == NULL) {
         print(_("Memory allocation failed for parameters array.\n"));
         free(h);
         return NULL;
     }
 
-    return h; // Return the newly created Help structure
+    return h;  // Return the newly created Help structure
 }
 
-visible void help_unref(Help* h){
-    for(size_t i=0; i< h->cur; i++){
+visible void help_unref(Help *h) {
+    for (size_t i = 0; i < h->cur; i++) {
         free(h->parameters[i]);
     }
     free(h->parameters);
@@ -41,13 +40,13 @@ visible void help_unref(Help* h){
 }
 
 // Function to add a string to the Help structure
-visible void help_add_string(Help *h, const char* string) {
+visible void help_add_string(Help *h, const char *string) {
     // Check if the current count has reached the maximum capacity
     if (h->cur >= h->max) {
         // Increase the maximum capacity by 32
         h->max += 32;
         // Reallocate memory for the parameters array
-        h->parameters = realloc(h->parameters, h->max * sizeof(char*));
+        h->parameters = realloc(h->parameters, h->max * sizeof(char *));
         if (h->parameters == NULL) {
             print(_("Memory reallocation failed for parameters array.\n"));
             return;
@@ -66,12 +65,12 @@ visible void help_add_string(Help *h, const char* string) {
 }
 
 // Function to add a parameter with its description to the Help structure
-visible void help_add_parameter(Help *h, const char* name, const char* description) {
+visible void help_add_parameter(Help *h, const char *name, const char *description) {
     // Log the name and description for debugging purposes
     debug("name: %s, desc: %s\n", name, description);
 
     // Build a formatted string combining the name and description, and add it to the Help structure
-    char* string = build_string("%s : %s", name, description);
-    help_add_string(h, (const char*)string);
+    char *string = build_string("%s : %s", name, description);
+    help_add_string(h, (const char *) string);
     free(string);
 }

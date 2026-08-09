@@ -1,36 +1,35 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
+#include <unistd.h>
 
-#include <core/ymp.h>
 #include <core/operations.h>
-
+#include <core/ymp.h>
 #include <utils/fetcher.h>
 #include <utils/gui.h>
 #include <utils/jobs.h>
 
-static VariableManager* vars;
+static VariableManager *vars;
 
-static void fetch_progress_cb(const char* url, size_t downloaded, size_t total, void* userdata) {
-    (void)url;
-    char* id = (char*)userdata;
+static void fetch_progress_cb(const char *url, size_t downloaded, size_t total, void *userdata) {
+    (void) url;
+    char *id = (char *) userdata;
 
     gui_progress_update(id, downloaded, total);
 }
 
 typedef struct {
-    const char* url;
-    char* target_file;
-    char* id;
+    const char *url;
+    char *target_file;
+    char *id;
 } download_job_t;
 
-static int download_job_cb(void* ctx, void* args) {
-    (void)args;
-    download_job_t* dl = (download_job_t*)ctx;
+static int download_job_cb(void *ctx, void *args) {
+    (void) args;
+    download_job_t *dl = (download_job_t *) ctx;
 
     char title[PATH_MAX];
-    const char* base = strrchr(dl->url, '/');
+    const char *base = strrchr(dl->url, '/');
     base = base ? base + 1 : dl->url;
     snprintf(title, PATH_MAX, "%s : %s", _("Download"), base);
     gui_progress_add(dl->id, title, base, 0);
@@ -43,12 +42,12 @@ static int download_job_cb(void* ctx, void* args) {
     return ok ? 0 : 1;
 }
 
-static int fetch_fn(void** args){
-    const char* target = variable_get_value(vars, "target");
-    char **links = (char**)args;
+static int fetch_fn(void **args) {
+    const char *target = variable_get_value(vars, "target");
+    char **links = (char **) args;
 
     char curdir[PATH_MAX];
-    if(!target || strlen(target) == 0){
+    if (!target || strlen(target) == 0) {
         if (getcwd(curdir, sizeof(curdir)) == NULL) {
             perror("getcwd() error");
             return 1;
@@ -58,21 +57,21 @@ static int fetch_fn(void** args){
 
     gui_init();
 
-    jobs* j = jobs_new();
+    jobs *j = jobs_new();
     if (!j) {
         gui_end();
         return 1;
     }
 
-    for(size_t i=0; links[i]; i++){
-        download_job_t* dl = malloc(sizeof(download_job_t));
-        if(!dl){
+    for (size_t i = 0; links[i]; i++) {
+        download_job_t *dl = malloc(sizeof(download_job_t));
+        if (!dl) {
             perror("malloc");
             break;
         }
         dl->url = links[i];
 
-        const char* base = strrchr(links[i], '/');
+        const char *base = strrchr(links[i], '/');
         base = base ? base + 1 : links[i];
 
         char target_file[PATH_MAX + strlen(links[i]) + 1];
@@ -83,7 +82,7 @@ static int fetch_fn(void** args){
         snprintf(id, sizeof(id), "fetch_%zu", i);
         dl->id = strdup(id);
 
-        jobs_add(j, (callback)download_job_cb, dl, NULL);
+        jobs_add(j, (callback) download_job_cb, dl, NULL);
     }
 
     jobs_run(j);
@@ -91,10 +90,9 @@ static int fetch_fn(void** args){
 
     gui_end();
     return 0;
-
 }
 
-visible void plugin_init(Ymp* ymp){
+visible void plugin_init(Ymp *ymp) {
     vars = ymp->variables;
     Operation op;
     op.name = "fetch";

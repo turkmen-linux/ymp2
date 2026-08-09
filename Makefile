@@ -2,6 +2,7 @@ SHELL=/bin/bash -e
 all: clean build
 
 build:
+	find src/ plugin include examples data -type f  -iname '*.c' -exec clang-format -style=file  -i {}  \;
 	CFLAGS='-g3 -O3' meson setup build $(ARGS) \
 	    --buildtype=debug \
 	    --prefix="/" \

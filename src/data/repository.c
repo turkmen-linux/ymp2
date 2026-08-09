@@ -1,88 +1,87 @@
-#include <stdlib.h>
+#include <config.h>
+#include <libgen.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <libgen.h>
 
+#include <core/logger.h>
+#include <core/variable.h>
+#include <core/ymp.h>
+#include <data/package.h>
+#include <data/repository.h>
+#include <utils/color.h>
+#include <utils/fetcher.h>
 #include <utils/file.h>
 #include <utils/string.h>
 #include <utils/yaml.h>
-#include <utils/fetcher.h>
-#include <utils/color.h>
 
-#include <core/ymp.h>
-#include <core/logger.h>
-#include <core/variable.h>
-#include <config.h>
-
-#include <data/package.h>
-#include <data/repository.h>
-
-visible Repository* repository_new() {
-    Repository* repo = (Repository*)malloc(sizeof(Repository));
+visible Repository *repository_new() {
+    Repository *repo = (Repository *) malloc(sizeof(Repository));
     if (!repo) {
-        return NULL; // Handle memory allocation failure
+        return NULL;  // Handle memory allocation failure
     }
-    repo->package_count = 0; // Initialize package_count
-    repo->packages = malloc(sizeof(Package*) * 32); // Initialize with a reasonable capacity
+    repo->package_count = 0;                          // Initialize package_count
+    repo->packages = malloc(sizeof(Package *) * 32);  // Initialize with a reasonable capacity
     if (!repo->packages) {
         free(repo);
         color_print(BOLD, COLOR_RED, "Memory initial allocation failed\n");
-        return NULL; // Handle memory allocation failure
+        return NULL;  // Handle memory allocation failure
     }
     return repo;
 }
 
-visible void repository_unref(Repository* repo) {
-    if (!repo){
-        return; // Check for NULL
+visible void repository_unref(Repository *repo) {
+    if (!repo) {
+        return;  // Check for NULL
     }
     for (size_t i = 0; i < repo->package_count; i++) {
         package_unref(repo->packages[i]);
     }
-    if(repo->packages){
+    if (repo->packages) {
         free(repo->packages);
     }
-    if(repo->name){
-        free((char*)repo->name);
+    if (repo->name) {
+        free((char *) repo->name);
     }
-    if(repo->uri){
-        free((char*)repo->uri);
+    if (repo->uri) {
+        free((char *) repo->uri);
     }
     free(repo);
 }
 
-static void repository_load_data(Repository* repo, const char* data, bool is_source) {
+static void repository_load_data(Repository *repo, const char *data, bool is_source) {
 
     // Get area list
     int len = 0;
-    char** areas;
+    char **areas;
     if (is_source) {
         areas = yaml_get_area_list(data, "source", &len);
     } else {
         areas = yaml_get_area_list(data, "package", &len);
     }
 
-    if(len == 0){
+    if (len == 0) {
         free(areas);
         return;
     }
     debug("loaded: %d\n", len);
 
     // Reallocate package storage
-    repo->packages = realloc(repo->packages, (repo->package_count + len) * sizeof(Package*));
+    repo->packages = realloc(repo->packages, (repo->package_count + len) * sizeof(Package *));
     if (!repo->packages) {
         color_print(BOLD, COLOR_RED, "Memory allocation failed %ld\n", repo->package_count + len);
-        for (int i = 0; i < len; i++) free(areas[i]);
+        for (int i = 0; i < len; i++)
+            free(areas[i]);
         free(areas);
-        return; // Handle memory allocation failure
+        return;  // Handle memory allocation failure
     }
 
     // Load packages
     for (int i = 0; i < len && areas[i]; i++) {
         repo->packages[repo->package_count] = package_new();
         repo->packages[repo->package_count]->is_virtual = true;
-        repo->packages[repo->package_count]->repo = (void*)repo;
+        repo->packages[repo->package_count]->repo = (void *) repo;
         if (repo->packages[repo->package_count] == NULL) {
             print(_("Failed to create new package\n"));
             continue;
@@ -92,7 +91,7 @@ static void repository_load_data(Repository* repo, const char* data, bool is_sou
     }
 }
 
-visible Package* repository_get(Repository *repo, const char* name, bool is_source) {
+visible Package *repository_get(Repository *repo, const char *name, bool is_source) {
     if (repo == NULL) {
         return NULL;
     }
@@ -109,25 +108,25 @@ visible Package* repository_get(Repository *repo, const char* name, bool is_sour
     return NULL;
 }
 
-visible void repository_load_from_index(Repository* repo, const char* index) {
+visible void repository_load_from_index(Repository *repo, const char *index) {
     debug("Load from index: %s\n", index);
     // Read index
-    char* data = readfile(index);
+    char *data = readfile(index);
     if (data) {
         repository_load_from_data(repo, data);
         free(data);
     }
 }
 
-visible void repository_load_from_data(Repository* repo, const char* data) {
+visible void repository_load_from_data(Repository *repo, const char *data) {
     debug("Load from data len:%d\n", strlen(data));
     if (repo == NULL) {
         return;
     }
     // Get URI
-    char* inner = yaml_get_area(data, "index");
+    char *inner = yaml_get_area(data, "index");
     repo->name = yaml_get_value(inner, "name");
-    char* repo_uri_file = build_string("%s/%s/sources.list.d/%s", get_value("DESTDIR"), STORAGE, repo->name);
+    char *repo_uri_file = build_string("%s/%s/sources.list.d/%s", get_value("DESTDIR"), STORAGE, repo->name);
     char *tmp = readfile(repo_uri_file);
     repo->uri = strip(tmp);
     free(tmp);
@@ -138,7 +137,7 @@ visible void repository_load_from_data(Repository* repo, const char* data) {
     free(inner);
 }
 
-visible bool repository_download_package(Repository* repo, const char* name, bool is_source) {
+visible bool repository_download_package(Repository *repo, const char *name, bool is_source) {
     if (repo == NULL) {
         return false;
     }
@@ -150,4 +149,3 @@ visible bool repository_download_package(Repository* repo, const char* name, boo
     bool status = package_download(p, repo->uri);
     return status;
 }
-

@@ -1,9 +1,7 @@
+#include <ncurses.h>
 #include <string.h>
 
-#include <ncurses.h>
-
 #include <core/ymp.h>
-
 #include <utils/gui.h>
 
 extern WINDOW *win;
@@ -15,17 +13,17 @@ static char *saved_title;
 static char *saved_msg;
 static bool saved_yesno;
 
-
 extern void center_window(int w, int h);
 extern void draw_text(const char *text, int y_start, bool center);
 
-#define count_line(A) do {\
-  for(size_t i=0; A[i]; i++) {\
-      if (A[i] == '\n'){ \
-            h++; \
-        } \
-  } \
-} while(0)
+#define count_line(A)                   \
+    do {                                \
+        for (size_t i = 0; A[i]; i++) { \
+            if (A[i] == '\n') {         \
+                h++;                    \
+            }                           \
+        }                               \
+    } while (0)
 
 void gui_yesno_draw() {
     clear();
@@ -86,8 +84,8 @@ void gui_yesno_draw() {
 
 visible bool gui_yes_no(const char *title, const char *msg, bool def) {
     gui_init();
-    saved_title = (char *)title;
-    saved_msg = (char *)msg;
+    saved_title = (char *) title;
+    saved_msg = (char *) msg;
     saved_yesno = def;
     current_display = GUI_DISPLAY_YESNO;
 
