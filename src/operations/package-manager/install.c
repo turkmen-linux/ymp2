@@ -129,7 +129,7 @@ void install_init(OperationManager *manager) {
     op.name = "install";
     op.alias = "it:add:merge";
     op.description = _("Install package");
-    op.min_args = 1;
+    op.min_args = 0;
     op.call = (callback) install_main;
     op.help = help_new();
     help_add_parameter(op.help, "--ignore-dependency", _("disable dependency check"));

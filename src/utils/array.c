@@ -79,6 +79,10 @@ visible void array_set(array *arr, char **new_data) {
 }
 
 visible char *array_get_string(array *arr) {
+    if (!arr) {
+        warning("Invalid array detected\n");
+        return NULL;
+    }
     pthread_mutex_lock(&arr->lock);
     size_t tot_len = 0;
     size_t start = 0;
