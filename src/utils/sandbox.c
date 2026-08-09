@@ -5,8 +5,10 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <core/logger.h>
 #include <core/variable.h>
 #include <sys/mount.h>
+#include <utils/file.h>
 #include <utils/sandbox.h>
 #include <utils/string.h>
 
@@ -71,26 +73,40 @@ visible void sandbox_apply(sandbox_handle_t *sandbox) {
     }
     write_id_map("/proc/self/uid_map", sandbox->uid);
     write_id_map("/proc/self/gid_map", sandbox->gid);
-    // Apply the registered mounts.
+
+    // New rootfs.
+    create_dir("/tmp/ymp-root");
+    chdir("/tmp/ymp-root");
+
+    // Apply the registered mounts inside the rootfs.
     size_t len = 0;
     char **binds = array_get(sandbox->binds, &len);
     for (size_t i = 0; i < len; i++) {
         char **parts = split(binds[i], " ");
+        char *target = build_string("/tmp/ymp-root%s", parts[1]);
         // A "tmpfs" source is mounted as a fresh tmpfs instead of a bind mount.
         int ret;
         if (strcmp(parts[0], "tmpfs") == 0) {
-            ret = mount("tmpfs", parts[1], "tmpfs", 0, NULL);
+            ret = mount("tmpfs", target, "tmpfs", 0, NULL);
         } else {
-            ret = mount(parts[0], parts[1], NULL, MS_BIND | MS_REC, NULL);
+            debug("%s => %s\n", parts[0], target);
+            create_dir(target);
+            ret = mount(parts[0], target, NULL, MS_BIND | MS_REC, NULL);
         }
         if (ret < 0) {
             perror("mount");
-            exit(1);
+            warning("Failed to mount: %s\n", target);
+            continue;
         }
+        free(target);
         free(binds[i]);
         free(parts);
     }
     free(binds);
+
+    // Chroot into the rootfs.
+    chroot("/tmp/ymp-root");
+    chdir("/");
 }
 
 visible void sandbox_configure_bind(sandbox_handle_t *sandbox, const char *src, const char *target) {

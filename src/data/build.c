@@ -142,6 +142,36 @@ visible int ympbuild_check(char *ympfile) {
     }
 }
 
+static void sandbox_build(ympbuild *ymp) {
+    // Create and configure the sandbox.
+    char *uuid = generate_uuid();
+    sandbox_handle_t *handle = sandbox_new();
+    if (!handle) {
+        exit(EXIT_FAILURE);
+    }
+    sandbox_configure_hostname(handle, uuid);
+    sandbox_configure_bind(handle, "tmpfs", "/tmp");
+
+    char *dirs[] = {
+        "/dev", "/sys", "/proc", "/usr",
+        "/lib", "/bin", "/etc", "/lib64",
+        "/lib32", "/libx32", "/var", NULL
+
+    };
+    for (size_t i = 0; dirs[i]; i++) {
+        sandbox_configure_bind(handle, dirs[i], dirs[i]);
+    }
+
+    sandbox_configure_bind(handle, ymp->path, ymp->path);
+
+    sandbox_configure_network(handle, false);
+
+    // Apply the sandbox and run the command inside it.
+    sandbox_apply(handle);
+    sandbox_unref(handle);
+    free(uuid);
+}
+
 visible int ympbuild_run_function(ympbuild *ymp, const char *name) {
     enable_raw_mode();
     pid_t pid = fork();
@@ -160,17 +190,17 @@ visible int ympbuild_run_function(ympbuild *ymp, const char *name) {
             "fi",
             ymp->header, ymp->ctx, name, name, name);
         char *args[] = { "/bin/bash", "-c", command, NULL };
-        if (chdir(ymp->path) < 0) {
-            warning("Build path is broken!");
-            free(command);
-            return -1;
-        }
         char *envs[] = {
             build_string("PATH=%s:/usr/bin:/usr/sbin:/bin:/sbin/", ymp->path),
             build_string("HOME=%s", ymp->path),
             NULL
         };
-        sandbox();
+        sandbox_build(ymp);
+        if (chdir(ymp->path) < 0) {
+            warning("Build path is broken!");
+            free(command);
+            return -1;
+        }
         execve(args[0], args, envs);
         warning("Failed to exec command!");
         free(command);
