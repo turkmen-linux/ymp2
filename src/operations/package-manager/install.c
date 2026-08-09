@@ -13,8 +13,6 @@
 #include <utils/string.h>
 #include <utils/yaml.h>
 
-static int install_upgrade();
-
 static bool in_upgrade = false;
 
 static int download_cb(Package *p, int num) {
@@ -42,14 +40,24 @@ static int install_cb(Package *p, int num) {
     return 0;
 }
 
+static void install_schedule(char *name, jobs *download_jobs, jobs *install_jobs) {
+    // Resolve dependencies
+    Package **res = resolve_dependency(name);
+    if (res == NULL) {
+        return;
+    }
+    // Define jobs
+    for (size_t i = 0; res[i]; i++) {
+        if (package_is_installed(res[i])) {
+            continue;
+        }
+        jobs_add(download_jobs, (callback) download_cb, res[i], (void *) (i + 1));
+        jobs_add(install_jobs, (callback) install_cb, res[i], (void *) (i + 1));
+    }
+}
+
 static int install_main(char **args) {
     int status = 0;
-    if (get_bool("upgrade") && !in_upgrade) {
-        status = install_upgrade();
-        if (status != 0) {
-            return status;
-        }
-    }
 
     // Begin resolver and init job manager
     Repository **repos = resolve_begin();
@@ -63,21 +71,28 @@ static int install_main(char **args) {
         install_jobs->parallel = 1;
     }
 
-    for (size_t r = 0; args[r]; r++) {
-        // Resolve dependencies
-        Package **res = resolve_dependency(args[0]);
-        if (res == NULL) {
-            continue;
-        }
-        // Define jobs
-        for (size_t i = 0; res[i]; i++) {
-            if (package_is_installed(res[i])) {
-                continue;
+    // Upgrade installed packages first
+    if (get_bool("upgrade") && !in_upgrade) {
+        char **need_upgrade = resolve_upgrade(repos);
+        if (need_upgrade) {
+            in_upgrade = true;  // semaphore
+            for (size_t u = 0; need_upgrade[u]; u++) {
+                install_schedule(need_upgrade[u], download_jobs, install_jobs);
             }
-            jobs_add(download_jobs, (callback) download_cb, res[i], (void *) (i + 1));
-            jobs_add(install_jobs, (callback) install_cb, res[i], (void *) (i + 1));
+            in_upgrade = false;
+            // Clean up
+            for (size_t i = 0; need_upgrade[i]; i++) {
+                free(need_upgrade[i]);
+            }
+            free(need_upgrade);
         }
     }
+
+    // Resolve requested packages
+    for (size_t r = 0; args[r]; r++) {
+        install_schedule(args[r], download_jobs, install_jobs);
+    }
+
     // Download packages
     jobs_run(download_jobs);
     if (download_jobs->failed) {
@@ -102,25 +117,6 @@ install_main_free:
     resolve_end(repos);
     jobs_unref(download_jobs);
     jobs_unref(install_jobs);
-    return status;
-}
-
-static int install_upgrade() {
-    // Begin resolver and init job manager
-    Repository **repos = resolve_begin();
-    if (repos == NULL) {
-        return 2;
-    }
-    char **need_upgrade = resolve_upgrade(repos);
-    in_upgrade = true;                        // semaphore
-    int status = install_main(need_upgrade);  // first upgrade packages
-    in_upgrade = false;
-    // Clean up
-    for (size_t i = 0; need_upgrade[i]; i++) {
-        free(need_upgrade[i]);
-    }
-    free(need_upgrade);
-    resolve_end(repos);
     return status;
 }
 

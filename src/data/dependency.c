@@ -266,13 +266,18 @@ visible void resolve_end(Repository **repos) {
     }
     free(repos);  // Free the repository pointer array
     // Free packages not owned by any repository (created by resolve_reverse_dependency_fn)
-    for (size_t i = 0; i < resolved_count; i++) {
-        if (resolved[i] && resolved[i]->repo == NULL) {
-            package_unref(resolved[i]);
+    if (resolved) {
+        for (size_t i = 0; i < resolved_count; i++) {
+            if (resolved[i] && resolved[i]->repo == NULL) {
+                package_unref(resolved[i]);
+            }
         }
+        free(resolved);  // Free the resolved dependencies array
+        resolved = NULL;
     }
-    free(resolved);      // Free the resolved dependencies array
+    resolved_count = 0;
     array_unref(cache);  // Unreference the cache array
+    cache = NULL;
 }
 
 // Public function to resolve dependencies for a given package name
@@ -282,12 +287,16 @@ visible Package **resolve_dependency(char *name) {
         print(_("Failed to resolve dependencies\n"));
         return NULL;  // Dont resolve package if repository list is empty
     }
+    if (resolved != NULL) {
+        free(resolved);
+    }
     resolved = malloc(sizeof(Package *) * 1024);  // Create a new array for resolved packages
     resolved_count = 0;                           // reset resolve count
     resolved_total = 0;                           // reset resolve total
     cache = array_new();                          // Create a new array for caching resolved packages
 
     resolve_dependency_fn(name, !get_bool("no-emerge"));  // Resolve dependencies recursively
+    resolved[resolved_count] = NULL;                      // NULL terminate the resolved list
     info("Dependencies resolved in %d µs\n", get_epoch() - begin_time);
     return resolved;  // Return the array of resolved dependencies
 }
