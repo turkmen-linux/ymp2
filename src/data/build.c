@@ -53,7 +53,7 @@ visible char **ympbuild_get_array(ympbuild *ymp, const char *name) {
 visible char *ympbuild_package_filename(const char *path) {
     char *ympfile = build_string("%s/ympbuild", path);
     // Allocate memory for a new ympbuild structure
-    ympbuild *ymp = malloc(sizeof(ympbuild));
+    ympbuild *ymp = calloc(1, sizeof(ympbuild));
     if (!ymp) {
         free(ympfile);
         return NULL;
@@ -66,7 +66,7 @@ visible char *ympbuild_package_filename(const char *path) {
     char *name = ympbuild_get_value(ymp, "name");
     char *version = ympbuild_get_value(ymp, "version");
     char *release = ympbuild_get_value(ymp, "release");
-    char *ret = malloc(sizeof(char) * (strlen(name) + strlen(version) + strlen(release) + strlen(ARCH) + 9));
+    char *ret = calloc((strlen(name) + strlen(version) + strlen(release) + strlen(ARCH) + 9), sizeof(char));
     if (!ret) {
         ret = NULL;
         goto ympbuild_package_filename_free;
@@ -93,7 +93,7 @@ ympbuild_package_filename_free:
 visible char *ympbuild_source_filename(const char *path) {
     char *ympfile = build_string("%s/ympbuild", path);
     // Allocate memory for a new ympbuild structure
-    ympbuild *ymp = malloc(sizeof(ympbuild));
+    ympbuild *ymp = calloc(1, sizeof(ympbuild));
     if (!ymp) {
         free(ympfile);
         return NULL;
@@ -106,7 +106,7 @@ visible char *ympbuild_source_filename(const char *path) {
     char *name = ympbuild_get_value(ymp, "name");
     char *version = ympbuild_get_value(ymp, "version");
     char *release = ympbuild_get_value(ymp, "release");
-    char *ret = malloc(sizeof(char) * (strlen(name) + strlen(version) + strlen(release) + 15));
+    char *ret = calloc((strlen(name) + strlen(version) + strlen(release) + 15), sizeof(char));
     if (!ret) {
         ret = NULL;
         goto ympbuild_source_filename_free;
@@ -524,7 +524,7 @@ visible char *build_source_from_path(const char *path) {
     }
 
     // Allocate memory for a new ympbuild structure
-    ympbuild *ymp = malloc(sizeof(ympbuild));
+    ympbuild *ymp = calloc(1, sizeof(ympbuild));
     if (!ymp) {
         free(ympfile);
         return NULL;
@@ -596,7 +596,7 @@ visible char *build_binary_from_path(const char *path) {
     }
 
     // Allocate memory for a new ympbuild structure
-    ympbuild *ymp = malloc(sizeof(ympbuild));
+    ympbuild *ymp = calloc(1, sizeof(ympbuild));
     if (!ymp) {
         return NULL;
     }

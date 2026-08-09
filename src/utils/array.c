@@ -10,12 +10,12 @@
 #define csort(A, B) qsort(A, B, sizeof(const char *), (int (*)(const void *, const void *)) strcmp)
 
 visible array *array_new() {
-    array *arr = (array *) malloc(sizeof(array));
+    array *arr = (array *) calloc(1, sizeof(array));
     if (!arr) {
         print(_("memory allocation failed"));
         return NULL;
     }
-    arr->data = (char **) malloc(1024 * sizeof(char *));
+    arr->data = (char **) calloc(1024, sizeof(char *));
     if (!arr->data) {
         print(_("memory allocation failed"));
         free(arr);
@@ -94,7 +94,7 @@ visible char *array_get_string(array *arr) {
     }
     char *ret = calloc(tot_len + 1, sizeof(char));
     start = 0;
-    while (start < arr->size + arr->removed + 1) {
+    while (start < arr->capacity) {
         if (arr->data[start] != NULL) {
             strcat(ret, arr->data[start]);
         }
@@ -241,7 +241,7 @@ visible char **array_get(array *arr, size_t *len) {
 
     // Allocate memory for the return array
     size_t count = arr->size > arr->removed ? arr->size - arr->removed : 0;
-    char **ret = malloc((count + 1) * sizeof(char *));
+    char **ret = calloc((count + 1), sizeof(char *));
     if (!ret) {
         pthread_mutex_unlock(&arr->lock);
         return NULL;  // Handle memory allocation failure
@@ -341,7 +341,7 @@ visible void array_clear(array *arr) {
         }
     }
     free(arr->data);
-    arr->data = (char **) malloc(1024 * sizeof(char *));
+    arr->data = (char **) calloc(1024, sizeof(char *));
     arr->size = 0;
     arr->capacity = 1024;
     arr->removed = 0;

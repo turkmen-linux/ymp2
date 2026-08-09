@@ -294,10 +294,10 @@ visible Package **resolve_dependency(char *name) {
     if (resolved != NULL) {
         free(resolved);
     }
-    resolved = malloc(sizeof(Package *) * 1024);  // Create a new array for resolved packages
-    resolved_count = 0;                           // reset resolve count
-    resolved_total = 0;                           // reset resolve total
-    cache = array_new();                          // Create a new array for caching resolved packages
+    resolved = calloc(1024, sizeof(Package *));  // Create a new array for resolved packages
+    resolved_count = 0;                          // reset resolve count
+    resolved_total = 0;                          // reset resolve total
+    cache = array_new();                         // Create a new array for caching resolved packages
 
     resolve_dependency_fn(name, !get_bool("no-emerge"));  // Resolve dependencies recursively
     resolved[resolved_count] = NULL;                      // NULL terminate the resolved list
@@ -311,10 +311,10 @@ visible Package **resolve_reverse_dependency(char *name) {
     if (resolved != NULL) {
         free(resolved);
     }
-    resolved = malloc(sizeof(Package *) * 1024);  // Create a new array for resolved packages
-    resolved_count = 0;                           // reset resolve count
-    resolved_total = 0;                           // reset resolve total
-    cache = array_new();                          // Create a new array for caching resolved packages
+    resolved = calloc(1024, sizeof(Package *));  // Create a new array for resolved packages
+    resolved_count = 0;                          // reset resolve count
+    resolved_total = 0;                          // reset resolve total
+    cache = array_new();                         // Create a new array for caching resolved packages
     info("Reverse dependencies resolved in %d µs\n", get_epoch() - begin_time);
     resolve_reverse_dependency_fn(name);
     resolved[resolved_count] = NULL;
