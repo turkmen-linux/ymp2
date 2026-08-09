@@ -137,6 +137,17 @@ void operation_manager_unref(OperationManager* manager);
  */
 int operation_main(OperationManager *manager, const char* name, void* args);
 
+/**
+ * @brief Looks up an operation by its name or alias.
+ *
+ * Searches the registered operations for one whose name matches the given
+ * string, or that declares the string as one of its aliases.
+ *
+ * @param manager A pointer to the `OperationManager` instance to search.
+ * @param name The operation name or alias to look up.
+ * @return The matching `Operation`, or a zero-initialized `Operation`
+ *         (all fields NULL/0) if no operation matches.
+ */
 Operation get_operation_by_name(OperationManager *manager, const char* name);
 
 #endif

@@ -1,10 +1,29 @@
 #ifndef _hash_h
 #define _hash_h
 
+/**
+ * @file hash.h
+ * @brief File hash calculation utilities.
+ *
+ * Provides the calculate_hash() function and convenience macros for
+ * computing SHA-512, SHA-256, SHA-1, and MD5 hashes of files.
+ */
 
+/** @def SHA512
+ *  @brief Hash type constant for the SHA-512 algorithm.
+ */
 #define SHA512 0
+/** @def SHA256
+ *  @brief Hash type constant for the SHA-256 algorithm.
+ */
 #define SHA256 1
+/** @def SHA1
+ *  @brief Hash type constant for the SHA-1 algorithm.
+ */
 #define SHA1   2
+/** @def MD5
+ *  @brief Hash type constant for the MD5 algorithm.
+ */
 #define MD5    3
 
 /**
@@ -26,7 +45,6 @@
 char *calculate_hash(int type, const char *path);
 
 /**
- * @file hash.h
  * @brief Calculates the SHA-1 hash of a file.
  *
  * This function reads the contents of the file located at the specified path

@@ -4,6 +4,13 @@
 #include <data/package.h>
 
 /**
+ * @file repository.h
+ * @brief Package repository management.
+ *
+ * This header defines the Repository structure and functions for
+ * loading, querying, and downloading packages from repositories.
+ */
+/**
  * @struct Repository
  * @brief Represents a package repository.
  *

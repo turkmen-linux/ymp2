@@ -10,6 +10,14 @@
 
 #include <stdbool.h>
 
+/**
+ * @brief Callback invoked with download progress information.
+ *
+ * @param url The URL currently being downloaded.
+ * @param downloaded Number of bytes downloaded so far.
+ * @param total Total number of bytes expected, or 0 if unknown.
+ * @param userdata User data passed to fetch_with_progress().
+ */
 typedef void (*FetchProgressCallback)(const char* url, size_t downloaded, size_t total, void* userdata);
 
 /**

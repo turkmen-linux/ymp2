@@ -121,6 +121,17 @@ char** listdir(const char* path);
  */
 char** find(const char* path);
 
+/**
+ * @brief Formats a byte count into a human-readable size string.
+ *
+ * Writes a human-readable representation of the given byte count into
+ * the provided buffer. Sizes are rendered in units of B, KB, MB, or GB
+ * depending on their magnitude.
+ *
+ * @param buf The destination buffer.
+ * @param buf_len The size of the destination buffer.
+ * @param bytes The number of bytes to format.
+ */
 void format_size(char *buf, size_t buf_len, size_t bytes);
 
 /**

@@ -1,3 +1,11 @@
+/**
+ * @file dependency.h
+ * @brief Package dependency resolution.
+ *
+ * Provides functions for resolving dependencies, reverse dependencies,
+ * groups, and upgrade candidates from the configured repositories.
+ */
+
 #include <data/repository.h>
 #include <data/package.h>
 
@@ -50,6 +58,16 @@ char** get_group_packages (const char* name);
  */
 Package** resolve_reverse_dependency(char* name);
 
+/**
+ * @brief Determines which installed packages need an upgrade.
+ *
+ * Compares the installed packages against the provided repositories and
+ * collects the names of packages that have a newer version available.
+ *
+ * @param repos A NULL-terminated array of repositories to check against.
+ * @return A NULL-terminated array of package names that need upgrading.
+ *         The caller must free the array and its contents.
+ */
 char** resolve_upgrade(Repository** repos);
 
 /**
