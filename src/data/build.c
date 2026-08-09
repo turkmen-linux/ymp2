@@ -31,7 +31,7 @@ visible char *ympbuild_get_value(ympbuild *ymp, const char *name) {
         "echo -n ${%s}",
         ymp->ctx, name);
     char *args[] = { "/bin/bash", "-c", command, NULL };
-    char *output = strip(getoutput_unshare(args, UNSHARE_FLAGS | CLONE_NEWPID));
+    char *output = strip(getoutput_unshare(args, CLONE_NEWNS | CLONE_NEWUTS | CLONE_NEWUSER | CLONE_NEWNET | CLONE_NEWPID));
     debug("variable: %s -> %s\n", name, output);
     free(command);
     return output;
@@ -44,7 +44,7 @@ visible char **ympbuild_get_array(ympbuild *ymp, const char *name) {
         "echo -n ${%s[@]}",
         ymp->ctx, name);
     char *args[] = { "/bin/bash", "-c", command, NULL };
-    char *output = strip(getoutput_unshare(args, UNSHARE_FLAGS | CLONE_NEWPID));
+    char *output = strip(getoutput_unshare(args, CLONE_NEWNS | CLONE_NEWUTS | CLONE_NEWUSER | CLONE_NEWNET | CLONE_NEWPID));
     debug("variable: %s -> %s\n", name, output);
     free(command);
     return split(output, " ");

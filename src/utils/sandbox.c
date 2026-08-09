@@ -2,38 +2,118 @@
 #include <sched.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #include <core/variable.h>
+#include <sys/mount.h>
 #include <utils/sandbox.h>
+#include <utils/string.h>
 
-visible void sandbox() {
-    if (get_bool("no-sandbox")) {
-        return;
+// Writes "0 id 1" into an id map file.
+static void write_id_map(const char *path, unsigned long id) {
+    FILE *fp = fopen(path, "w");
+    if (fp) {
+        fprintf(fp, "0 %lu 1", id);
+        fclose(fp);
     }
-    uid_t uid = getuid();
-    gid_t gid = getgid();
-    if (unshare(UNSHARE_FLAGS) < 0) {
+}
+
+visible sandbox_handle_t *sandbox_new() {
+    sandbox_handle_t *sandbox = calloc(1, sizeof(sandbox_handle_t));
+    if (!sandbox) {
+        return NULL;
+    }
+    sandbox->flags = CLONE_NEWNS | CLONE_NEWUTS | CLONE_NEWUSER | CLONE_NEWNET;
+    sandbox->hostname = strdup("sandbox");
+    sandbox->uid = getuid();
+    sandbox->gid = getgid();
+    sandbox->binds = array_new();
+    return sandbox;
+}
+
+visible void sandbox_configure_hostname(sandbox_handle_t *sandbox, const char *hostname) {
+    free(sandbox->hostname);
+    sandbox->hostname = strdup(hostname);
+}
+
+visible void sandbox_configure_flags(sandbox_handle_t *sandbox, int flags) {
+    sandbox->flags = flags;
+}
+
+visible void sandbox_configure_user(sandbox_handle_t *sandbox, uid_t uid, gid_t gid) {
+    sandbox->uid = uid;
+    sandbox->gid = gid;
+}
+
+visible void sandbox_apply(sandbox_handle_t *sandbox) {
+    // Create the namespaces. Network access shares the host network.
+    int flags = sandbox->network ? sandbox->flags & ~CLONE_NEWNET : sandbox->flags;
+    if (unshare(flags) < 0) {
         perror("unshare");
         exit(1);
     }
-    if (sethostname("sandbox", 7) < 0) {
+    // Isolate the mount namespace so mounts do not leak to the host.
+    if (mount(NULL, "/", NULL, MS_PRIVATE | MS_REC, NULL) < 0) {
+        perror("mount");
+        exit(1);
+    }
+    // Isolate the hostname.
+    if (sethostname(sandbox->hostname, strlen(sandbox->hostname)) < 0) {
         perror("hostname");
         exit(1);
     }
-    FILE *uid_map = fopen("/proc/self/uid_map", "w");
-    if (uid_map) {
-        fprintf(uid_map, "0 %d 1", uid);
-        fclose(uid_map);
-    }
+    // Map the current user to root inside the sandbox.
     FILE *setgroups = fopen("/proc/self/setgroups", "w");
     if (setgroups) {
         fprintf(setgroups, "deny");
         fclose(setgroups);
     }
-    FILE *gid_map = fopen("/proc/self/gid_map", "w");
-    if (gid_map) {
-        fprintf(gid_map, "0 %d 1", gid);
-        fclose(gid_map);
+    write_id_map("/proc/self/uid_map", sandbox->uid);
+    write_id_map("/proc/self/gid_map", sandbox->gid);
+    // Apply the registered mounts.
+    size_t len = 0;
+    char **binds = array_get(sandbox->binds, &len);
+    for (size_t i = 0; i < len; i++) {
+        char **parts = split(binds[i], " ");
+        // A "tmpfs" source is mounted as a fresh tmpfs instead of a bind mount.
+        int ret;
+        if (strcmp(parts[0], "tmpfs") == 0) {
+            ret = mount("tmpfs", parts[1], "tmpfs", 0, NULL);
+        } else {
+            ret = mount(parts[0], parts[1], NULL, MS_BIND | MS_REC, NULL);
+        }
+        if (ret < 0) {
+            perror("mount");
+            exit(1);
+        }
+        free(binds[i]);
+        free(parts);
+    }
+    free(binds);
+}
+
+visible void sandbox_configure_bind(sandbox_handle_t *sandbox, const char *src, const char *target) {
+    array_add(sandbox->binds, build_string("%s %s", src, target));
+}
+
+visible void sandbox_configure_network(sandbox_handle_t *sandbox, bool enabled) {
+    sandbox->network = enabled;
+}
+
+visible void sandbox_unref(sandbox_handle_t *sandbox) {
+    free(sandbox->hostname);
+    array_unref(sandbox->binds);
+    free(sandbox);
+}
+
+visible void sandbox() {
+    if (get_bool("no-sandbox")) {
+        return;
+    }
+    sandbox_handle_t *handle = sandbox_new();
+    if (handle) {
+        sandbox_apply(handle);
+        sandbox_unref(handle);
     }
 }
