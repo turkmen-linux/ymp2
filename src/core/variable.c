@@ -14,13 +14,13 @@ typedef struct {
 } YmpVariable;
 
 visible VariableManager *variable_manager_new() {
-    VariableManager *variables = (VariableManager *) malloc(sizeof(VariableManager));
+    VariableManager *variables = (VariableManager *) calloc(1, sizeof(VariableManager));
     if (!variables) {
         return NULL;  // Handle memory allocation failure
     }
     variables->capacity = 32;  // Initialize with a reasonable capacity
     variables->length = 0;
-    variables->priv_data = malloc(sizeof(YmpVariable) * variables->capacity);
+    variables->priv_data = calloc(variables->capacity, sizeof(YmpVariable));
     if (!variables->priv_data) {
         free(variables);
         return NULL;  // Handle memory allocation failure

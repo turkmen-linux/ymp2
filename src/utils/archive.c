@@ -200,7 +200,7 @@ visible char *archive_readfile(Archive *data, const char *file_path) {
         if (strcmp(entry_path, file_path) != 0)
             continue;
         size_t size = archive_entry_size(entry);
-        ret = (char *) malloc(size + 1);
+        ret = (char *) calloc(1, size + 1);
         if (ret == NULL) {
             char *error_msg = build_string("Memory allocation failed");
             error_add(error_msg);

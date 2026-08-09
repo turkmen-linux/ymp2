@@ -77,7 +77,7 @@ visible void jobs_run(jobs *j) {
 }
 
 visible jobs *jobs_new() {
-    jobs *j = (jobs *) malloc(sizeof(jobs));
+    jobs *j = (jobs *) calloc(1, sizeof(jobs));
     if (!j) {
         return NULL;
     }
@@ -87,7 +87,7 @@ visible jobs *jobs_new() {
     j->total = 0;
     j->parallel = get_nprocs_conf();
     j->failed = false;
-    j->jobs = (job *) malloc(j->max * sizeof(job));
+    j->jobs = (job *) calloc(j->max, sizeof(job));
     pthread_cond_init(&j->cond, NULL);
     return j;
 }

@@ -124,7 +124,7 @@ static char **tokenize_line(const char *line, bool *stop_expr) {
                         line++;
                 }
                 size_t clen = line - start;
-                char *cmd = malloc(clen + 1);
+                char *cmd = calloc(1, clen + 1);
                 if (!cmd)
                     continue;
                 memcpy(cmd, start, clen);
@@ -146,7 +146,7 @@ static char **tokenize_line(const char *line, bool *stop_expr) {
                 while (*line && *line != '}')
                     line++;
                 size_t vlen = line - start;
-                char *vname = malloc(vlen + 1);
+                char *vname = calloc(1, vlen + 1);
                 if (!vname)
                     continue;
                 memcpy(vname, start, vlen);
@@ -169,7 +169,7 @@ static char **tokenize_line(const char *line, bool *stop_expr) {
                     line++;
                 if (line > start) {
                     size_t vlen = line - start;
-                    char *vname = malloc(vlen + 1);
+                    char *vname = calloc(1, vlen + 1);
                     if (!vname)
                         continue;
                     memcpy(vname, start, vlen);
@@ -194,7 +194,7 @@ static char **tokenize_line(const char *line, bool *stop_expr) {
             while (*line && *line != '`')
                 line++;
             size_t clen = line - start;
-            char *cmd = malloc(clen + 1);
+            char *cmd = calloc(1, clen + 1);
             if (!cmd)
                 continue;
             memcpy(cmd, start, clen);
@@ -311,7 +311,7 @@ static int eval_cond_chain(char **args, size_t *pos) {
     while (args[start + count] && !is_cond_op(args[start + count]))
         count++;
 
-    char **op_args = malloc((count + 1) * sizeof(char *));
+    char **op_args = calloc((count + 1), sizeof(char *));
     if (!op_args) {
         *pos = start + count;
         return 1;

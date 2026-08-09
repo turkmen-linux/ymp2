@@ -393,9 +393,9 @@ visible bool move_file(const char *src, const char *dest) {
 visible char *sreadlink(const char *path) {
     // Buffer size for the target path
     ssize_t bufsize = 1024;  // You can adjust this size as needed
-    char *buf = malloc(bufsize);
+    char *buf = calloc(bufsize, sizeof(char));
     if (buf == NULL) {
-        perror("malloc");
+        perror("calloc");
         return NULL;  // Return NULL if memory allocation fails
     }
 

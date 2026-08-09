@@ -10,7 +10,7 @@
 // Function to create a new Help structure
 visible Help *help_new() {
     // Allocate memory for the Help structure
-    Help *h = malloc(sizeof(Help));
+    Help *h = calloc(1, sizeof(Help));
     if (h == NULL) {
         print(_("Memory allocation failed for Help structure.\n"));
         return NULL;
@@ -21,7 +21,7 @@ visible Help *help_new() {
     h->max = 32;
 
     // Allocate memory for the parameters array
-    h->parameters = malloc(h->max * sizeof(char *));
+    h->parameters = calloc(h->max, sizeof(char *));
     if (h->parameters == NULL) {
         print(_("Memory allocation failed for parameters array.\n"));
         free(h);

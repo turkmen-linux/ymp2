@@ -64,9 +64,9 @@ static int fetch_fn(void **args) {
     }
 
     for (size_t i = 0; links[i]; i++) {
-        download_job_t *dl = malloc(sizeof(download_job_t));
+        download_job_t *dl = calloc(1, sizeof(download_job_t));
         if (!dl) {
-            perror("malloc");
+            perror("calloc");
             break;
         }
         dl->url = links[i];

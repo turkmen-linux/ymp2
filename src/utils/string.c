@@ -29,7 +29,7 @@ visible char *readfile(const char *path) {
     long length = ftell(file);
     fseek(file, 0, SEEK_SET);
 
-    char *data = malloc(sizeof(char) * (length + 1));
+    char *data = calloc(length + 1, sizeof(char));
     if (!data) {
         goto readfile_err;
     }
@@ -201,7 +201,7 @@ visible char *url_encode(const char *input) {
     }
 
     /* +1 for null-terminator */
-    char *output = (char *) malloc((cnt + 1) * sizeof(char));
+    char *output = (char *) calloc(cnt + 1, sizeof(char));
 
     if (output == NULL) {
         perror("Memory allocation failed\n");
@@ -233,7 +233,7 @@ visible char *build_string(char *format, ...) {
     va_end(args);
 
     /* Allocate memory for the string */
-    char *result = (char *) malloc(size);
+    char *result = (char *) calloc(1, size);
     if (result == NULL) {
         return NULL;
     }
@@ -265,7 +265,7 @@ visible char *str_replace(const char *str, const char *oldSub, const char *newSu
 
     // Allocate memory for the new string
     size_t newStrLen = strLen + count * (newSubLen - oldSubLen);
-    char *newStr = (char *) malloc(newStrLen + 1);  // +1 for the null terminator
+    char *newStr = (char *) calloc(1, newStrLen + 1);  // +1 for the null terminator
     if (!newStr) {
         return NULL;  // Memory allocation failed
     }
@@ -290,7 +290,7 @@ visible char *str_replace(const char *str, const char *oldSub, const char *newSu
 
 visible char **split(const char *data, const char *f) {
     if (strlen(data) == 0) {
-        char **ret = malloc(sizeof(char *));
+        char **ret = calloc(1, sizeof(char *));
         if (!ret) {
             return NULL;
         }
@@ -340,7 +340,7 @@ visible char *strip(const char *str) {
     size_t length = end - src + 1;
 
     // Allocate memory for the new string
-    char *trimmed = (char *) malloc(length + 1);
+    char *trimmed = (char *) calloc(1, length + 1);
     if (trimmed == NULL) {
         return NULL;  // Handle memory allocation failure
     }

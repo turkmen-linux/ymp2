@@ -41,10 +41,10 @@ static int progress_callback(void *clientp, curl_off_t dltotal, curl_off_t dlnow
 
 visible bool fetch_with_progress(const char *url, const char *path, FetchProgressCallback cb, void *userdata) {
     debug("Fetch: %s -> %s\n", url, path);
-    fetcher *fetch = malloc(sizeof(fetcher));
+    fetcher *fetch = calloc(1, sizeof(fetcher));
 
     if (!fetch) {
-        perror("malloc");
+        perror("calloc");
         return false;
     }
 

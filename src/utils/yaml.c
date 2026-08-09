@@ -125,7 +125,7 @@ visible char **yaml_get_array(const char *data, const char *name, int *count) {
 visible char **yaml_get_area_list(const char *fdata, const char *path, int *area_count) {
     debug("%s\n", path);
     int max = 32;
-    char **ret = malloc(max * sizeof(char *));
+    char **ret = calloc(max, sizeof(char *));
 
     array *area = array_new();
     char line[MAX_LINE_LENGTH];

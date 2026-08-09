@@ -17,12 +17,12 @@
 #include <utils/yaml.h>
 
 visible Repository *repository_new() {
-    Repository *repo = (Repository *) malloc(sizeof(Repository));
+    Repository *repo = (Repository *) calloc(1, sizeof(Repository));
     if (!repo) {
         return NULL;  // Handle memory allocation failure
     }
-    repo->package_count = 0;                          // Initialize package_count
-    repo->packages = malloc(sizeof(Package *) * 32);  // Initialize with a reasonable capacity
+    repo->package_count = 0;                         // Initialize package_count
+    repo->packages = calloc(32, sizeof(Package *));  // Initialize with a reasonable capacity
     if (!repo->packages) {
         free(repo);
         color_print(BOLD, COLOR_RED, "Memory initial allocation failed\n");

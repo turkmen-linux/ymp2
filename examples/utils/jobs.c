@@ -21,7 +21,7 @@ int main() {
 
     // Add jobs to the job manager
     for (int i = 0; i < 10; i++) {
-        int *arg = malloc(sizeof(int));
+        int *arg = calloc(1, sizeof(int));
         if (!arg) {
             return EXIT_FAILURE;
         }

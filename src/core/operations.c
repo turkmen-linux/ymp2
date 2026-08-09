@@ -16,11 +16,11 @@ typedef struct {
 
 visible OperationManager *operation_manager_new() {
     // Allocate memory for the OperationManager instance
-    OperationManager *manager = (OperationManager *) malloc(sizeof(OperationManager));
+    OperationManager *manager = (OperationManager *) calloc(1, sizeof(OperationManager));
     if (manager == NULL) {
         return NULL;  // Memory allocation failed
     }
-    manager->priv_data = (void *) malloc(sizeof(OperationManagerPriv));
+    manager->priv_data = (void *) calloc(1, sizeof(OperationManagerPriv));
     if (manager->priv_data == NULL) {
         free(manager);
         return NULL;  // Memory allocation failed

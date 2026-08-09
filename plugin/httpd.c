@@ -27,7 +27,7 @@ typedef struct {
 
 static void serve_file(int client_fd, FILE *file, size_t fsize, size_t start, size_t end) {
     (void) end;
-    char *buffer = malloc(BUFFER_SIZE);
+    char *buffer = calloc(1, BUFFER_SIZE);
     if (!buffer) {
         return;
     }
@@ -256,7 +256,7 @@ static int httpd(char **args) {
     }
     while (true) {
         int client_fd = accept(fd, (struct sockaddr *) &addr, (socklen_t *) &addrlen);
-        int *pclient = malloc(sizeof(int));
+        int *pclient = calloc(1, sizeof(int));
         if (!pclient) {
             close(client_fd);
             continue;

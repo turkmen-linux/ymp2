@@ -36,13 +36,13 @@ typedef struct {
 Ymp *global;
 
 static YmpPrivate *queue_init() {
-    YmpPrivate *queue = (YmpPrivate *) malloc(sizeof(YmpPrivate));
+    YmpPrivate *queue = (YmpPrivate *) calloc(1, sizeof(YmpPrivate));
     if (!queue) {
         return NULL;
     }
     queue->length = 0;
     queue->capacity = 32;
-    queue->item = malloc(sizeof(OperationJob) * 32);
+    queue->item = calloc(32, sizeof(OperationJob));
     return queue;
 }
 static void sigsegv_event(int signal) {
@@ -97,7 +97,7 @@ visible Ymp *ymp_init() {
 #ifndef NDEBUG
     size_t begin_time = get_epoch();
 #endif
-    Ymp *ymp = (Ymp *) malloc(sizeof(Ymp));
+    Ymp *ymp = (Ymp *) calloc(1, sizeof(Ymp));
     if (ymp == NULL) {
         return NULL;  // Memory allocation failed!
     }

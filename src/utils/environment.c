@@ -22,7 +22,7 @@ visible void save_env() {
     while (environ[len]) {
         len++;
     }
-    char **ret = malloc((len + 1) * sizeof(char *));
+    char **ret = calloc((len + 1), sizeof(char *));
     if (!ret) {
         return;
     }
