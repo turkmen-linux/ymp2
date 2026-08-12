@@ -51,6 +51,7 @@ visible void sandbox_configure_user(sandbox_handle_t *sandbox, uid_t uid, gid_t 
 visible void sandbox_apply(sandbox_handle_t *sandbox) {
     // Create the namespaces. Network access shares the host network.
     int flags = sandbox->network ? sandbox->flags & ~CLONE_NEWNET : sandbox->flags;
+    int rc = 0;
     if (unshare(flags) < 0) {
         perror("unshare");
         exit(1);
@@ -76,7 +77,10 @@ visible void sandbox_apply(sandbox_handle_t *sandbox) {
 
     // New rootfs.
     create_dir("/tmp/ymp-root");
-    chdir("/tmp/ymp-root");
+    rc = chdir("/tmp/ymp-root");
+    if(rc){
+        exit(rc);
+    }
 
     // Apply the registered mounts inside the rootfs.
     size_t len = 0;
@@ -105,8 +109,14 @@ visible void sandbox_apply(sandbox_handle_t *sandbox) {
     free(binds);
 
     // Chroot into the rootfs.
-    chroot("/tmp/ymp-root");
-    chdir("/");
+    rc = chroot("/tmp/ymp-root");
+    if(rc){
+        exit(rc);
+    }
+    rc = chdir("/");
+    if(rc){
+        exit(rc);
+    }
 }
 
 visible void sandbox_configure_bind(sandbox_handle_t *sandbox, const char *src, const char *target) {
