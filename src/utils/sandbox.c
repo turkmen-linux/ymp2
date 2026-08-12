@@ -78,7 +78,7 @@ visible void sandbox_apply(sandbox_handle_t *sandbox) {
     // New rootfs.
     create_dir("/tmp/ymp-root");
     rc = chdir("/tmp/ymp-root");
-    if(rc){
+    if (rc) {
         exit(rc);
     }
 
@@ -110,11 +110,11 @@ visible void sandbox_apply(sandbox_handle_t *sandbox) {
 
     // Chroot into the rootfs.
     rc = chroot("/tmp/ymp-root");
-    if(rc){
+    if (rc) {
         exit(rc);
     }
     rc = chdir("/");
-    if(rc){
+    if (rc) {
         exit(rc);
     }
 }

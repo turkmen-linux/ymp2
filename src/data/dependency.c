@@ -189,8 +189,8 @@ visible char **resolve_upgrade(Repository **repos) {
                 continue;
             }
             // remove suffix
-            for(size_t k=0; packages[j][k]; k++){
-                if(packages[j][k] == '.'){
+            for (size_t k = 0; packages[j][k]; k++) {
+                if (packages[j][k] == '.') {
                     packages[j][k] = '\0';
                     break;
                 }

@@ -404,7 +404,7 @@ visible bool package_is_installed(Package *pkg) {
         }
         package_load_from_metadata(pi, data, false);  // load virtual installed package
         debug("%s %d == %d\n", pkg->name, pi->release, pkg->release);
-        is_package = (pi->release == pkg->release);   // check installed release and package release are same
+        is_package = (pi->release == pkg->release);  // check installed release and package release are same
         // cleanup
         package_unref(pi);
         free(ymp_data);
