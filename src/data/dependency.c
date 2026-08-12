@@ -188,13 +188,20 @@ visible char **resolve_upgrade(Repository **repos) {
             if (array_has(need_upgrade, packages[j])) {
                 continue;
             }
+            // remove suffix
+            for(size_t k=0; packages[j][k]; k++){
+                if(packages[j][k] == '.'){
+                    packages[j][k] = '\0';
+                    break;
+                }
+            }
             Package *p = repository_get(repos[i], packages[j], emerge);  // Get the package from the repository
             if (!p) {
                 continue;
             }
             if (!package_is_installed(p)) {  // check upgrade
                 info("%s is need upgrade\n", packages[j]);
-                array_add(need_upgrade, packages[j]);
+                array_add(need_upgrade, p->name);
             }
         }
     }

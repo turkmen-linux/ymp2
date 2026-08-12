@@ -143,7 +143,7 @@ visible bool package_load_from_metadata(Package *pkg, const char *metadata, bool
     const char *rel = yaml_get_value(pkg->metadata, "release");
     if (rel == NULL) {
         pkg->release = 0;
-    } else if (strlen(rel) > 1) {
+    } else if (strlen(rel) > 0) {
         pkg->release = atoi(rel);
     }
     int dep_count = 0;
@@ -403,6 +403,7 @@ visible bool package_is_installed(Package *pkg) {
             return false;
         }
         package_load_from_metadata(pi, data, false);  // load virtual installed package
+        debug("%s %d == %d\n", pkg->name, pi->release, pkg->release);
         is_package = (pi->release == pkg->release);   // check installed release and package release are same
         // cleanup
         package_unref(pi);
