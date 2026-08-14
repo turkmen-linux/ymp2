@@ -108,8 +108,8 @@ static int quarantine_validate_files(const char *name) {
         }
 
         // Build the actual file path in quarantine root filesystem
-        strncpy(actual_file, rootfs_path, strlen(actual_file));
-        strncat(actual_file, line + 41, strlen(actual_file));
+        strcpy(actual_file, rootfs_path);
+        strcat(actual_file, line + 41);
 
         debug("Validate file: %s\n", actual_file + strlen(rootfs_path));
 
