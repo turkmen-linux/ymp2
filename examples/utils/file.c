@@ -62,19 +62,24 @@ int main() {
         if (dirs[i][0] != '.') {
             printf("%s\n", dirs[i]);
         }
+        free(dirs[i]);
         i++;
     }
+    free(dirs);
     // Find (list files recursivelly)
     char **files = find("./");
     i = 0;
     while (files[i]) {
         printf("%s\n", files[i]);
+        free(files[i]);
         i++;
     }
+    free(files);
     // command output
     char *args[] = { "/bin/cat", "/etc/os-release", NULL };
     char *out = getoutput(args);
     printf("%s\n", out);
+    free(out);
 
     const char *source = file_path;
     const char *destination = "destination.txt";

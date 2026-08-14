@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <utils/string.h>
 
@@ -19,6 +20,7 @@ int main() {
     // Read file
     char *os_release = readfile("/etc/os-release");
     printf("%s\n", os_release);
+    free(os_release);
 
     // uuid generate
     char *uuid = generate_uuid();
@@ -45,7 +47,7 @@ int main() {
     free(concatenated);  // Free the allocated memory
 
     // Trim whitespace
-    char *whitespace_str = "   Trim me!   ";
+    char *whitespace_str = strdup("   Trim me!   ");
     char *trimmed = trim(whitespace_str);
     printf("Trimmed string: '%s'\n", trimmed);
     free(trimmed);  // Free the allocated memory

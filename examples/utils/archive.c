@@ -58,7 +58,7 @@ int main() {
     // Create the archive
     archive_create(myArchive);
 
-    free(myArchive);
+    archive_unref(myArchive);
 
     myArchive = archive_new();
 
@@ -90,7 +90,7 @@ int main() {
     }
 
     // Clean up and release resources
-    free(myArchive);
+    archive_unref(myArchive);
 
     return EXIT_SUCCESS;
 }

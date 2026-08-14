@@ -145,27 +145,43 @@ visible void array_uniq(array *arr) {
     pthread_mutex_lock(&arr->lock);
     size_t start = 1;
     size_t i = 0;
-    size_t removed = 0;
-    while (start < arr->capacity) {
+    while (start < arr->size) {
         if (arr->data[start] == NULL) {
             start++;
             continue;
         }
-        for (i = 0; i < start - 1; i++) {
+        for (i = 0; i < start; i++) {
             if (arr->data[i] != NULL && strcmp(arr->data[i], arr->data[start]) == 0) {
-                arr->data[i] = NULL;
-                removed++;
+                free(arr->data[start]);
+                arr->data[start] = NULL;
+                break;
             }
         }
         start++;
     }
-    arr->size -= removed;
-    arr->removed = removed;
+    // Compact the array so remaining entries are contiguous
+    size_t write = 0;
+    for (size_t read = 0; read < arr->size; read++) {
+        if (arr->data[read] != NULL) {
+            if (write != read) {
+                arr->data[write] = arr->data[read];
+            }
+            write++;
+        }
+    }
+    for (size_t k = write; k < arr->size; k++) {
+        arr->data[k] = NULL;
+    }
+    arr->size = write;
+    arr->removed = 0;
     pthread_mutex_unlock(&arr->lock);
 }
 
 visible void array_pop(array *arr, size_t index) {
     pthread_mutex_lock(&arr->lock);
+    if (arr->data[index] != NULL) {
+        free(arr->data[index]);
+    }
     arr->data[index] = NULL;
     arr->size -= 1;
     arr->removed += 1;
@@ -208,10 +224,12 @@ visible void array_sort(array *arr) {
     pthread_mutex_lock(&arr->lock);
     char **new_data = (char **) calloc(arr->capacity, sizeof(char *));
     if (!new_data) {
+        pthread_mutex_unlock(&arr->lock);
         return;
     }
     size_t start = 0;
     size_t skip = 0;
+    size_t count = 0;
     while (start < arr->size + arr->removed + 1) {
         if (arr->data[start] == NULL) {
             start++;
@@ -219,16 +237,19 @@ visible void array_sort(array *arr) {
             continue;
         }
         new_data[start - skip] = strdup(arr->data[start]);
+        count++;
         start++;
     }
-    csort(new_data, arr->size);
-    for (size_t i = 0; i < arr->size; i++) {
+    csort(new_data, count);
+    for (size_t i = 0; i < arr->size + arr->removed + 1; i++) {
         if (arr->data[i]) {
             free(arr->data[i]);
         }
     }
     free(arr->data);
     arr->data = new_data;
+    arr->size = count;
+    arr->removed = 0;
     pthread_mutex_unlock(&arr->lock);
 }
 
@@ -239,17 +260,24 @@ visible char **array_get(array *arr, size_t *len) {
 
     pthread_mutex_lock(&arr->lock);
 
+    // Count the actual number of live (non-NULL) entries
+    size_t total = arr->size + arr->removed;
+    size_t count = 0;
+    for (size_t i = 0; i < total; i++) {
+        if (arr->data[i] != NULL) {
+            count++;
+        }
+    }
+
     // Allocate memory for the return array
-    size_t count = arr->size > arr->removed ? arr->size - arr->removed : 0;
     char **ret = calloc((count + 1), sizeof(char *));
     if (!ret) {
         pthread_mutex_unlock(&arr->lock);
         return NULL;  // Handle memory allocation failure
     }
 
-    size_t start = 0;
     size_t ret_index = 0;  // Index for ret array
-    while (start < arr->size) {
+    for (size_t start = 0; start < total; start++) {
         if (arr->data[start] != NULL) {
             ret[ret_index] = strdup(arr->data[start]);
             debug("item: %s index: %ld len: %ld\n", ret[ret_index], ret_index, arr->size);
@@ -265,7 +293,6 @@ visible char **array_get(array *arr, size_t *len) {
             }
             ret_index++;
         }
-        start++;
     }
     // Set length if len is not NULL
     if (len) {

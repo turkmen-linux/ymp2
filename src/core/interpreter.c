@@ -409,6 +409,9 @@ visible int run_script(const char *script) {
                     free(la[j]);
                 free(la);
             }
+            if (lines[i] == NULL) {
+                i--;  // keep the outer loop's i++ on the NULL terminator
+            }
             goto args_cleanup;
         }
         if (iseq(args[0], "if")) {
@@ -425,7 +428,9 @@ visible int run_script(const char *script) {
                     if (iflevel == 0)
                         goto found_endif;
                 }
-                error_add(build_string("syntax error at line %d : endif missing", cur));
+                char *syntax_err = build_string("syntax error at line %d : endif missing", cur);
+                error_add(syntax_err);
+                free(syntax_err);
                 error(1);
                 goto args_cleanup_err;
             found_endif:;
@@ -454,6 +459,9 @@ visible int run_script(const char *script) {
                     }
                 }
                 while_depth--;
+                if (lines[i] == NULL) {
+                    i--;  // keep the outer loop's i++ on the NULL terminator
+                }
             }
             goto args_cleanup;
         }

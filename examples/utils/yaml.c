@@ -36,6 +36,7 @@ int main() {
     char *value = yaml_get_value(data, value_name);
     if (value) {
         printf("Value of '%s': %s\n", value_name, value);
+        free(value);
     }
 
     // Get an array of items from an area

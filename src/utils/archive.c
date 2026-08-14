@@ -57,6 +57,7 @@ static void archive_load_archive(Archive *data) {
     if (archive_read_open_filename(data->archive, data->archive_path, 10240) != ARCHIVE_OK) {
         char *error_msg = build_string("Failed to open archive: %s", archive_error_string(data->archive));
         error_add(error_msg);
+        free(error_msg);
     }
 }
 
@@ -100,7 +101,12 @@ visible void archive_add(Archive *data, const char *path) {
 
 visible void archive_create(Archive *data) {
     size_t len;
-    archive_write(data, data->archive_path, array_get(data->a, &len));
+    char **files = array_get(data->a, &len);
+    archive_write(data, data->archive_path, files);
+    for (size_t i = 0; i < len; i++) {
+        free(files[i]);
+    }
+    free(files);
 }
 
 static void archive_extract_fn(Archive *data, const char *path, bool all) {
@@ -150,6 +156,7 @@ static void archive_extract_fn(Archive *data, const char *path, bool all) {
                 if (symlink(link_target, target_file) != 0) {
                     char *error_msg = build_string("Failed to create symbolic link: %s -> %s", target_file, link_target);
                     error_add(error_msg);
+                    free(error_msg);
                     free(target_file);
                     error(3);
                 }
@@ -161,6 +168,7 @@ static void archive_extract_fn(Archive *data, const char *path, bool all) {
             if (file == NULL) {
                 char *error_msg = build_string("Failed to open file for writing: %s", target_file);
                 error_add(error_msg);
+                free(error_msg);
                 free(target_file);
                 error(3);
             }
@@ -208,12 +216,16 @@ visible char *archive_readfile(Archive *data, const char *file_path) {
         if (ret == NULL) {
             char *error_msg = build_string("Memory allocation failed");
             error_add(error_msg);
+            free(error_msg);
         }
         ssize_t bytes_read = archive_read_data(data->archive, ret, size);
         if (bytes_read < 0) {
             char *error_msg = build_string("Failed to read file: %s", archive_error_string(data->archive));
-            free(ret);
             error_add(error_msg);
+            free(error_msg);
+            free(ret);
+            ret = NULL;
+            break;
         }
         ret[bytes_read] = '\0';
         break;

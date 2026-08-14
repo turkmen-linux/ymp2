@@ -114,7 +114,7 @@ visible char **yaml_get_array(const char *data, const char *name, int *count) {
     free(area_data);
     size_t len;
     char **ret = array_get(a, &len);
-    if (*count) {
+    if (count) {
         *count = len;
     }
     array_unref(a);
@@ -149,6 +149,7 @@ visible char **yaml_get_area_list(const char *fdata, const char *path, int *area
                     }
                     if (ret == NULL) {
                         print(_("Memory allocation failed\n"));
+                        array_unref(area);
                         return NULL;
                     }
                 }
@@ -186,6 +187,7 @@ visible char **yaml_get_area_list(const char *fdata, const char *path, int *area
         ret[*area_count] = trim(array_get_string(area));
         (*area_count)++;
     }
+    array_unref(area);
 
     return ret;
 }

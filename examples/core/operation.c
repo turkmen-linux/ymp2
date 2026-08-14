@@ -4,7 +4,8 @@
 #include <core/operations.h>
 
 int my_print(void *args) {
-    printf("%s\n", (char *) args);
+    char **argv = (char **) args;
+    printf("%s\n", argv[0]);
     return 0;
 }
 
@@ -48,9 +49,11 @@ int main(int argc, char **argv) {
     manager->on_error = op3;
 
     int rc = 0;
-    rc += operation_main(manager, "foo", "hello foo\n");
-    rc += operation_main(manager, "bar", "hello bar\n");
-    free(manager);
+    char *foo_args[] = { "hello foo\n", NULL };
+    char *bar_args[] = { "hello bar\n", NULL };
+    rc += operation_main(manager, "foo", foo_args);
+    rc += operation_main(manager, "bar", bar_args);
+    operation_manager_unref(manager);
 
     if (rc > 0) {
         return 0;

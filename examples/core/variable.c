@@ -10,11 +10,11 @@ int main(int argc, char **argv) {
     variable_set_value(vars, "user", "pingu");
     char *user = variable_get_value(vars, "user");
     printf("%s\n", user);
-    free(vars);
+    variable_manager_unref(vars);
     Ymp *ymp = ymp_init();
-    char *args_set[] = { "name", "pingu" };
+    char *args_set[] = { "name", "pingu", NULL };
     ymp_add(ymp, "set", (void *) args_set);
-    char *args_get[] = { "name" };
+    char *args_get[] = { "name", NULL };
     ymp_add(ymp, "get", (void *) args_get);
     ymp_run(ymp);
     return 0;

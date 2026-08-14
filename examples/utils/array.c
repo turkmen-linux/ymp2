@@ -28,6 +28,10 @@ int main() {
     for (size_t i = 0; i < len; i++) {
         printf("%s\n", contents[i]);
     }
+    for (size_t i = 0; i < len; i++) {
+        free(contents[i]);
+    }
+    free(contents);
 
     // Remove duplicates
     array_uniq(myArray);
@@ -36,6 +40,10 @@ int main() {
     for (size_t i = 0; i < len; i++) {
         printf("%s\n", contents[i]);
     }
+    for (size_t i = 0; i < len; i++) {
+        free(contents[i]);
+    }
+    free(contents);
 
     // Sort the array
     array_sort(myArray);
@@ -44,6 +52,10 @@ int main() {
     for (size_t i = 0; i < len; i++) {
         printf("%s\n", contents[i]);
     }
+    for (size_t i = 0; i < len; i++) {
+        free(contents[i]);
+    }
+    free(contents);
 
     // Concatenate all strings into a single string
     char *concatenated = array_get_string(myArray);

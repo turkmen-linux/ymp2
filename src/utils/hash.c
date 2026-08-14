@@ -41,11 +41,26 @@ visible char *calculate_hash(int type, const char *path) {
     ssize_t byte = 0;
 
     int fd = open(path, O_RDONLY);
-    EVP_DigestInit_ex(mdctx, md, NULL);
+    if (fd < 0) {
+        perror("Failed to open file");
+        EVP_MD_CTX_destroy(mdctx);
+        return NULL;
+    }
+    if (EVP_DigestInit_ex(mdctx, md, NULL) != 1) {
+        EVP_MD_CTX_destroy(mdctx);
+        close(fd);
+        return NULL;
+    }
 
-    while ((byte = read(fd, buffer, sizeof(buffer))) != 0) {
+    while ((byte = read(fd, buffer, sizeof(buffer))) > 0) {
         EVP_DigestUpdate(mdctx, buffer, byte);
         memset(buffer, 0, BUFFER_SIZE);
+    }
+    if (byte < 0) {
+        perror("Failed to read file");
+        EVP_MD_CTX_destroy(mdctx);
+        close(fd);
+        return NULL;
     }
 
     EVP_DigestFinal_ex(mdctx, digest, &md_len);

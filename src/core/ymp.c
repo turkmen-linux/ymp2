@@ -205,7 +205,9 @@ visible void load_plugin(Ymp *ymp, const char *path) {
     void *handle;
     handle = dlopen(path, RTLD_LAZY);
     if (!handle) {
-        error_add(build_string("Failed to load plugin: %s from %s\n", dlerror(), path));
+        char *error_msg = build_string("Failed to load plugin: %s from %s\n", dlerror(), path);
+        error_add(error_msg);
+        free(error_msg);
         return;
     }
     dlerror();

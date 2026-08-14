@@ -61,13 +61,20 @@ static int repo_update() {
             free(repo_file_path);
             continue;
         }
-        char *repo_ctx = trim(readfile(repo_file_path));
+        char *repo_data = readfile(repo_file_path);
+        if (repo_data == NULL) {
+            free(repo_file_path);
+            free(repos[r]);
+            continue;
+        }
+        char *repo_ctx = trim(repo_data);
         char **repo_urls = split(repo_ctx, "\n");
         for (size_t i = 0; repo_urls[i]; i++) {
             status += repo_update_op(repo_urls[i], repos[r]);
             free(repo_urls[i]);
         }
         // free memory
+        free(repo_urls);
         free(repo_file_path);
         free(repo_ctx);
         free(repos[r]);
@@ -81,8 +88,7 @@ static int repo_update() {
 static int repo_add(const char *uri) {
     int status = 0;
     // fetch repo name
-    char *name = get_value("name");
-    name = str_replace(name, "/", "-");
+    char *name = str_replace(get_value("name"), "/", "-");
     // create sources.list.d if does not exists
     char *sources_path = build_string("%s/%s/sources.list.d/", get_value("DESTDIR"), STORAGE);
     create_dir(sources_path);
@@ -99,6 +105,7 @@ static int repo_add(const char *uri) {
 repo_add_free:
     free(repo_path);
     free(sources_path);
+    free(name);
     return status;
 }
 
@@ -182,6 +189,7 @@ static int repo_index(const char *path) {
     for (len = 0; files[len]; len++) {
     }
     PkgIndex out[len];
+    memset(out, 0, sizeof(out));
     // scan all files
     size_t cur = 0;
     for (size_t i = 0; files[i]; i++) {
@@ -228,9 +236,11 @@ repo_index_free:
     fclose(f);
     // cleanup memory
     for (size_t i = 0; i < cur; i++) {
-        free(out[i].metadata - 5);
-        free(out[i].sha256);
-        free(out[i].md5);
+        if (out[i].metadata) {
+            free(out[i].metadata - 5);
+            free(out[i].sha256);
+            free(out[i].md5);
+        }
     }
     for (size_t i = 0; files[i]; i++) {
         free(files[i]);
@@ -241,8 +251,7 @@ repo_index_free:
 
 static int repo_del() {
     int status = 0;
-    char *name = get_value("name");
-    name = str_replace(name, "/", "-");
+    char *name = str_replace(get_value("name"), "/", "-");
     char *repo_path = build_string("%s/%s/sources.list.d/", get_value("DESTDIR"), STORAGE, name);
     if (!isfile(repo_path)) {
         status = 1;
@@ -251,6 +260,7 @@ static int repo_del() {
     unlink(repo_path);
 repo_del_free:
     free(repo_path);
+    free(name);
     return status;
 }
 

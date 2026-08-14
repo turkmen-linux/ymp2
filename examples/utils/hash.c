@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <stdio.h>
 
 #include <utils/hash.h>
@@ -16,6 +17,11 @@ int main() {
 
     char *sha512 = calculate_sha512(path);
     printf("SHA512 %s\n", sha512);
+
+    free(sha1);
+    free(md5);
+    free(sha256);
+    free(sha512);
 
     return 0;
 }

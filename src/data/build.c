@@ -296,13 +296,23 @@ static bool get_resource(const char *resource_path, const char *resource_name, s
 
     // Check the hash of the downloaded or copied file
     char *actual_hash = calculate_hash(resource_type, target_file_path);
+    if (actual_hash == NULL) {
+        print(_("Failed to calculate hash for: %s\n"), target_file_path);
+        free(cache_directory);
+        free(target_file_path);
+        return false;
+    }
 
     if (iseq((char *) expected_hash, "SKIP")) {
         warning(_("Skipping hash verification for: %s\n"), source_file_name);
     } else if (!iseq(actual_hash, (char *) expected_hash)) {
         print("Archive hash is invalid:\n  -> Expected: %s\n  -> Received: %s\n", expected_hash, actual_hash);
+        free(actual_hash);
+        free(cache_directory);
+        free(target_file_path);
         return false;
     }
+    free(actual_hash);
 
     // Cleanup
     free(cache_directory);
