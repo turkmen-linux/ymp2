@@ -47,6 +47,10 @@ visible void archive_load(Archive *data, const char *path) {
 }
 
 static void archive_load_archive(Archive *data) {
+    if (data->archive) {
+        archive_read_free(data->archive);
+        data->archive = NULL;
+    }
     data->archive = archive_read_new();
     archive_read_support_filter_all(data->archive);
     archive_read_support_format_all(data->archive);

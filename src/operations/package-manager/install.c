@@ -8,6 +8,7 @@
 #include <data/dependency.h>
 #include <data/quarantine.h>
 #include <data/repository.h>
+#include <utils/array.h>
 #include <utils/file.h>
 #include <utils/jobs.h>
 #include <utils/string.h>
@@ -38,6 +39,8 @@ static int install_cb(Package *p, int num) {
     return 0;
 }
 
+static array *scheduled = NULL;
+
 static void install_schedule(char *name, jobs *download_jobs, jobs *install_jobs) {
     // Resolve dependencies
     Package **res = resolve_dependency(name);
@@ -49,6 +52,10 @@ static void install_schedule(char *name, jobs *download_jobs, jobs *install_jobs
         if (package_is_installed(res[i])) {
             continue;
         }
+        if (array_has(scheduled, res[i]->name)) {
+            continue;
+        }
+        array_add(scheduled, res[i]->name);
         jobs_add(download_jobs, (callback) download_cb, res[i], (void *) (i + 1));
         jobs_add(install_jobs, (callback) install_cb, res[i], (void *) (i + 1));
     }
@@ -56,6 +63,7 @@ static void install_schedule(char *name, jobs *download_jobs, jobs *install_jobs
 
 static int install_main(char **args) {
     int status = 0;
+    scheduled = array_new();
 
     // Begin resolver and init job manager
     Repository **repos = resolve_begin();
@@ -110,6 +118,7 @@ static int install_main(char **args) {
 install_main_free:
 
     // Cleanup resolver and job managers
+    array_unref(scheduled);
     resolve_end(repos);
     jobs_unref(download_jobs);
     jobs_unref(install_jobs);
