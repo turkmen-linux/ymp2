@@ -44,6 +44,8 @@ visible int print_fn(const char *caller, const char *filename, int line, int typ
         cur_time = get_epoch();
     } else if (type == WARNING) {
         color_print(BOLD, COLOR_YELLOW, "%s: ", "Warning");
+    } else if (type == INFO) {
+        color_print(BOLD, COLOR_CYAN, "%s: ", "INFO");
     } else if (type == ERROR) {
         color_print(BOLD, COLOR_RED, "%s: ", "ERROR");
     }

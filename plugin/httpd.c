@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include <arpa/inet.h>
 #include <core/logger.h>
 #include <core/operations.h>
 #include <core/variable.h>
@@ -82,8 +83,12 @@ static void list_directory(int client_fd, const char *dir_path, const char *serv
         return;
     }
 
+    const char *head = "<head>"
+                       "<meta charset=\"utf-8\">"
+                       "</head>";
+
     // Start HTML response
-    char *msg = build_string("<html><body><h1>Directory Listing for /%s</h1><ul>\n", dir_path + strlen(serve));
+    char *msg = build_string("<html>%s<body><h1>Directory Listing for /%s</h1><ul>\n", head, dir_path + strlen(serve));
     if (swrite(client_fd, msg) < 0) {
         return;
     }
@@ -179,15 +184,25 @@ static void *handle_client(void *arg) {
         }
         free(lines[i]);
     }
-    path = build_string("%s/%s", serve_path, path);
-    path = realpath(path, NULL);
+    // build requested path
+    char* tmp = build_string("%s/%s", serve_path, path);
+    free(path);
+    // decode url
+    path = url_decode(tmp);
+    free(tmp);
+    // realpath
+    tmp = realpath(path, NULL);
+    free(path);
+    // final
+    path = tmp;
     if (path == NULL) {
         res = "HTTP/1.1 404 Not Found\n";
+        info("404 not found: %s\n", path);
         goto write_response;
     }
     free(lines);
     // check path is valid
-    print(_("GET: %s\n"), path);
+    info(_("GET: %s\n"), path);
     if (isfile(path)) {
         FILE *file = fopen(path, "rb");
         if (file == NULL) {
@@ -228,9 +243,14 @@ static int httpd(char **args) {
     }
     (void) args;
     int port = 8000;
+    const char *server_address = NULL;
     // set port if defined
     if (!iseq(variable_get_value(y->variables, "port"), "")) {
         port = atoi(variable_get_value(y->variables, "port"));
+    }
+    // set address if defined
+    if (!iseq(variable_get_value(y->variables, "address"), "")) {
+        server_address = variable_get_value(y->variables, "address");
     }
     struct sockaddr_in addr;
     int addrlen = sizeof(addr);
@@ -240,9 +260,15 @@ static int httpd(char **args) {
         return 1;
     }
     addr.sin_port = htons(port);
-    addr.sin_addr.s_addr = 0;
-    addr.sin_addr.s_addr = INADDR_ANY;
     addr.sin_family = AF_INET;
+    if (server_address == NULL) {
+        server_address = "127.0.0.1";
+    }
+    if (inet_pton(AF_INET, server_address, &addr.sin_addr) != 1) {
+        fprintf(stderr, "Invalid IPv4 address: %s\n", server_address);
+        close(fd);
+        return 1;
+    }
     if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &(int){ 1 }, sizeof(int)) < 0) {
         perror("setsockopt(SO_REUSEPORT) failed");
     }
@@ -254,6 +280,7 @@ static int httpd(char **args) {
         print(_("Listen failed...\n"));
         return 1;
     }
+    info(_("Server listening %s:%d\n"), server_address, port);
     while (true) {
         int client_fd = accept(fd, (struct sockaddr *) &addr, (socklen_t *) &addrlen);
         int *pclient = calloc(1, sizeof(int));
@@ -280,6 +307,7 @@ visible void plugin_init(Ymp *ymp) {
     op.call = (callback) httpd;
     op.alias = NULL;
     op.help = help_new();
+    help_add_parameter(op.help, "--address", _("serve listen address. (default 127.0.0.1)"));
     help_add_parameter(op.help, "--source", _("serve directory. (default /)"));
     help_add_parameter(op.help, "--port", _("server tcp port (default 8000)"));
     op.min_args = 0;
