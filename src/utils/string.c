@@ -89,8 +89,7 @@ visible char *str_add(const char *str1, const char *str2) {
     if (!ret) {
         return NULL;
     }
-    strcpy(ret, str1);
-    strcat(ret, str2);
+    sprintf(ret, "%s%s", str1, str2);
     return ret;
 }
 

@@ -29,8 +29,7 @@ static int sysconf_main(char **args) {
         }
         char trigger[PATH_MAX];
         for (size_t i = 0; sc[i]; i++) {
-            strcpy(trigger, "/etc/sysconf.d/");
-            strcat(trigger, sc[i]);
+            sprintf(trigger, "/etc/sysconf.d/%s", sc[i]);
             debug("%s\n", trigger);
             char *fargs[] = { "/bin/sh", trigger, NULL };
             int rc = run_args(fargs);

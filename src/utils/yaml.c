@@ -81,7 +81,7 @@ visible char *yaml_get_value(const char *data, const char *name) {
     }
     while (fgets(line, sizeof(line), stream)) {
         if (strncmp(line, name, strlen(name)) == 0 && line[strlen(name)] == ':') {
-            strcpy(value, line + strlen(name) + 1);
+            sprintf(value, "%s", line + strlen(name) + 1);
             value[strcspn(value, "\n")] = 0;  // Remove newline
             in_value = true;
             break;

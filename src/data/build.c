@@ -71,14 +71,7 @@ visible char *ympbuild_package_filename(const char *path) {
         ret = NULL;
         goto ympbuild_package_filename_free;
     }
-    strcpy(ret, name);
-    strcat(ret, "_");
-    strcat(ret, version);
-    strcat(ret, "_");
-    strcat(ret, release);
-    strcat(ret, "_");
-    strcat(ret, ARCH);
-    strcat(ret, ".ymp");
+    sprintf(ret, "%s_%s_%s_%s.ymp", name, version, release, ARCH);
 ympbuild_package_filename_free:
     // free memory
     free(name);
@@ -111,12 +104,7 @@ visible char *ympbuild_source_filename(const char *path) {
         ret = NULL;
         goto ympbuild_source_filename_free;
     }
-    strcpy(ret, name);
-    strcat(ret, "_");
-    strcat(ret, version);
-    strcat(ret, "_");
-    strcat(ret, release);
-    strcat(ret, "_source.ymp");
+    sprintf(ret, "%s_%s_%s_source.ymp", name, version, release);
 ympbuild_source_filename_free:
     // free memory
     free(name);
