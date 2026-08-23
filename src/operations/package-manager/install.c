@@ -77,6 +77,9 @@ static int install_main(char **args) {
         install_jobs->parallel = 1;
     }
 
+    // base packages upgrade first
+    install_schedule("@sys.base", download_jobs, install_jobs);
+
     // Upgrade installed packages first
     if (get_bool("upgrade")) {
         char **need_upgrade = resolve_upgrade(repos);
