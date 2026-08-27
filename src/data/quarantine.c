@@ -328,7 +328,7 @@ visible int quarantine_sync(const char *name) {
     }
 
     // Move files
-    sprintf(target, "%s/%s/metadate/%s.yaml", destdir, STORAGE, name);
+    sprintf(target, "%s/%s/metadata/%s.yaml", destdir, STORAGE, name);
     stat = !move_file(metadata_path, target);
     if (stat) {
         warning("failed to sync: %s\n", metadata_path);
