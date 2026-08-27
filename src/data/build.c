@@ -399,7 +399,7 @@ static void generate_links_files(const char *path) {
         if (issymlink(inodes[i])) {
             debug("add symlink: %s\n", inodes[i]);
             // Add the symlink information to the links array
-            array_add(links, build_string("%s %s\n", sreadlink(inodes[i]), inodes[i] + strlen(rootfs)));
+            array_add(links, build_string("%s %s\n", inodes[i] + strlen(rootfs) +1, sreadlink(inodes[i])));
         }
         // Check if the current inode is a regular file
         else if (isfile(inodes[i])) {
