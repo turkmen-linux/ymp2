@@ -12,6 +12,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <utils/error.h>
+#include <utils/string.h>
+#include <core/logger.h>
 
 visible size_t get_epoch() {
     struct timeval tv;
@@ -35,6 +37,7 @@ visible void single_instance() {
     }
 }
 visible char *which(char *cmd) {
+    debug("%s\n", cmd);
     char *fullPath = getenv("PATH");
 
     struct stat buffer;
@@ -64,6 +67,9 @@ extern char **environ;
 visible int run_args(char *args[]) {
     pid_t pid = fork();
     int status = 0;
+    char* tmp = join(" ", args);
+    debug("%s\n", tmp);
+    free(tmp);
     if (pid == 0) {
         execv(args[0], args);
         perror("exec failed");
