@@ -184,6 +184,7 @@ visible char *getoutput_unshare(char *argv[], int flags) {
         perror("fork");
         return NULL;
     }
+    bool nosandbox = get_bool("no-sandbox");
     if (pid == 0) {  // Child process
         // Close the read end of the pipe
         close(pipefd[0]);
@@ -193,7 +194,7 @@ visible char *getoutput_unshare(char *argv[], int flags) {
         close(pipefd[1]);  // Close the original write end
 
         // unshare flags
-        if (unshare(flags) < 0) {
+        if (!nosandbox && unshare(flags) < 0) {
             exit(EXIT_FAILURE);
         }
         // Execute the command

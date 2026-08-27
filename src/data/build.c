@@ -131,6 +131,9 @@ visible int ympbuild_check(char *ympfile) {
 }
 
 static void sandbox_build(ympbuild *ymp) {
+    if(get_bool("no-sandbox")){
+        return;
+    }
     // Create and configure the sandbox.
     char *uuid = generate_uuid();
     sandbox_handle_t *handle = sandbox_new();
