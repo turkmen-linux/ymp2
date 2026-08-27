@@ -95,14 +95,11 @@ visible char *str_add(const char *str1, const char *str2) {
 
 visible char *trim(char *content) {
     // Create a copy of the content to modify
-    char *trimmed_content = content;
-    if (trimmed_content == NULL) {
-        return NULL;  // Memory allocation failed
-    }
+    array *a = array_new();
 
-    char *line = strtok(trimmed_content, "\n");  // Tokenize the content by new lines
+    char *line = strtok(content, "\n");  // Tokenize the content by new lines
     if (line == NULL) {
-        return trimmed_content;  // No content to process
+        return content;  // No content to process
     }
 
     // Determine the number of leading whitespace characters in the first line
@@ -110,22 +107,21 @@ visible char *trim(char *content) {
 
     // Process the first line
     if (strlen(line) > n) {
-        memmove(trimmed_content, line + n, strlen(line) - n + 1);  // Trim the first line
-    } else {
-        line[0] = '\0';  // If n is greater than or equal to line length, set line to empty
+        array_add(a, line + n);
     }
-    size_t cur = strlen(line) - n + 1;
     // Process the remaining lines
     while ((line = strtok(NULL, "\n")) != NULL) {
         if (strlen(line) > n) {
-            trimmed_content[cur + 1] = '\n';
-            memmove(trimmed_content + cur + 2, line + n, strlen(line) - n);  // Trim the line
-            cur += strlen(line) - n + 1;
-        } else {
-            line[0] = '\0';  // Set line to empty if n is greater than or equal to line length
+            array_add(a, line + n);
         }
     }
-    trimmed_content[cur + 1] = '\0';
+    size_t len = 0;
+    char** lines = array_get(a, &len);
+    char* trimmed_content = join("\n", lines);
+    for(size_t i=0; lines[i]; i++){
+        free(lines[i]);
+    }
+    array_unref(a);
     return trimmed_content;  // Return the trimmed content
 }
 
