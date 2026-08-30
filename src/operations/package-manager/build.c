@@ -31,7 +31,7 @@ static int build(void **args) {
             free(cache);
             return 1;
         }
-        char *pkg = create_package(cache);
+        char *pkg = create_package(fbuild);
         debug("Output package %s %s %d\n", pkg, args[i], i);
 
         char *pname = ympbuild_package_filename(args[i]);
