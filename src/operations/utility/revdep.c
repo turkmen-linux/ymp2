@@ -5,6 +5,7 @@
 #include <core/ymp.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <core/logger.h>
 #include <utils/file.h>
 #include <utils/jobs.h>
 #include <utils/process.h>
@@ -54,10 +55,71 @@ static int pkgconf_check() {
     return 0;
 }
 
+static int readelf_callback(void* args){
+    char* file = (char*)args;
+    //printf("%s\n", file);
+    const char* cmd[] = {"readelf", "-d", file, NULL};
+    char* output = getoutput_unshare((char**)cmd, 0);
+    char** lines = split(output, "\n");
+    array *libs = array_new();
+    for(size_t i=0; lines[i]; i++){
+        if (strstr(lines[i], "NEEDED")){
+            size_t cur = 0;
+            for(size_t j=0; lines[i][j] ; j++){
+                if(lines[i][j] == '['){
+                    cur = j+1;
+                } else if (lines[i][j] == ']'){
+                    lines[i][j] = '\0';
+                    break;
+                }
+            }
+            array_add(libs, lines[i]+cur);
+            debug("LIBS: %s\n", lines[i]+cur);
+            free(lines[i]);
+        }
+    }
+    free(output);
+    free(lines);
+    return 0;
+}
+
+static int readelf_check() {
+    char *dirs[] = {
+        "/usr/bin/",
+        "/usr/lib/",
+        "/bin/",
+        "/lib/",
+        NULL
+    };
+    for (size_t i = 0; dirs[i]; i++) {
+        char **files = find(dirs[i]);
+        jobs *job = jobs_new();
+        for (size_t j = 0; files[j]; j++) {
+            if (files[j][0] == '.') {
+                continue;
+            }
+            if(!is_elf(files[j])){
+                continue;
+            }
+            jobs_add(job, (callback) readelf_callback, files[j], NULL);
+        }
+        jobs_run(job);
+        jobs_unref(job);
+        for (size_t j = 0; files[j]; j++) {
+            free(files[j]);
+        }
+        free(files);
+    }
+    return 0;
+}
+
+
 static int revdep_main(void **args) {
     (void) args;
     if (get_bool("pkgconfig")) {
         pkgconf_check();
+    } else {
+        readelf_check();
     }
     return 0;
 }

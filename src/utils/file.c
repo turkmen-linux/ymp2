@@ -194,7 +194,7 @@ visible char *getoutput_unshare(char *argv[], int flags) {
         close(pipefd[1]);  // Close the original write end
 
         // unshare flags
-        if (!nosandbox && unshare(flags) < 0) {
+        if (!nosandbox && flags != 0 && unshare(flags) < 0) {
             exit(EXIT_FAILURE);
         }
         // Execute the command
