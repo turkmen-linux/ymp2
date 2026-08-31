@@ -15,8 +15,12 @@
 #include <utils/yaml.h>
 
 static int download_cb(Package *p, int num) {
-    print("%s: %s\n", "Downloading", p->name);
     Repository *r = (Repository *) p->repo;
+    if (!p->repo) {
+        // package file or non-repository package
+        return 0;
+    }
+    print("%s: %s\n", "Downloading", p->name);
     debug("download %d %s\n", num, r->uri);
     if (!package_download(p, r->uri)) {
         print("%s: %s\n", "Download Failed", p->name);
@@ -42,6 +46,15 @@ static int install_cb(Package *p, int num) {
 static array *scheduled = NULL;
 
 static void install_schedule(char *name, jobs *download_jobs, jobs *install_jobs) {
+    if (isfile(name)) {
+        Package *p = package_new();
+        package_load_from_file(p, name);
+        jobs_add(install_jobs, (callback) install_cb, p, (void *) 1);
+        for (size_t i = 0; p->dependencies[i]; i++) {
+            install_schedule(p->dependencies[i], download_jobs, install_jobs);
+        }
+        return;
+    }
     // Resolve dependencies
     Package **res = resolve_dependency(name);
     if (res == NULL) {

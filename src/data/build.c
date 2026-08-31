@@ -131,7 +131,7 @@ visible int ympbuild_check(char *ympfile) {
 }
 
 static void sandbox_build(ympbuild *ymp) {
-    if(get_bool("no-sandbox")){
+    if (get_bool("no-sandbox")) {
         return;
     }
     // Create and configure the sandbox.
@@ -399,7 +399,7 @@ static void generate_links_files(const char *path) {
         if (issymlink(inodes[i])) {
             debug("add symlink: %s\n", inodes[i]);
             // Add the symlink information to the links array
-            array_add(links, build_string("%s %s\n", inodes[i] + strlen(rootfs) +1, sreadlink(inodes[i])));
+            array_add(links, build_string("%s %s\n", inodes[i] + strlen(rootfs) + 1, sreadlink(inodes[i])));
         }
         // Check if the current inode is a regular file
         else if (isfile(inodes[i])) {

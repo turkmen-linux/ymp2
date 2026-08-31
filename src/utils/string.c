@@ -116,9 +116,9 @@ visible char *trim(char *content) {
         }
     }
     size_t len = 0;
-    char** lines = array_get(a, &len);
-    char* trimmed_content = join("\n", lines);
-    for(size_t i=0; lines[i]; i++){
+    char **lines = array_get(a, &len);
+    char *trimmed_content = join("\n", lines);
+    for (size_t i = 0; lines[i]; i++) {
         free(lines[i]);
     }
     array_unref(a);

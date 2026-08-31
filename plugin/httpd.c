@@ -185,7 +185,7 @@ static void *handle_client(void *arg) {
         free(lines[i]);
     }
     // build requested path
-    char* tmp = build_string("%s/%s", serve_path, path);
+    char *tmp = build_string("%s/%s", serve_path, path);
     free(path);
     // decode url
     path = url_decode(tmp);
