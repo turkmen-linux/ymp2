@@ -772,9 +772,6 @@ visible char *create_package(const char *path) {
         return NULL;  // Return NULL if the file is not found
     }
 
-    // Free the metadata file path string
-    free(metadata_file);
-
     // Change the current directory to the specified path
     if (chdir(path) < 0) {
         print("Failed to change directory\n");
@@ -814,7 +811,8 @@ visible char *create_package(const char *path) {
         Archive *a = archive_new();
 
         // Load the specified TAR.GZ package file into the archive object
-        archive_load(a, build_string("%s/data.tar.gz", path));
+        char *datafile = build_string("%s/data.tar.gz", path);
+        archive_load(a, datafile);
 
         // Set the archive type to TAR with GZIP compression
         archive_set_type(a, "tar", "gzip");
@@ -831,7 +829,8 @@ visible char *create_package(const char *path) {
         // Iterate through the list of files and add each one to the archive
         for (size_t i = 0; files[i]; i++) {
             // Add each file to the archive, adjusting the path to exclude the base directory
-            archive_add(a, files[i] + strlen(path) + 1);
+            info("Archive add: %s \n", files[i]);
+            archive_add(a, files[i] + 2);
         }
 
         // Create the archive with the added files
@@ -840,6 +839,14 @@ visible char *create_package(const char *path) {
         // Free the memory
         free(files);
         archive_unref(a);
+
+        // Add archive hash to metadata.yaml file
+        char *hash = calculate_hash(SHA1, datafile);
+        FILE *metadata = fopen(metadata_file, "a");
+        fprintf(metadata, "    archive-hash: %s\n", hash);  // Append  archive hash
+        fflush(metadata);                                   // Flush file
+        fclose(metadata);                                   // Close file
+        free(hash);                                         // Free hash after use
 
         // Change the current working directory back to the original specified path
         if (chdir(path) < 0) {
@@ -867,7 +874,13 @@ visible char *create_package(const char *path) {
 
         // Free the archive object after use
         archive_unref(a);
+
+        // Free datafile string after use
+        free(datafile);
     }
+
+    // Free the metadata file path string
+    free(metadata_file);
 
     // Change back to the original directory
     if (chdir(curdir) < 0) {
