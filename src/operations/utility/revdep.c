@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,6 +7,7 @@
 #include <core/ymp.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <utils/array.h>
 #include <utils/file.h>
 #include <utils/jobs.h>
 #include <utils/process.h>
@@ -55,35 +57,110 @@ static int pkgconf_check() {
     return 0;
 }
 
+static array *installed_libs;
+static pthread_mutex_t revdep_lock = PTHREAD_MUTEX_INITIALIZER;
+
+static int lib_compare(const void *a, const void *b) {
+    return strcmp(*(const char *const *) a, *(const char *const *) b);
+}
+
+static void sort_strings(array *arr) {
+    if (arr->size > 1) {
+        qsort(arr->data, arr->size, sizeof(char *), lib_compare);
+    }
+}
+
+static void libs_add_dir(const char *dir) {
+    debug("collect libraries: %s\n", dir);
+    char **files = find(dir);
+    for (size_t i = 0; files[i]; i++) {
+        char *base = strrchr(files[i], '/');
+        array_add(installed_libs, base ? base + 1 : files[i]);
+        free(files[i]);
+    }
+    free(files);
+}
+
+static void libs_build(void) {
+    char *dirs[] = {
+        "/lib",
+        "/lib64",
+        "/usr/lib",
+        "/usr/lib64",
+        "/usr/local/lib",
+        "/usr/local/lib64",
+        "/usr/libexec",
+        NULL
+    };
+    installed_libs = array_new();
+    for (size_t i = 0; dirs[i]; i++) {
+        if (isdir(dirs[i]) && !issymlink(dirs[i])) {
+            libs_add_dir(dirs[i]);
+        }
+    }
+    array_uniq(installed_libs);
+    sort_strings(installed_libs);
+}
+
+static bool lib_installed(const char *lib) {
+    if (installed_libs == NULL) {
+        return true;
+    }
+    return bsearch(&lib, installed_libs->data, installed_libs->size,
+                   sizeof(char *), lib_compare) != NULL;
+}
+
 static int readelf_callback(void *args) {
     char *file = (char *) args;
-    // printf("%s\n", file);
     const char *cmd[] = { "readelf", "-d", file, NULL };
     char *output = getoutput_unshare((char **) cmd, 0);
+    if (output == NULL) {
+        return 0;
+    }
+    array *missing = NULL;
     char **lines = split(output, "\n");
-    array *libs = array_new();
     for (size_t i = 0; lines[i]; i++) {
         if (strstr(lines[i], "NEEDED")) {
             size_t cur = 0;
+            bool found = false;
             for (size_t j = 0; lines[i][j]; j++) {
                 if (lines[i][j] == '[') {
                     cur = j + 1;
+                    found = true;
                 } else if (lines[i][j] == ']') {
                     lines[i][j] = '\0';
                     break;
                 }
             }
-            array_add(libs, lines[i] + cur);
-            debug("LIBS: %s\n", lines[i] + cur);
-            free(lines[i]);
+            if (found && !lib_installed(lines[i] + cur)) {
+                if (missing == NULL) {
+                    missing = array_new();
+                }
+                array_add(missing, lines[i] + cur);
+            }
         }
+        free(lines[i]);
     }
+    info(_("checking file: %s\n"), file);
     free(output);
     free(lines);
+    if (missing != NULL) {
+        pthread_mutex_lock(&revdep_lock);
+        size_t len;
+        char **list = array_get(missing, &len);
+        for (size_t i = 0; i < len; i++) {
+            warning(_("missing library: %s from %s\n"), list[i], file);
+            free(list[i]);
+        }
+        free(list);
+        pthread_mutex_unlock(&revdep_lock);
+        array_unref(missing);
+    }
     return 0;
 }
 
 static int readelf_check() {
+    libs_build();
     char *dirs[] = {
         "/usr/bin/",
         "/usr/lib/",
@@ -98,6 +175,9 @@ static int readelf_check() {
             if (files[j][0] == '.') {
                 continue;
             }
+            if (issymlink(files[j])) {
+                continue;
+            }
             if (!is_elf(files[j])) {
                 continue;
             }
@@ -110,6 +190,8 @@ static int readelf_check() {
         }
         free(files);
     }
+    array_unref(installed_libs);
+    installed_libs = NULL;
     return 0;
 }
 
