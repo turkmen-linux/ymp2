@@ -70,7 +70,7 @@ Operation visible get_operation_by_name(OperationManager *manager, const char *n
             free(alias);
         }
     }
-    return (Operation) { 0 };
+    return (Operation){ 0 };
 }
 
 void visible operation_register(OperationManager *manager, Operation new_op) {

@@ -138,6 +138,9 @@ visible char **yaml_get_area_list(const char *fdata, const char *path, int *area
             line[strlen(line) - 1] = '\0';
         }
         if (e) {
+            if (strlen(line) == 0) {
+                continue;
+            }
             if (line[0] != ' ') {
                 // Flush memory to array
                 // Check if we need to resize the array

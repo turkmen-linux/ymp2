@@ -93,36 +93,36 @@ visible char *str_add(const char *str1, const char *str2) {
     return ret;
 }
 
-visible char *trim(char *content) {
-    // Create a copy of the content to modify
-    array *a = array_new();
+visible char *trim(const char *content) {
+    if (!content)
+        return NULL;
 
-    char *line = strtok(content, "\n");  // Tokenize the content by new lines
-    if (line == NULL) {
-        return content;  // No content to process
-    }
+    size_t n = count_tab(content);
+    char *result = calloc(strlen(content) + 1, sizeof(char));
+    if (!result)
+        return NULL;
 
-    // Determine the number of leading whitespace characters in the first line
-    size_t n = count_tab(line);
+    size_t res_idx = 0;
+    const char *line = content;
 
-    // Process the first line
-    if (strlen(line) > n) {
-        array_add(a, line + n);
-    }
-    // Process the remaining lines
-    while ((line = strtok(NULL, "\n")) != NULL) {
-        if (strlen(line) > n) {
-            array_add(a, line + n);
+    while (*line) {
+        const char *next_line = strchr(line, '\n');
+        size_t line_len = next_line ? (size_t) (next_line - line) : strlen(line);
+
+        if (line_len > n) {
+            memcpy(result + res_idx, line + n, line_len - n);
+            res_idx += line_len - n;
+        }
+
+        if (next_line) {
+            result[res_idx++] = '\n';
+            line = next_line + 1;
+        } else {
+            break;
         }
     }
-    size_t len = 0;
-    char **lines = array_get(a, &len);
-    char *trimmed_content = join("\n", lines);
-    for (size_t i = 0; lines[i]; i++) {
-        free(lines[i]);
-    }
-    array_unref(a);
-    return trimmed_content;  // Return the trimmed content
+    result[res_idx] = '\0';
+    return result;
 }
 
 visible char *int_to_string(int num) {
