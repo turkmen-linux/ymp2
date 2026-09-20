@@ -22,7 +22,10 @@ void dialog_init(OperationManager *manager) {
     op.alias = "ask";
     op.description = _("Dialog");
     op.min_args = 2;
-    op.help = NULL;
+    op.help = help_new();
+    help_add_parameter(op.help, "--yes-no", _("show a yes/no dialog"));
+    help_add_parameter(op.help, "--message", _("show an info message dialog"));
+    help_add_string(op.help, _("TITLE TEXT : dialog title and message"));
     op.call = (callback) dialog_main;
     operation_register(manager, op);
 }

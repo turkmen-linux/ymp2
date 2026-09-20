@@ -282,7 +282,16 @@ void repo_init(OperationManager *manager) {
     op.alias = "";
     op.description = _("Repository operations");
     op.min_args = 0;
-    op.help = NULL;
+    op.help = help_new();
+    help_add_parameter(op.help, "--update", _("update repository indexes"));
+    help_add_parameter(op.help, "--add", _("add a repository URI (requires --name)"));
+    help_add_parameter(op.help, "--remove", _("remove a repository (requires --name)"));
+    help_add_parameter(op.help, "--index", _("create repository index from PATH"));
+    help_add_parameter(op.help, "--name", _("repository name"));
+    help_add_parameter(op.help, "--move", _("reorganize package files while indexing"));
+    help_add_parameter(op.help, "--repicent", _("gpg recipient for signing the index"));
+    help_add_string(op.help, _("URI : repository URI for --add"));
+    help_add_string(op.help, _("PATH : package directory for --index"));
     op.call = (callback) repo_main;
     operation_register(manager, op);
 }

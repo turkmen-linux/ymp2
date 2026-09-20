@@ -18,7 +18,8 @@ visible void plugin_init(Ymp *ymp) {
         op.name = "hello";
         op.description = _("Simple hello world plugin");
         op.alias = NULL;
-        op.help = NULL;
+        op.help = help_new();
+        help_add_string(op.help, _("Takes no arguments."));
         op.min_args = 0;
         op.call = (callback) hello_fn;
         operation_register(ymp->manager, op);

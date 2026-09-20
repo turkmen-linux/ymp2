@@ -71,7 +71,7 @@ char* str_add(const char* str1, const char* str2);
  * @param data The string to trim.
  * @return A new string with whitespace removed from both ends.
  */
-char* trim(char* data);
+char* trim(const char* data);
 
 /**
  * @brief Converts an integer to a string.

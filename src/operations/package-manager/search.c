@@ -105,5 +105,8 @@ void search_init(OperationManager *manager) {
     op.call = (callback) search_main;
     op.help = help_new();
     help_add_parameter(op.help, "--file", _("Search files"));
+    help_add_parameter(op.help, "--package", _("search binary packages only"));
+    help_add_parameter(op.help, "--source", _("search source packages only"));
+    help_add_string(op.help, _("PATTERN... : search pattern"));
     operation_register(manager, op);
 }

@@ -26,7 +26,8 @@ void shell_init(OperationManager *manager) {
     Operation op;
     op.name = "shell";
     op.alias = "sh";
-    op.help = NULL;
+    op.help = help_new();
+    help_add_string(op.help, _("FILE... : ympsh script files to execute"));
     op.description = _("Execute ympsh file");
     op.min_args = 1;
     op.call = (callback) shell_fn;

@@ -19,7 +19,8 @@ void print_init(OperationManager *manager) {
     op.alias = "echo";
     op.description = _("Print message");
     op.min_args = 0;
-    op.help = NULL;
+    op.help = help_new();
+    help_add_string(op.help, _("MESSAGE... : messages to print"));
     op.call = (callback) print;
     operation_register(manager, op);
 }

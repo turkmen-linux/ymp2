@@ -153,5 +153,7 @@ void install_init(OperationManager *manager) {
     help_add_parameter(op.help, "--reinstall", _("reinstall if already installed"));
     help_add_parameter(op.help, "--no-emerge", _("use binary package"));
     help_add_parameter(op.help, "--sync-single", _("sync quarantine after every package installation"));
+    help_add_parameter(op.help, "--upgrade", _("upgrade installed packages"));
+    help_add_string(op.help, _("PACKAGE... : packages to install"));
     operation_register(manager, op);
 }

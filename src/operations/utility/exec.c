@@ -23,7 +23,8 @@ void exec_init(OperationManager *manager) {
     Operation op;
     op.name = "exec";
     op.alias = "exec:run";
-    op.help = NULL;
+    op.help = help_new();
+    help_add_string(op.help, _("COMMAND [ARGS]... : command to execute"));
     op.description = _("Execute command");
     op.min_args = 1;
     op.call = (callback) exec_fn;

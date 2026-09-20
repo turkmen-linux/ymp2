@@ -43,7 +43,8 @@ void setget_init(OperationManager *manager) {
     Operation set;
     set.name = "set";
     set.alias = NULL;
-    set.help = NULL;
+    set.help = help_new();
+    help_add_string(set.help, _("KEY VALUE : set variable KEY to VALUE"));
     set.description = _("Set ymp variable");
     set.min_args = 2;
     set.call = (callback) set_fn;
@@ -54,7 +55,8 @@ void setget_init(OperationManager *manager) {
     get.alias = NULL;
     get.description = _("Get ymp variable");
     get.min_args = 0;
-    get.help = NULL;
+    get.help = help_new();
+    help_add_string(get.help, _("[KEY]... : print variables (all variables if no KEY given)"));
     get.call = (callback) get_fn;
     operation_register(manager, get);
 
@@ -63,7 +65,8 @@ void setget_init(OperationManager *manager) {
     eq.description = _("Compare strings");
     eq.alias = NULL;
     eq.min_args = 2;
-    eq.help = NULL;
+    eq.help = help_new();
+    help_add_string(eq.help, _("STR1 STR2 : compare two strings"));
     eq.call = (callback) eq_fn;
     operation_register(manager, eq);
 
@@ -72,7 +75,8 @@ void setget_init(OperationManager *manager) {
     dummy.description = _("Do nothing");
     dummy.alias = NULL;
     dummy.min_args = 0;
-    dummy.help = NULL;
+    dummy.help = help_new();
+    help_add_string(dummy.help, _("Takes no arguments. Do nothing, always succeeds"));
     dummy.call = (callback) dummy_fn;
     operation_register(manager, dummy);
 }

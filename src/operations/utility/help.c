@@ -61,7 +61,8 @@ void help_init(OperationManager *manager) {
     op.description = _("Print help message");
     op.alias = "h";
     op.min_args = 0;
-    op.help = NULL;
+    op.help = help_new();
+    help_add_string(op.help, _("OPERATION... : show help for given operations"));
     op.call = (callback) help_main;
     operation_register(manager, op);
 }

@@ -100,6 +100,7 @@ void info_init(OperationManager *manager) {
     op.description = _("Show package information");
     op.min_args = 1;
     op.call = (callback) info_main;
-    op.help = NULL;
+    op.help = help_new();
+    help_add_string(op.help, _("PACKAGE... : packages to show information for"));
     operation_register(manager, op);
 }

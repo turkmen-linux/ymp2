@@ -81,7 +81,8 @@ void key_init(OperationManager *manager) {
     op.min_args = 0;
     op.help = help_new();
     help_add_parameter(op.help, "--add", _("Add a key into ymp keyring db"));
-    help_add_parameter(op.help, "--remove", _("Add a key from ymp keyring db"));
+    help_add_parameter(op.help, "--remove", _("Remove a key from ymp keyring db"));
+    help_add_parameter(op.help, "--list", _("List keys in ymp keyring db"));
     help_add_parameter(op.help, "--name", _("Name for new key"));
 
     op.call = (callback) key_main;

@@ -125,7 +125,9 @@ visible void plugin_init(Ymp *ymp) {
     op.alias = "bf";
     op.description = _("Brainfuck interpreter");
     op.min_args = 1;
-    op.help = NULL;
+    op.help = help_new();
+    help_add_parameter(op.help, "--compile", _("compile brainfuck code instead of interpreting"));
+    help_add_string(op.help, _("FILE : brainfuck source file to run"));
     op.call = (callback) brainfuck_op;
     operation_register(ymp->manager, op);
     y = ymp;

@@ -67,6 +67,8 @@ void build_init(OperationManager *manager) {
     op.alias = "bi:make";
     op.help = help_new();
     help_add_parameter(op.help, "--install", _("install after build"));
+    help_add_parameter(op.help, "--output", _("output directory for built packages"));
+    help_add_string(op.help, _("FILE... : ympbuild files or directories to build"));
     op.call = (callback) build;
     op.min_args = 1;
     operation_register(manager, op);

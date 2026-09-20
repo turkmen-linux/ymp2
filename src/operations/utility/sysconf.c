@@ -50,7 +50,8 @@ void sysconf_init(OperationManager *manager) {
     op.alias = "sc";
     op.description = _("Trigger sysconf operations");
     op.min_args = 0;
-    op.help = NULL;
+    op.help = help_new();
+    help_add_string(op.help, _("Takes no arguments. Runs sysconf scripts from /etc/sysconf.d/"));
     op.call = (callback) sysconf_main;
     operation_register(manager, op);
 }

@@ -211,7 +211,8 @@ void revdep_init(OperationManager *manager) {
     op.alias = "rbd:cr";
     op.description = _("Check library for broken links.");
     op.min_args = 0;
-    op.help = NULL;
+    op.help = help_new();
+    help_add_parameter(op.help, "--pkgconfig", _("check pkgconfig files instead of ELF binaries"));
     op.call = (callback) revdep_main;
     operation_register(manager, op);
 }
