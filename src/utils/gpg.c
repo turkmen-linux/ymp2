@@ -21,16 +21,22 @@ visible bool gpg_sign_file(const char *path) {
     if (!isfile(path)) {
         return false;
     }
-    char *args[] = { "gpg", "--batch", "--yes", "--sign", "-r", gpg_repicent, (char *) path, NULL };
-    return 0 == run_args(args);
+    char* gpg = which("gpg");
+    char *args[] = { gpg, "--batch", "--yes", "--sign", "-r", gpg_repicent, (char *) path, NULL };
+    bool status = (0 == run_args(args));
+    free(gpg);
+    return status;
 }
 
 visible bool gpg_export_file(const char *path) {
     if (isfile(path)) {
         return false;
     }
-    char *args[] = { "gpg", "--armor", "--export", "-o", gpg_repicent, (char *) path, NULL };
-    return 0 == run_args(args);
+    char* gpg = which("gpg");
+    char *args[] = { gpg, "--armor", "--export", "-o", gpg_repicent, (char *) path, NULL };
+    bool status = (0 == run_args(args));
+    free(gpg);
+    return status;
 }
 
 visible bool verify_file(const char *path, const char *keyring) {
@@ -46,6 +52,9 @@ visible bool verify_file(const char *path, const char *keyring) {
     char sig[PATH_MAX];
     snprintf(sig, sizeof(sig), "%s.gpg", path);
 
-    char *args[] = { "gpg", "--homedir", gpgdir, "--trust-model", "always", "--no-default-keyring", "--keyring", (char *) keyring, "--quiet", "--verify", sig, NULL };
-    return 0 == run_args(args);
+    char* gpg = which("gpg");
+    char *args[] = { gpg, "--homedir", gpgdir, "--trust-model", "always", "--no-default-keyring", "--keyring", (char *) keyring, "--quiet", "--verify", sig, NULL };
+    bool status = (0 == run_args(args));
+    free(gpg);
+    return status;
 }
