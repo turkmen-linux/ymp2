@@ -1,12 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libgen.h>
+
+#include <config.h>
 
 #include <core/logger.h>
 #include <core/ymp.h>
 #include <data/build.h>
 #include <utils/file.h>
 #include <utils/string.h>
+#include <utils/process.h>
+
+static char* git_clone(const char* git_url){
+    char *destdir = get_value("DESTDIR");
+    char* git = which("git");
+    char* ret = build_string("%s/%s/.cache/%s", destdir, BUILD_DIR, basename((char*)git_url));
+    char* args[] = {git, "clone", "--depth=1", (char*)git_url, ret, NULL};
+    int rc = run_args(args);
+    free(git);
+    if (rc == 0){
+        return ret;
+    }
+    free(ret);
+    return NULL;
+}
 
 static int build(void **args) {
     for (size_t i = 0; args[i]; i++) {
@@ -14,6 +32,16 @@ static int build(void **args) {
 
         if (strlen(target) == 0) {
             target = args[i];
+        }
+        char* git_path = NULL;
+        if(startswith(args[i], "git://") || endswith(args[i], ".git")){
+            git_path = git_clone(args[i]);
+            if(git_path){
+                args[i] = git_path;
+            } else {
+                warning("Failed to fetch git repository\n");
+                return 1;
+            }
         }
         char *cache = build_source_from_path(args[i]);
         // create source package
@@ -56,6 +84,9 @@ static int build(void **args) {
         }
         free(target_pfile);
         free(target_sfile);
+        if(git_path){
+            free(git_path);
+        }
     }
     return 0;
 }
