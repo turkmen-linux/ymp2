@@ -75,9 +75,9 @@ visible char *join(const char *f, char **array) {
     i = 0;
     /* copy items */
     while (array[i]) {
-        strncat(ret, array[i], strlen(array[i]) + 1);
+        strncat(ret, array[i], strlen(array[i]));
         if (i < cnt - 1) {
-            strncat(ret, f, strlen(f) + 1);
+            strncat(ret, f, strlen(f));
         }
         i++;
     }

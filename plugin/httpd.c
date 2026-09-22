@@ -269,7 +269,7 @@ static int httpd(char **args) {
         close(fd);
         return 1;
     }
-    if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &(int){ 1 }, sizeof(int)) < 0) {
+    if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &(int) { 1 }, sizeof(int)) < 0) {
         perror("setsockopt(SO_REUSEPORT) failed");
     }
     if (bind(fd, (struct sockaddr *) &addr, sizeof(struct sockaddr_in)) < 0) {

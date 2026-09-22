@@ -10,15 +10,13 @@ int main(int argc, char **argv) {
     try {
         int *ptr = NULL;
         *ptr = 10;
-    }
-    catch {
+    } catch {
         printf("Catch message %d\n", exception.code);
     }
     // throw test
     try {
         throw(31);
-    }
-    catch {
+    } catch {
         printf("Catch message %d\n", exception.code);
     }
     // throw outside

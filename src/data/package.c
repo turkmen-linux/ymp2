@@ -73,7 +73,9 @@ visible bool package_load_from_file(Package *pkg, const char *path) {
     debug("Package load from file: %s\n", path);
     // Check if the specified path is a valid file
     if (!isfile(path)) {
-        error_add(build_string("Failed to load package archive %s", path));
+        char *error_msg = build_string("Failed to load package archive %s", path);
+        error_add(error_msg);
+        free(error_msg);
         return false;  // Exit if the file does not exist
     }
 
