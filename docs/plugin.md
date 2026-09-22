@@ -107,7 +107,7 @@ visible void plugin_init(Ymp* ymp) {
     vars = ymp->variables;
     Operation op;
     op.name = "hello";
-    op.alias = "selam:hi:hola"
+    op.alias = "selam:hi:hola";
     op.help = help_new(); // Optional help class
     help_add_parameter(op.help, "--message", "Additional message");
     op.min_args = 0;

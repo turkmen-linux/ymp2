@@ -78,6 +78,9 @@ visible int gui_progress_add(const char *id, const char *title, const char *msg,
     pthread_mutex_lock(&p_mutex);
     if (progress_bar_count >= GUI_MAX_BARS) {
         pthread_mutex_unlock(&p_mutex);
+        if (id) free((void *)id);
+        if (title) free((void *)title);
+        if (msg) free((void *)msg);
         return -1;
     }
 

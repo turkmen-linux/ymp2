@@ -58,6 +58,8 @@ static void archive_load_archive(Archive *data) {
         char *error_msg = build_string("Failed to open archive: %s", archive_error_string(data->archive));
         error_add(error_msg);
         free(error_msg);
+        archive_read_free(data->archive);
+        data->archive = NULL;
     }
 }
 
