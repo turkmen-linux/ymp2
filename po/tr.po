@@ -680,7 +680,7 @@ msgstr "Global kotesizlestirilmedi. Lutfen yempi ilk olarak baslatin.\n"
 
 #: src/data/build.c:619
 msgid "Error: ymp global missing!\n"
-msgstr "Hata: ymp global eksik!"
+msgstr "Hata: ymp global eksik!\n"
 
 #: src/data/build.c:629
 #, c-format
