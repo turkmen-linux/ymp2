@@ -8,242 +8,89 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-04 16:34+0300\n"
+"POT-Creation-Date: 2026-09-22 22:26+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
-#: src/core/cli.c:26
-#, c-format
-msgid "Version: %s\n"
-msgstr ""
-
-#: src/core/cli.c:40
-msgid "No command given.\n"
-msgstr ""
-
-#: src/core/cli.c:41
-#, c-format
-msgid "Run %s for more information about usage.\n"
-msgstr ""
-
-#: src/core/help.c:16
-msgid "Memory allocation failed for Help structure.\n"
-msgstr ""
-
-#: src/core/help.c:27
-msgid "Memory allocation failed for parameters array.\n"
-msgstr ""
-
-#: src/core/help.c:52
-msgid "Memory reallocation failed for parameters array.\n"
-msgstr ""
-
-#: src/core/help.c:60
-#, c-format
-msgid "String duplication failed for: %s\n"
-msgstr ""
-
-#: src/core/operations.c:65 src/core/variable.c:65 src/core/ymp.c:148
-#: src/utils/yaml.c:151 src/utils/yaml.c:183
-msgid "Memory allocation failed\n"
-msgstr ""
-
-#: src/core/variable.c:43 src/core/variable.c:89
-msgid "Invalid VariableManager\n"
-msgstr ""
 
 #: src/core/ymp.c:59
 msgid "Segmentation fault:\n"
 msgstr ""
 
-#: src/data/build.c:201
+#: src/core/ymp.c:167
+msgid "Memory allocation failed\n"
+msgstr ""
+
+#: src/core/help.c:15
+msgid "Memory allocation failed for Help structure.\n"
+msgstr ""
+
+#: src/core/help.c:26
+msgid "Memory allocation failed for parameters array.\n"
+msgstr ""
+
+#: src/core/help.c:51
+msgid "Memory reallocation failed for parameters array.\n"
+msgstr ""
+
+#: src/core/help.c:59
 #, c-format
-msgid "Stripping: %s\n"
+msgid "String duplication failed for: %s\n"
 msgstr ""
 
-#: src/data/build.c:259
+#: src/core/cli.c:25
 #, c-format
-msgid "Skipping hash verification for: %s\n"
+msgid "Version: ymp %s\n"
 msgstr ""
 
-#: src/data/dependency.c:245
-msgid "Failed to resolve dependencies\n"
+#: src/core/cli.c:26
+msgid "YMP is a reliable and efficient package manager.\n"
 msgstr ""
 
-#: src/data/quarantine.c:22
-#, c-format
-msgid "Validating metadata: %s\n"
+#: src/core/cli.c:40
+msgid "Please provide a command. Use 'ymp help' for usage information.\n"
 msgstr ""
 
-#: src/data/quarantine.c:33
-#, c-format
-msgid "Invalid metadata: %s\n"
+#: src/core/variable.c:43 src/core/variable.c:104
+msgid "Invalid VariableManager.\n"
 msgstr ""
 
-#: src/data/quarantine.c:45
-#, c-format
-msgid "Unsupported package format: %s\n"
+#: src/core/variable.c:65 src/core/operations.c:84 src/utils/array.c:17
+#: src/utils/array.c:22 src/utils/yaml.c:154 src/utils/yaml.c:186
+msgid "Memory allocation failed.\n"
 msgstr ""
 
-#: src/data/quarantine.c:70
-#, c-format
-msgid "Validating files: %s\n"
+#: src/core/variable.c:89
+msgid "Invalid VariableManager\n"
 msgstr ""
 
-#: src/data/quarantine.c:83
-msgid "Package files not found\n"
-msgstr ""
-
-#: src/data/quarantine.c:92
-msgid "Failed to open package files\n"
-msgstr ""
-
-#: src/data/quarantine.c:150
-#, c-format
-msgid "Validating links: %s\n"
-msgstr ""
-
-#: src/data/quarantine.c:163
-msgid "Package links not found\n"
-msgstr ""
-
-#: src/data/quarantine.c:175
-msgid "Failed to open package links\n"
-msgstr ""
-
-#: src/data/quarantine.c:230
-#, c-format
-msgid "Syncing: %s\n"
-msgstr ""
-
-#: src/data/repository.c:74
-msgid "Failed to create new package\n"
-msgstr ""
-
-#: src/operations/package-manager/build.c:66
-msgid "Build package"
-msgstr ""
-
-#: src/operations/package-manager/build.c:69
-msgid "install after build"
-msgstr ""
-
-#: src/operations/package-manager/info.c:100
-msgid "Show package information"
-msgstr ""
-
-#: src/operations/package-manager/install.c:104
-msgid "Install package"
-msgstr ""
-
-#: src/operations/package-manager/install.c:108
-msgid "disable dependency check"
-msgstr ""
-
-#: src/operations/package-manager/install.c:109
-msgid "reinstall if already installed"
-msgstr ""
-
-#: src/operations/package-manager/install.c:110
-msgid "use binary package"
-msgstr ""
-
-#: src/operations/package-manager/install.c:111
-msgid "sync quarantine after every package installation"
-msgstr ""
-
-#: src/operations/package-manager/key.c:82
-msgid "Ymp key manager"
-msgstr ""
-
-#: src/operations/package-manager/key.c:85
-msgid "Add a key into ymp keyring db"
-msgstr ""
-
-#: src/operations/package-manager/key.c:86
-msgid "Add a key from ymp keyring db"
-msgstr ""
-
-#: src/operations/package-manager/key.c:87
-msgid "Name for new key"
-msgstr ""
-
-#: src/operations/package-manager/list.c:86
-msgid "List packages, repos and more"
-msgstr ""
-
-#: src/operations/package-manager/list.c:89
-msgid "List available packages"
-msgstr ""
-
-#: src/operations/package-manager/list.c:90
-msgid "List installed packages"
-msgstr ""
-
-#: src/operations/package-manager/remove.c:151
-msgid "Remove package"
-msgstr ""
-
-#: src/operations/package-manager/repo.c:273
-msgid "Repository operations"
-msgstr ""
-
-#: src/operations/package-manager/search.c:105
-msgid "Search package or file"
-msgstr ""
-
-#: src/operations/package-manager/search.c:109
-msgid "Search files"
-msgstr ""
-
-#: src/operations/utility/dialog.c:24
-msgid "Dialog"
-msgstr ""
-
-#: src/operations/utility/help.c:62
-msgid "Print help message"
-msgstr ""
-
-#: src/operations/utility/print.c:20
-msgid "Print message"
-msgstr ""
-
-#: src/operations/utility/revdep.c:71
-msgid "Check library for broken links."
-msgstr ""
-
-#: src/operations/utility/setget.c:33
-msgid "Set ymp variable"
-msgstr ""
-
-#: src/operations/utility/setget.c:41
-msgid "Get ymp variable"
-msgstr ""
-
-#: src/operations/utility/setget.c:49
-msgid "Compare strings"
-msgstr ""
-
-#: src/operations/utility/setget.c:58
-msgid "Do nothing"
-msgstr ""
-
-#: src/operations/utility/sysconf.c:54
-msgid "Trigger sysconf operations"
-msgstr ""
-
-#: src/utils/archive.c:170
+#: src/utils/archive.c:191
 #, c-format
 msgid "Skip unsupported archive entry: %s\n"
 msgstr ""
 
-#: src/utils/array.c:15 src/utils/array.c:20
-msgid "memory allocation failed"
+#: src/utils/file.c:332
+#, c-format
+msgid "Error accessing source directory: %s\n"
+msgstr ""
+
+#: src/utils/file.c:338
+#, c-format
+msgid "Error creating destination directory: %s\n"
+msgstr ""
+
+#: src/utils/file.c:344
+#, c-format
+msgid "Error opening source directory: %s\n"
+msgstr ""
+
+#: src/utils/file.c:417
+#, c-format
+msgid "Cannot access: %s\n"
 msgstr ""
 
 #: src/utils/fetcher.c:94
@@ -251,60 +98,687 @@ msgstr ""
 msgid "Download failed: %s\n"
 msgstr ""
 
-#: src/utils/file.c:319
-#, c-format
-msgid "Error accessing source directory: %s\n"
-msgstr ""
-
-#: src/utils/file.c:325
-#, c-format
-msgid "Error creating destination directory: %s\n"
-msgstr ""
-
-#: src/utils/file.c:331
-#, c-format
-msgid "Error opening source directory: %s\n"
-msgstr ""
-
-#: src/utils/file.c:404
-#, c-format
-msgid "Cannot access: %s\n"
-msgstr ""
-
-#: src/utils/gui.c:265
+#: src/utils/gui_yesno.c:65
 msgid "Select: "
 msgstr ""
 
-#: src/utils/gui.c:269
+#: src/utils/gui_yesno.c:69
 msgid " Yes "
 msgstr ""
 
-#: src/utils/gui.c:278
+#: src/utils/gui_yesno.c:78
 msgid " No "
 msgstr ""
 
-#: plugin/brainfuck.c:22
-msgid "Failed to run brainfuck code: Out of memory\n"
+#: src/utils/sandbox.c:104
+#, c-format
+msgid "Failed to mount: %s\n"
 msgstr ""
 
-#: plugin/brainfuck.c:127
-msgid "Brainfuck interpreter"
+#: src/operations/package-manager/info.c:101
+msgid "Show package information"
+msgstr ""
+
+#: src/operations/package-manager/info.c:105
+msgid "PACKAGE... : packages to show information for"
+msgstr ""
+
+#: src/operations/package-manager/install.c:23
+#, c-format
+msgid "Downloading: %s\n"
+msgstr ""
+
+#: src/operations/package-manager/install.c:26
+#, c-format
+msgid "Download failed for: %s\n"
+msgstr ""
+
+#: src/operations/package-manager/install.c:35
+#, c-format
+msgid "Installing: %s\n"
+msgstr ""
+
+#: src/operations/package-manager/install.c:37
+#, c-format
+msgid "Installation failed for: %s\n"
+msgstr ""
+
+#: src/operations/package-manager/install.c:148
+msgid "Install package"
+msgstr ""
+
+#: src/operations/package-manager/install.c:152
+msgid "disable dependency check"
+msgstr ""
+
+#: src/operations/package-manager/install.c:153
+msgid "reinstall if already installed"
+msgstr ""
+
+#: src/operations/package-manager/install.c:154
+msgid "use binary package"
+msgstr ""
+
+#: src/operations/package-manager/install.c:155
+msgid "sync quarantine after every package installation"
+msgstr ""
+
+#: src/operations/package-manager/install.c:156
+msgid "upgrade installed packages"
+msgstr ""
+
+#: src/operations/package-manager/install.c:157
+msgid "PACKAGE... : packages to install"
+msgstr ""
+
+#: src/operations/package-manager/template.c:61
+#, c-format
+msgid "Variable '%s' is not defined. Please use --%s\n"
+msgstr ""
+
+#: src/operations/package-manager/template.c:123
+msgid "Please check ympbuild:\n"
+msgstr ""
+
+#: src/operations/package-manager/template.c:125
+msgid "Template"
+msgstr ""
+
+#: src/operations/package-manager/template.c:125
+msgid "Is it OK ?"
+msgstr ""
+
+#: src/operations/package-manager/template.c:152
+#, c-format
+msgid "Creating template: %s\n"
+msgstr ""
+
+#: src/operations/package-manager/template.c:176
+msgid "Create ympbuild from template."
+msgstr ""
+
+#: src/operations/package-manager/template.c:179
+msgid "package name"
+msgstr ""
+
+#: src/operations/package-manager/template.c:180
+msgid "package version"
+msgstr ""
+
+#: src/operations/package-manager/template.c:181
+msgid "package homepage"
+msgstr ""
+
+#: src/operations/package-manager/template.c:182
+msgid "package description"
+msgstr ""
+
+#: src/operations/package-manager/template.c:183
+msgid "package dependencies"
+msgstr ""
+
+#: src/operations/package-manager/template.c:184
+msgid "package build dependencies"
+msgstr ""
+
+#: src/operations/package-manager/template.c:185
+msgid "package creator email"
+msgstr ""
+
+#: src/operations/package-manager/template.c:186
+msgid "package maintainer"
+msgstr ""
+
+#: src/operations/package-manager/template.c:187
+msgid "package license"
+msgstr ""
+
+#: src/operations/package-manager/template.c:188
+msgid "package source"
+msgstr ""
+
+#: src/operations/package-manager/template.c:189
+msgid "package build-type (autotool cmake meson)"
+msgstr ""
+
+#: src/operations/package-manager/template.c:190
+msgid "ympbuild output directory"
+msgstr ""
+
+#: src/operations/package-manager/build.c:96
+msgid "Build package"
+msgstr ""
+
+#: src/operations/package-manager/build.c:99
+msgid "install after build"
+msgstr ""
+
+#: src/operations/package-manager/build.c:100
+msgid "output directory for built packages"
+msgstr ""
+
+#: src/operations/package-manager/build.c:101
+msgid "FILE... : ympbuild files or directories to build"
+msgstr ""
+
+#: src/operations/package-manager/key.c:80
+msgid "Ymp key manager"
+msgstr ""
+
+#: src/operations/package-manager/key.c:83
+msgid "Add a key into ymp keyring db"
+msgstr ""
+
+#: src/operations/package-manager/key.c:84
+msgid "Remove a key from ymp keyring db"
+msgstr ""
+
+#: src/operations/package-manager/key.c:85
+msgid "List keys in ymp keyring db"
+msgstr ""
+
+#: src/operations/package-manager/key.c:86
+msgid "Name for new key"
+msgstr ""
+
+#: src/operations/package-manager/list.c:87
+msgid "List packages, repos and more"
+msgstr ""
+
+#: src/operations/package-manager/list.c:90
+msgid "List available packages"
+msgstr ""
+
+#: src/operations/package-manager/list.c:91
+msgid "List installed packages"
+msgstr ""
+
+#: src/operations/package-manager/remove.c:150
+msgid "Remove package"
+msgstr ""
+
+#: src/operations/package-manager/remove.c:153
+msgid "PACKAGE... : packages to remove"
+msgstr ""
+
+#: src/operations/package-manager/clean.c:16
+#: src/operations/package-manager/clean.c:21
+#: src/operations/package-manager/clean.c:26
+#: src/operations/package-manager/clean.c:31
+#, c-format
+msgid "Clean: %s\n"
+msgstr ""
+
+#: src/operations/package-manager/clean.c:16
+msgid "package cache"
+msgstr ""
+
+#: src/operations/package-manager/clean.c:21
+msgid "repository index cache"
+msgstr ""
+
+#: src/operations/package-manager/clean.c:26
+msgid "build directory"
+msgstr ""
+
+#: src/operations/package-manager/clean.c:31
+msgid "quarantine"
+msgstr ""
+
+#: src/operations/package-manager/clean.c:40
+msgid "Remove all caches."
+msgstr ""
+
+#: src/operations/package-manager/clean.c:43
+msgid "Takes no arguments. Removes package, index and build caches."
+msgstr ""
+
+#: src/operations/package-manager/repo.c:129
+#, c-format
+msgid "%s: %s\n"
+msgstr ""
+
+#: src/operations/package-manager/repo.c:283
+msgid "Repository operations"
+msgstr ""
+
+#: src/operations/package-manager/repo.c:286
+msgid "update repository indexes"
+msgstr ""
+
+#: src/operations/package-manager/repo.c:287
+msgid "add a repository URI (requires --name)"
+msgstr ""
+
+#: src/operations/package-manager/repo.c:288
+msgid "remove a repository (requires --name)"
+msgstr ""
+
+#: src/operations/package-manager/repo.c:289
+msgid "create repository index from PATH"
+msgstr ""
+
+#: src/operations/package-manager/repo.c:290
+msgid "repository name"
+msgstr ""
+
+#: src/operations/package-manager/repo.c:291
+msgid "reorganize package files while indexing"
+msgstr ""
+
+#: src/operations/package-manager/repo.c:292
+msgid "gpg recipient for signing the index"
+msgstr ""
+
+#: src/operations/package-manager/repo.c:293
+msgid "URI : repository URI for --add"
+msgstr ""
+
+#: src/operations/package-manager/repo.c:294
+msgid "PATH : package directory for --index"
+msgstr ""
+
+#: src/operations/package-manager/search.c:103
+msgid "Search package or file"
+msgstr ""
+
+#: src/operations/package-manager/search.c:107
+msgid "Search files"
+msgstr ""
+
+#: src/operations/package-manager/search.c:108
+msgid "search binary packages only"
+msgstr ""
+
+#: src/operations/package-manager/search.c:109
+msgid "search source packages only"
+msgstr ""
+
+#: src/operations/package-manager/search.c:110
+msgid "PATTERN... : search pattern"
+msgstr ""
+
+#: src/operations/utility/dialog.c:24
+msgid "Dialog"
+msgstr ""
+
+#: src/operations/utility/dialog.c:27
+msgid "show a yes/no dialog"
+msgstr ""
+
+#: src/operations/utility/dialog.c:28
+msgid "show an info message dialog"
+msgstr ""
+
+#: src/operations/utility/dialog.c:29
+msgid "TITLE TEXT : dialog title and message"
+msgstr ""
+
+#: src/operations/utility/exec.c:27
+msgid "COMMAND [ARGS]... : command to execute"
+msgstr ""
+
+#: src/operations/utility/exec.c:28
+msgid "Execute command"
+msgstr ""
+
+#: src/operations/utility/print.c:21
+msgid "Print message"
+msgstr ""
+
+#: src/operations/utility/print.c:24
+msgid "MESSAGE... : messages to print"
+msgstr ""
+
+#: src/operations/utility/help.c:61
+msgid "Print help message"
+msgstr ""
+
+#: src/operations/utility/help.c:65
+msgid "OPERATION... : show help for given operations"
+msgstr ""
+
+#: src/operations/utility/sysconf.c:26
+#, c-format
+msgid "Failed to chroot: %s\n"
+msgstr ""
+
+#: src/operations/utility/sysconf.c:51
+msgid "Trigger sysconf operations"
+msgstr ""
+
+#: src/operations/utility/sysconf.c:54
+msgid "Takes no arguments. Runs sysconf scripts from /etc/sysconf.d/"
+msgstr ""
+
+#: src/operations/utility/revdep.c:152
+#, c-format
+msgid "Missing library: %s from %s\n"
+msgstr ""
+
+#: src/operations/utility/revdep.c:212
+msgid "Check library for broken links."
+msgstr ""
+
+#: src/operations/utility/revdep.c:215
+msgid "check pkgconfig files instead of ELF binaries"
+msgstr ""
+
+#: src/operations/utility/shell.c:30
+msgid "FILE... : ympsh script files to execute"
+msgstr ""
+
+#: src/operations/utility/shell.c:31
+msgid "Execute ympsh file"
+msgstr ""
+
+#: src/operations/utility/setget.c:47
+msgid "KEY VALUE : set variable KEY to VALUE"
+msgstr ""
+
+#: src/operations/utility/setget.c:48
+msgid "Set ymp variable"
+msgstr ""
+
+#: src/operations/utility/setget.c:56
+msgid "Get ymp variable"
+msgstr ""
+
+#: src/operations/utility/setget.c:59
+msgid "[KEY]... : print variables (all variables if no KEY given)"
+msgstr ""
+
+#: src/operations/utility/setget.c:65
+msgid "Compare strings"
+msgstr ""
+
+#: src/operations/utility/setget.c:69
+msgid "STR1 STR2 : compare two strings"
+msgstr ""
+
+#: src/operations/utility/setget.c:75
+msgid "Do nothing"
+msgstr ""
+
+#: src/operations/utility/setget.c:79
+msgid "Takes no arguments. Do nothing, always succeeds"
+msgstr ""
+
+#: src/data/package.c:210
+msgid "Invalid package.\n"
+msgstr ""
+
+#: src/data/package.c:216
+msgid "Invalid package archive.\n"
+msgstr ""
+
+#: src/data/package.c:219
+#, c-format
+msgid "Extracting package: %s\n"
+msgstr ""
+
+#: src/data/package.c:223
+#, c-format
+msgid "Package %s is marked as unsafe.\n"
+msgstr ""
+
+#: src/data/package.c:295
+#, c-format
+msgid "Package archive hash mismatch: Expected '%s', Received '%s'\n"
+msgstr ""
+
+#: src/data/package.c:401
+#, c-format
+msgid "Metadata is invalid for package: %s\n"
+msgstr ""
+
+#: src/data/dependency.c:24
+#, c-format
+msgid "Resolving group: %s (depth: %d)\n"
+msgstr ""
+
+#: src/data/dependency.c:75 src/data/dependency.c:127
+#, c-format
+msgid "Searching: %s (depth: %d)\n"
+msgstr ""
+
+#: src/data/dependency.c:100 src/data/dependency.c:177
+#, c-format
+msgid "Resolved: %s (depth: %d)\n"
+msgstr ""
+
+#: src/data/dependency.c:139
+#, c-format
+msgid "Package is not installed: %s\n"
+msgstr ""
+
+#: src/data/dependency.c:159
+#, c-format
+msgid "Installed package is broken: %s\n"
+msgstr ""
+
+#: src/data/dependency.c:203
+#, c-format
+msgid "%s needs upgrade\n"
+msgstr ""
+
+#: src/data/dependency.c:240
+msgid "Repository list is empty.\n"
+msgstr ""
+
+#: src/data/dependency.c:298
+msgid "Failed to resolve dependencies.\n"
+msgstr ""
+
+#: src/data/dependency.c:311
+#, c-format
+msgid "Dependencies resolved in %d µs\n"
+msgstr ""
+
+#: src/data/dependency.c:325
+#, c-format
+msgid "Reverse dependencies resolved in %d µs\n"
+msgstr ""
+
+#: src/data/build.c:195
+msgid "Build directory is invalid or inaccessible.\n"
+msgstr ""
+
+#: src/data/build.c:200
+msgid "Failed to execute build command.\n"
+msgstr ""
+
+#: src/data/build.c:295
+#, c-format
+msgid "Hash calculation failed for: %s\n"
+msgstr ""
+
+#: src/data/build.c:302
+#, c-format
+msgid "Hash verification skipped for: %s\n"
+msgstr ""
+
+#: src/data/build.c:304
+#, c-format
+msgid ""
+"Archive hash verification failed:\n"
+"  -> Expected: %s\n"
+"  -> Received: %s\n"
+msgstr ""
+
+#: src/data/build.c:548
+msgid "Global context not initialized. Please initialize ymp first.\n"
+msgstr ""
+
+#: src/data/build.c:629
+#, c-format
+msgid "ympbuild file not found: %s\n"
+msgstr ""
+
+#: src/data/build.c:642
+msgid "Syntax error detected in ympbuild file.\n"
+msgstr ""
+
+#: src/data/build.c:749
+#, c-format
+msgid "Binary package created at: %s\n"
+msgstr ""
+
+#: src/data/build.c:753
+msgid "Failed to create package.\n"
+msgstr ""
+
+#: src/data/build.c:760
+#, c-format
+msgid "Creating package from: %s\n"
+msgstr ""
+
+#: src/data/build.c:776
+#, c-format
+msgid "Metadata file not found: %s\n"
+msgstr ""
+
+#: src/data/build.c:782
+#, c-format
+msgid "Failed to change directory to: %s\n"
+msgstr ""
+
+#: src/data/build.c:788
+msgid "Invalid metadata format.\n"
+msgstr ""
+
+#: src/data/build.c:827
+msgid "Failed to change directory to 'output' directory.\n"
+msgstr ""
+
+#: src/data/build.c:837
+#, c-format
+msgid "Archive add: %s \n"
+msgstr ""
+
+#: src/data/build.c:858
+#, c-format
+msgid "Failed to change directory back to: %s\n"
+msgstr ""
+
+#: src/data/build.c:892
+msgid "Failed to change directory back.\n"
+msgstr ""
+
+#: src/data/quarantine.c:19
+#, c-format
+msgid "Validating metadata for: %s\n"
+msgstr ""
+
+#: src/data/quarantine.c:30
+#, c-format
+msgid "Invalid metadata for: %s\n"
+msgstr ""
+
+#: src/data/quarantine.c:42
+#, c-format
+msgid "Unsupported package format: %s\n"
+msgstr ""
+
+#: src/data/quarantine.c:67
+#, c-format
+msgid "Validating files for: %s\n"
+msgstr ""
+
+#: src/data/quarantine.c:80
+msgid "Package files not found\n"
+msgstr ""
+
+#: src/data/quarantine.c:89
+msgid "Failed to open package files\n"
+msgstr ""
+
+#: src/data/quarantine.c:121
+#, c-format
+msgid "File not found: %s\n"
+msgstr ""
+
+#: src/data/quarantine.c:146
+#, c-format
+msgid "Validating links for: %s\n"
+msgstr ""
+
+#: src/data/quarantine.c:159
+msgid "Package links not found\n"
+msgstr ""
+
+#: src/data/quarantine.c:171
+msgid "Failed to open package links\n"
+msgstr ""
+
+#: src/data/quarantine.c:196
+#, c-format
+msgid "Error reading symlink: %s\n"
+msgstr ""
+
+#: src/data/quarantine.c:205
+#, c-format
+msgid "Link check failed: %s\n"
+msgstr ""
+
+#: src/data/quarantine.c:211
+#, c-format
+msgid "Absolute path symlink found: %s\n"
+msgstr ""
+
+#: src/data/quarantine.c:225
+#, c-format
+msgid "Syncing quarantine for: %s\n"
+msgstr ""
+
+#: src/data/quarantine.c:279 src/data/quarantine.c:309
+#, c-format
+msgid "Failed to sync: %s => %s\n"
+msgstr ""
+
+#: src/data/quarantine.c:318 src/data/quarantine.c:326
+#, c-format
+msgid "Failed to sync: %s\n"
+msgstr ""
+
+#: src/data/quarantine.c:334
+msgid "Failed to sync metadata\n"
+msgstr ""
+
+#: src/data/repository.c:86
+msgid "Failed to create new package.\n"
+msgstr ""
+
+#: plugin/fetch.c:34
+msgid "Download"
+msgstr ""
+
+#: plugin/fetch.c:100
+msgid "file downloader"
+msgstr ""
+
+#: plugin/fetch.c:102 plugin/extract.c:31
+msgid "Target directory"
 msgstr ""
 
 #: plugin/extract.c:28
 msgid "Extract files from archive"
 msgstr ""
 
-#: plugin/extract.c:31 plugin/fetch.c:74
-msgid "Target directory"
+#: plugin/brainfuck.c:21
+msgid "Failed to run brainfuck code: Out of memory\n"
 msgstr ""
 
-#: plugin/fetch.c:43
-msgid "Download"
+#: plugin/brainfuck.c:126
+msgid "Brainfuck interpreter"
 msgstr ""
 
-#: plugin/fetch.c:72
-msgid "file downloader"
+#: plugin/brainfuck.c:129
+msgid "compile brainfuck code instead of interpreting"
+msgstr ""
+
+#: plugin/brainfuck.c:130
+msgid "FILE : brainfuck source file to run"
 msgstr ""
 
 #: plugin/hello.c:10
@@ -315,45 +789,90 @@ msgstr ""
 msgid "Simple hello world plugin"
 msgstr ""
 
-#: plugin/httpd.c:67
+#: plugin/hello.c:22
+msgid "Takes no arguments."
+msgstr ""
+
+#: plugin/debian.c:41
+msgid "Deb package operations"
+msgstr ""
+
+#: plugin/debian.c:44
+msgid "Extract a deb package."
+msgstr ""
+
+#: plugin/debian.c:45
+msgid "Extract directory target."
+msgstr ""
+
+#: plugin/sandbox.c:16
+msgid "No command to run in the sandbox.\n"
+msgstr ""
+
+#: plugin/sandbox.c:53
+msgid "Run a command inside an isolated sandbox"
+msgstr ""
+
+#: plugin/sandbox.c:56
+msgid "Set the sandbox hostname."
+msgstr ""
+
+#: plugin/sandbox.c:57
+msgid "Bind mounts (space separated src:target) into the sandbox."
+msgstr ""
+
+#: plugin/sandbox.c:58
+msgid "Share the host network."
+msgstr ""
+
+#: plugin/httpd.c:74
 #, c-format
 msgid "Failed to open directory: %s\n"
 msgstr ""
 
-#: plugin/httpd.c:128
+#: plugin/httpd.c:143
 msgid "Failed to read from client"
 msgstr ""
 
-#: plugin/httpd.c:180
+#: plugin/httpd.c:205
 #, c-format
 msgid "GET: %s\n"
 msgstr ""
 
-#: plugin/httpd.c:184
+#: plugin/httpd.c:209
 #, c-format
 msgid "Failed to open file: %s\n"
 msgstr ""
 
-#: plugin/httpd.c:229
+#: plugin/httpd.c:259
 msgid "Error opening socket\n"
 msgstr ""
 
-#: plugin/httpd.c:240
+#: plugin/httpd.c:276
 msgid "Error binding socket\n"
 msgstr ""
 
-#: plugin/httpd.c:244
+#: plugin/httpd.c:280
 msgid "Listen failed...\n"
 msgstr ""
 
-#: plugin/httpd.c:262
+#: plugin/httpd.c:283
+#, c-format
+msgid "Server listening %s:%d\n"
+msgstr ""
+
+#: plugin/httpd.c:306
 msgid "simple http server"
 msgstr ""
 
-#: plugin/httpd.c:266
+#: plugin/httpd.c:310
+msgid "serve listen address. (default 127.0.0.1)"
+msgstr ""
+
+#: plugin/httpd.c:311
 msgid "serve directory. (default /)"
 msgstr ""
 
-#: plugin/httpd.c:267
+#: plugin/httpd.c:312
 msgid "server tcp port (default 8000)"
 msgstr ""
