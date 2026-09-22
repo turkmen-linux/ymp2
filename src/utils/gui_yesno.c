@@ -1,3 +1,4 @@
+#include <libintl.h>
 #include <ncurses.h>
 #include <string.h>
 

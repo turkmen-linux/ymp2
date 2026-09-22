@@ -21,7 +21,7 @@ static array *cache;
 size_t depth = 0;  // Variable to track the depth of dependency resolution
 
 visible char **get_group_packages(const char *name) {
-    info("Resolving group: %s depth:%d\n", name, depth);
+    info(_("Resolving group: %s (depth: %d)\n"), name, depth);
     array *res = array_new();
     Package *pi = package_new();
     pi->is_virtual = true;
@@ -72,7 +72,7 @@ static void resolve_dependency_fn(char *name, bool emerge) {
     array_add(cache, name);
 
     // Log the current package being searched and the depth level
-    info("Search: %s depth:%d\n", name, depth);
+    info(_("Searching: %s (depth: %d)\n"), name, depth);
 
     if (name[0] == '@') {
         char **grp_pkgs = get_group_packages(name);
@@ -97,7 +97,7 @@ static void resolve_dependency_fn(char *name, bool emerge) {
         depth--;  // Decrease the depth after processing all dependencies
 
         // Log the resolved package and current depth
-        info("Resolved: %s depth:%d\n", name, depth);
+        info(_("Resolved: %s (depth: %d)\n"), name, depth);
 
         // Check list length reallocate if needed
         if (resolved_count + 1 >= resolved_total) {
@@ -124,7 +124,7 @@ static void resolve_reverse_dependency_fn(char *name) {
     array_add(cache, name);
 
     // Log the current package being searched and the depth level
-    info("Search: %s depth:%d\n", name, depth);
+    info(_("Searching: %s (depth: %d)\n"), name, depth);
 
     // Check list length reallocate if needed
     if (resolved_count + 1 >= resolved_total) {
@@ -136,7 +136,7 @@ static void resolve_reverse_dependency_fn(char *name) {
     }
     Package *pkg = package_new();
     if (!package_load_from_installed(pkg, name)) {
-        warning("Package is not installed: %s\n", name);
+        warning(_("Package is not installed: %s\n"), name);
         package_unref(pkg);
         return;
     }
@@ -156,7 +156,7 @@ static void resolve_reverse_dependency_fn(char *name) {
         Package *pi = package_new();
         packages[i][strlen(packages[i]) - 5] = '\0';
         if (!package_load_from_installed(pi, packages[i])) {
-            warning("Installed package is broken: %s\n", packages[i]);
+            warning(_("Installed package is broken: %s\n"), packages[i]);
             package_unref(pi);
             free(packages[i]);
             continue;
@@ -174,7 +174,7 @@ static void resolve_reverse_dependency_fn(char *name) {
     depth--;  // Decrease the depth after processing all dependencies
 
     // Log the resolved package and current depth
-    info("Resolved: %s depth:%d\n", name, depth);
+    info(_("Resolved: %s (depth: %d)\n"), name, depth);
 }
 
 visible char **resolve_upgrade(Repository **repos) {
@@ -200,7 +200,7 @@ visible char **resolve_upgrade(Repository **repos) {
                 continue;
             }
             if (!package_is_installed(p)) {  // check upgrade
-                info("%s is need upgrade\n", packages[j]);
+                info(_("%s needs upgrade\n"), packages[j]);
                 array_add(need_upgrade, p->name);
             }
         }
@@ -237,7 +237,7 @@ visible Repository **resolve_begin() {
         i++;
     }
     if (j == 0) {
-        warning("%s\n", "Repository list is empty!");
+        warning(_("Repository list is empty.\n"));
         free(dirs);
         free(repodir);
         return NULL;
@@ -295,7 +295,7 @@ visible void resolve_end(Repository **frepos) {
 visible Package **resolve_dependency(char *name) {
     size_t begin_time = get_epoch();
     if (repos == NULL) {
-        print(_("Failed to resolve dependencies\n"));
+        print(_("Failed to resolve dependencies.\n"));
         return NULL;  // Dont resolve package if repository list is empty
     }
     if (resolved != NULL) {
@@ -308,7 +308,7 @@ visible Package **resolve_dependency(char *name) {
 
     resolve_dependency_fn(name, !get_bool("no-emerge"));  // Resolve dependencies recursively
     resolved[resolved_count] = NULL;                      // NULL terminate the resolved list
-    info("Dependencies resolved in %d µs\n", get_epoch() - begin_time);
+    info(_("Dependencies resolved in %d µs\n"), get_epoch() - begin_time);
     return resolved;  // Return the array of resolved dependencies
 }
 
@@ -322,7 +322,7 @@ visible Package **resolve_reverse_dependency(char *name) {
     resolved_count = 0;                          // reset resolve count
     resolved_total = 0;                          // reset resolve total
     cache = array_new();                         // Create a new array for caching resolved packages
-    info("Reverse dependencies resolved in %d µs\n", get_epoch() - begin_time);
+    info(_("Reverse dependencies resolved in %d µs\n"), get_epoch() - begin_time);
     resolve_reverse_dependency_fn(name);
     resolved[resolved_count] = NULL;
     return resolved;  // Return the array of resolved dependencies

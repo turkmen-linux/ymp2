@@ -40,7 +40,7 @@ visible void variable_manager_unref(VariableManager *variables) {
 
 static void variable_set_value_fn(VariableManager *variables, const char *name, const char *value, bool read_only) {
     if (!variables) {
-        print(_("Invalid VariableManager\n"));
+        print(_("Invalid VariableManager.\n"));
         return;
     }
     YmpVariable *vars = (YmpVariable *) variables->priv_data;
@@ -62,7 +62,7 @@ static void variable_set_value_fn(VariableManager *variables, const char *name, 
         variables->capacity += 32;
         YmpVariable *new_vars = realloc(variables->priv_data, sizeof(YmpVariable) * variables->capacity);
         if (!new_vars) {
-            print(_("Memory allocation failed\n"));
+            print(_("Memory allocation failed.\n"));
             return;
         }
         variables->priv_data = new_vars;
@@ -101,7 +101,7 @@ visible char *variable_get_value(VariableManager *variables, const char *name) {
 
 visible char **variable_get_names(VariableManager *variables) {
     if (!variables) {
-        print(_("Invalid VariableManager\n"));
+        print(_("Invalid VariableManager.\n"));
         return NULL;
     }
     YmpVariable *vars = (YmpVariable *) variables->priv_data;
@@ -119,7 +119,7 @@ visible char **variable_get_names(VariableManager *variables) {
 char *get_value(const char *name) {
     if (!global) {
         global = ymp_init();
-        warning("please call ymp_init after use get_value");
+        warning("Please call ymp_init() before using get_value().");
     }
     return variable_get_value(global->variables, name);
 }
@@ -127,7 +127,7 @@ char *get_value(const char *name) {
 void set_value(const char *name, const char *value) {
     if (!global) {
         global = ymp_init();
-        warning("please call ymp_init after use set_value");
+        warning("Please call ymp_init() before using set_value().");
     }
     variable_set_value(global->variables, name, value);
 }
@@ -135,7 +135,7 @@ void set_value(const char *name, const char *value) {
 void set_value_read_only(const char *name, const char *value) {
     if (!global) {
         global = ymp_init();
-        warning("please call ymp_init after use set_value_read_only");
+        warning("Please call ymp_init() before using set_value_read_only().");
     }
     variable_set_value_read_only(global->variables, name, value);
 }

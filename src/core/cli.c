@@ -22,7 +22,8 @@ visible int ymp_main(int argc, char **argv) {
                 color_print(BOLD, COLOR_RED, "YMP");
                 print("    : %serli ve %silli %sackage manager\n",
                       red "Y" nop, red "M" nop, red "P" nop);
-                print(_("Version: %s\n"), VERSION);
+                print(_("Version: ymp %s\n"), VERSION);
+                print(_("YMP is a reliable and efficient package manager.\n"));
                 show_ver = true;
             } else if (show_ver && iseq(argv[i], "--flag")) {
                 print("\n%s\n", readfile(":/flag.txt"));
@@ -36,8 +37,7 @@ visible int ymp_main(int argc, char **argv) {
         }
         ymp_add(ymp, argv[1], parse_args(argv + 2, false));
     } else {
-        print(_("No command given.\n"));
-        print(_("Run %s for more information about usage.\n"), red "ymp help" nop);
+        print(_("Please provide a command. Use 'ymp help' for usage information.\n"));
         ymp_unref(ymp);
         return 1;
     }

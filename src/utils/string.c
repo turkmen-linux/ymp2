@@ -74,10 +74,19 @@ visible char *join(const char *f, char **array) {
     int cnt = i;
     i = 0;
     /* copy items */
+    size_t remaining = len;
     while (array[i]) {
-        strncat(ret, array[i], strlen(array[i]));
+        size_t item_len = strlen(array[i]);
+        if (remaining < item_len) {
+            remaining = item_len;
+        }
+        strncat(ret, array[i], remaining);
         if (i < cnt - 1) {
-            strncat(ret, f, strlen(f));
+            size_t sep_len = strlen(f);
+            if (remaining < sep_len) {
+                remaining = sep_len;
+            }
+            strncat(ret, f, remaining);
         }
         i++;
     }

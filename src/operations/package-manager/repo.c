@@ -126,7 +126,7 @@ static int repo_index_op(char *file, PkgIndex *i) {
         status = 1;
         goto repo_index_op_free;
     }
-    info("%s: %s\n", "Index", file);
+    info(_("%s: %s\n"), "Index", file);
     i->md5 = calculate_md5(file);
     i->sha256 = calculate_sha256(file);
     i->metadata = metadata + 5;
@@ -175,7 +175,7 @@ static void move_packages(const char *path) {
 static int repo_index(const char *path) {
     const char *name = get_value("name");
     if (strlen(name) < 1) {
-        color_print(BOLD, COLOR_RED, "repo name is undefined. Use --name=xxx\n");
+        color_print(BOLD, COLOR_RED, "Repository name is undefined. Use --name=xxx\n");
         return 1;
     }
     if (get_bool("move")) {
@@ -225,7 +225,7 @@ static int repo_index(const char *path) {
     }
     char *repicent = get_value("repicent");
     if (strlen(repicent) < 1) {
-        color_print(BOLD, COLOR_RED, "Failed to set gpg repicent!\n");
+        color_print(BOLD, COLOR_RED, "Failed to set GPG representative.\n");
         status = 1;
         goto repo_index_free;
     }

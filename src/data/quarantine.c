@@ -16,7 +16,7 @@
 
 // Function to validate metadata
 static int quarantine_validate_metadata(const char *name) {
-    print(_("Validating metadata: %s\n"), name);
+    print(_("Validating metadata for: %s\n"), name);
     // Get the destination directory from global variables
     char *destdir = variable_get_value(global->variables, "DESTDIR");
 
@@ -27,7 +27,7 @@ static int quarantine_validate_metadata(const char *name) {
     char *metadata = readfile(metadata_path);
     char *data = yaml_get_area(metadata, "ymp");
     if (!data) {
-        warning(_("Invalid metadata: %s\n"), metadata_path);
+        warning(_("Invalid metadata for: %s\n"), metadata_path);
         status = 1;
         free(metadata);
         return status;
@@ -64,7 +64,7 @@ static int quarantine_validate_metadata(const char *name) {
 
 // Function to validate files in the quarantine directory
 static int quarantine_validate_files(const char *name) {
-    print(_("Validating files: %s\n"), name);
+    print(_("Validating files for: %s\n"), name);
     // Get the destination directory from global variables
     char *destdir = variable_get_value(global->variables, "DESTDIR");
 
@@ -118,7 +118,7 @@ static int quarantine_validate_files(const char *name) {
 
         // Check if the actual file exists
         if (!isfile(actual_file)) {
-            warning("file not found: %s\n", actual_file);
+            warning(_("File not found: %s\n"), actual_file);
             status = 1;
         } else {
             // Calculate the SHA1 hash of the actual file
@@ -143,7 +143,7 @@ free_quarantine_validate_files:
 }
 
 static int quarantine_validate_links(const char *name) {
-    print(_("Validating links: %s\n"), name);
+    print(_("Validating links for: %s\n"), name);
     // Get the destination directory from global variables
     char *destdir = variable_get_value(global->variables, "DESTDIR");
 
@@ -193,7 +193,7 @@ static int quarantine_validate_links(const char *name) {
         snprintf(actual_link, sizeof(actual_link), "%s%s", rootfs_path, line);
         ssize_t rc = readlink(actual_link, link_target, PATH_MAX);
         if (rc < 0) {
-            warning("Error reading symlink: %s\n", actual_link);
+            warning(_("Error reading symlink: %s\n"), actual_link);
             perror(link_target);
             status = 1;
             goto free_quarantine_validate_links;
@@ -202,13 +202,13 @@ static int quarantine_validate_links(const char *name) {
         // check links are same
         status = strcmp(link_target, line + offset + 1);
         if (status) {
-            warning("link check failed %s\n", actual_link);
+            warning(_("Link check failed: %s\n"), actual_link);
             goto free_quarantine_validate_links;
         }
         // check link is absolute path
         if (line[offset + 1] == '/') {
             status = 1;
-            warning("absolute path symlink found %s\n", actual_link);
+            warning(_("Absolute path symlink found: %s\n"), actual_link);
             goto free_quarantine_validate_links;
         }
     }
@@ -222,7 +222,7 @@ free_quarantine_validate_links:
 
 // Function to sync quarantine validated files
 visible int quarantine_sync(const char *name) {
-    print(_("Syncing: %s\n"), name);
+    print(_("Syncing quarantine for: %s\n"), name);
     int status = 0;
     // Get the destination directory from global variables
     char *destdir = variable_get_value(global->variables, "DESTDIR");
@@ -276,7 +276,7 @@ visible int quarantine_sync(const char *name) {
             stat += 1;
         }
         if (stat != 0) {
-            warning("failed to sync: %s => %s\n", source, target);
+            warning(_("Failed to sync: %s => %s\n"), source, target);
             status = stat;
             goto free_quarantine_sync;
         }
@@ -306,7 +306,7 @@ visible int quarantine_sync(const char *name) {
         }
         status = symlink(line + offset + 1, target);
         if (status != 0) {
-            warning("failed to sync: %s => %s\n", target, line + offset + 1);
+            warning(_("Failed to sync: %s => %s\n"), target, line + offset + 1);
             goto free_quarantine_sync;
         }
     }
@@ -315,7 +315,7 @@ visible int quarantine_sync(const char *name) {
     snprintf(target, sizeof(target), "%s/%s/files/%s", destdir, STORAGE, name);
     int stat = !move_file(files_path, target);
     if (stat) {
-        warning("failed to sync: %s\n", files_path);
+        warning(_("Failed to sync: %s\n"), files_path);
         status += stat;
     }
 
@@ -323,7 +323,7 @@ visible int quarantine_sync(const char *name) {
     snprintf(target, sizeof(target), "%s/%s/links/%s", destdir, STORAGE, name);
     stat = !move_file(links_path, target);
     if (stat) {
-        warning("failed to sync: %s\n", links_path);
+        warning(_("Failed to sync: %s\n"), links_path);
         status += stat;
     }
 
@@ -331,7 +331,7 @@ visible int quarantine_sync(const char *name) {
     snprintf(target, sizeof(target), "%s/%s/metadata/%s.yaml", destdir, STORAGE, name);
     stat = !move_file(metadata_path, target);
     if (stat) {
-        warning("failed to sync: %s\n", metadata_path);
+        warning(_("Failed to sync metadata\n"));
         status += stat;
     }
 

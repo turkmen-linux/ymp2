@@ -207,20 +207,20 @@ static bool package_import_from_build(Package *pkg, const char *path) {
 visible bool package_extract(Package *pkg) {
     // Check if the package pointer is NULL
     if (!pkg) {
-        warning("%s\n", "Invalid package!");
+        warning(_("Invalid package.\n"));
         return false;  // Return false if the package is invalid
     }
 
     // Check if the package archive is NULL
     if (pkg->archive == NULL) {
-        warning("%s\n", "Invalid package archive!");
+        warning(_("Invalid package archive.\n"));
         return false;  // Return false if the archive is invalid
     }
-    info("Package extract: %s\n", pkg->name);
+    info(_("Extracting package: %s\n"), pkg->name);
 
     const char *unsafe = yaml_get_value(pkg->metadata, "unsafe");
     if (unsafe && strlen(yaml_get_value(pkg->metadata, "unsafe")) > 0) {
-        warning("Package %s is unsafe!\n", pkg->name);
+        warning(_("Package %s is marked as unsafe.\n"), pkg->name);
         if (strcmp(get_value("unsafe"), "true") != 0) {
             return false;
         }
@@ -292,7 +292,7 @@ visible bool package_extract(Package *pkg) {
 
             // Compare the calculated hash with the expected hash
             if (!iseq(hash, yaml_hash)) {
-                warning("%s Excepted %s <> Received %s\n", "Package archive hash is wrong!", hash, yaml_hash);
+                warning(_("Package archive hash mismatch: Expected '%s', Received '%s'\n"), hash, yaml_hash);
                 free(hash);
                 free(yaml_hash);
                 free(file);
@@ -398,7 +398,7 @@ visible bool package_is_installed(Package *pkg) {
         } else if (yaml_has_area(ymp_data, "source")) {
             data = yaml_get_area(ymp_data, "source");
         } else {
-            warning("Metadata is invalid: %s\n", pkg->name);
+            warning(_("Metadata is invalid for package: %s\n"), pkg->name);
             package_unref(pi);
             free(ymp_data);
             free(manifest);

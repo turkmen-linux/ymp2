@@ -192,12 +192,12 @@ visible int ympbuild_run_function(ympbuild *ymp, const char *name) {
         };
         sandbox_build(ymp);
         if (chdir(ymp->path) < 0) {
-            warning("Build path is broken!");
+            warning(_("Build directory is invalid or inaccessible.\n"));
             free(command);
             return -1;
         }
         execve(args[0], args, envs);
-        warning("Failed to exec command!");
+        warning(_("Failed to execute build command.\n"));
         free(command);
         exit(1);
     } else {
@@ -224,7 +224,7 @@ static void binary_process(const char *path) {
             free(inodes[i]);
             continue;
         }
-        print(_("Stripping: %s\n"), inodes[i] + strlen(path) + 7);
+        print("Stripping: %s\n", inodes[i] + strlen(path) + 7);
         pid_t pid = fork();
         if (pid == 0) {
             char *cmd[] = {
@@ -292,16 +292,16 @@ static bool get_resource(const char *resource_path, const char *resource_name, s
     // Check the hash of the downloaded or copied file
     char *actual_hash = calculate_hash(resource_type, target_file_path);
     if (actual_hash == NULL) {
-        print(_("Failed to calculate hash for: %s\n"), target_file_path);
+        print(_("Hash calculation failed for: %s\n"), target_file_path);
         free(cache_directory);
         free(target_file_path);
         return false;
     }
 
     if (iseq((char *) expected_hash, "SKIP")) {
-        warning(_("Skipping hash verification for: %s\n"), source_file_name);
+        warning(_("Hash verification skipped for: %s\n"), source_file_name);
     } else if (!iseq(actual_hash, (char *) expected_hash)) {
-        print("Archive hash is invalid:\n  -> Expected: %s\n  -> Received: %s\n", expected_hash, actual_hash);
+        print(_("Archive hash verification failed:\n  -> Expected: %s\n  -> Received: %s\n"), expected_hash, actual_hash);
         free(actual_hash);
         free(cache_directory);
         free(target_file_path);
@@ -545,7 +545,7 @@ static void generate_metadata(ympbuild *ymp, bool is_source) {
 visible char *build_source_from_path(const char *path) {
     // Check if the global context is initialized
     if (!global) {
-        print("Error: ymp global missing!\n");
+        print(_("Global context not initialized. Please initialize ymp first.\n"));
         return NULL;
     }
 
@@ -626,8 +626,9 @@ visible char *build_binary_from_path(const char *path) {
 
     // Check if the ympbuild file exists
     if (!isfile(ympfile)) {
-        free(ympfile);  // Free the allocated string if the file does not exist
-        return NULL;    // Return NULL if the file is not found
+        print(_("ympbuild file not found: %s\n"), ympfile);
+        free(ympfile);
+        return NULL;  // Return NULL if the file is not found
     }
 
     // Allocate memory for a new ympbuild structure
@@ -638,7 +639,7 @@ visible char *build_binary_from_path(const char *path) {
 
     // Syntax check before read
     if (ympbuild_check(ympfile) != 0) {
-        print("Error: syntax error!\n");
+        print(_("Syntax error detected in ympbuild file.\n"));
         free(ympfile);
         free(ymp);
         return NULL;
@@ -736,7 +737,7 @@ visible char *build_binary_from_path(const char *path) {
 visible bool build_from_path(const char *path) {
     // Create the source from the specified path
     char *cache = build_source_from_path(path);
-    print("Source created at: %s\n", cache);  // Print the location of the created source
+    print("Source created at: %s\n", cache);
 
     if (cache == NULL) {
         return NULL;
@@ -745,18 +746,18 @@ visible bool build_from_path(const char *path) {
     char *build = build_binary_from_path(cache);
     free(cache);
     if (build) {
-        print("Binary created at: %s\n", build);  // Print the location of the created binary
+        print(_("Binary package created at: %s\n"), build);
         free(build);
         return true;
     } else {
-        warning("Failed to create package!");
+        warning(_("Failed to create package.\n"));
     }
 
     return false;
 }
 
 visible char *create_package(const char *path) {
-    print("Create package from: %s\n", path);
+    print(_("Creating package from: %s\n"), path);
     // Get the current working directory
     char curdir[PATH_MAX];
     if (getcwd(curdir, sizeof(curdir)) == NULL) {
@@ -772,19 +773,19 @@ visible char *create_package(const char *path) {
 
     // Check if the metadata file exists
     if (!isfile(metadata_file)) {
-        print("Failed to find %s\n", metadata_file);
+        print(_("Metadata file not found: %s\n"), metadata_file);
         return NULL;  // Return NULL if the file is not found
     }
 
     // Change the current directory to the specified path
     if (chdir(path) < 0) {
-        print("Failed to change directory\n");
+        print(_("Failed to change directory to: %s\n"), path);
         return NULL;  // Return NULL if changing directory fails
     }
 
     // Check if the metadata is valid and contains the "ymp" area
     if (!yaml_has_area(metadata, "ymp")) {
-        print("Invalid metadata\n");
+        print(_("Invalid metadata format.\n"));
         return NULL;  // Return NULL if the metadata is invalid
     }
 
@@ -823,7 +824,7 @@ visible char *create_package(const char *path) {
 
         // Change the current working directory to the 'output' directory
         if (chdir("output") < 0) {
-            print("Failed to change directory to 'output'\n");
+            print(_("Failed to change directory to 'output' directory.\n"));
             return NULL;  // Return NULL if changing the directory fails
         }
 
@@ -833,7 +834,7 @@ visible char *create_package(const char *path) {
         // Iterate through the list of files and add each one to the archive
         for (size_t i = 0; files[i]; i++) {
             // Add each file to the archive, adjusting the path to exclude the base directory
-            info("Archive add: %s \n", files[i]);
+            info(_("Archive add: %s \n"), files[i]);
             archive_add(a, files[i] + 2);
         }
 
@@ -854,7 +855,7 @@ visible char *create_package(const char *path) {
 
         // Change the current working directory back to the original specified path
         if (chdir(path) < 0) {
-            print("Failed to change directory back to '%s'\n", path);
+            print(_("Failed to change directory back to: %s\n"), path);
             return NULL;  // Return NULL if changing the directory fails
         }
 
@@ -888,7 +889,7 @@ visible char *create_package(const char *path) {
 
     // Change back to the original directory
     if (chdir(curdir) < 0) {
-        print("Failed to change directory\n");
+        print(_("Failed to change directory back.\n"));
         return NULL;  // Return NULL if changing back fails
     }
 

@@ -81,7 +81,7 @@ void visible operation_register(OperationManager *manager, Operation new_op) {
 
         // Check if realloc was successful
         if (new_ops == NULL) {
-            print(_("Memory allocation failed\n"));
+            print(_("Memory allocation failed.\n"));
             return;
         }
 
@@ -112,7 +112,7 @@ int visible operation_main(OperationManager *manager, const char *name, void *ar
         return operation_main(manager, (char *) "help", (void *) fargs);
     }
     if (len < op.min_args) {
-        debug("Min arguments error\n");
+        debug("Minimum arguments error: expected %d, got %d", op.min_args, len);
         goto operation_main_on_error;
     }
     priv->running = true;
@@ -124,7 +124,7 @@ int visible operation_main(OperationManager *manager, const char *name, void *ar
     priv->running = false;
     if (status > 0) {
     operation_main_on_error:
-        warning("Operation failed: %s Exited with : %d\n", op.name, status);
+        warning("Operation failed: %s (exited with code %d)", op.name, status);
         if (manager->on_error.call) {
             mode_t ue = umask(0022);
             manager->on_error.call(NULL);

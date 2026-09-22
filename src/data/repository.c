@@ -25,7 +25,7 @@ visible Repository *repository_new() {
     repo->packages = calloc(32, sizeof(Package *));  // Initialize with a reasonable capacity
     if (!repo->packages) {
         free(repo);
-        color_print(BOLD, COLOR_RED, "Memory initial allocation failed\n");
+        color_print(BOLD, COLOR_RED, "Memory initial allocation failed.\n");
         return NULL;  // Handle memory allocation failure
     }
     return repo;
@@ -70,7 +70,7 @@ static void repository_load_data(Repository *repo, const char *data, bool is_sou
     // Reallocate package storage
     repo->packages = realloc(repo->packages, (repo->package_count + len) * sizeof(Package *));
     if (!repo->packages) {
-        color_print(BOLD, COLOR_RED, "Memory allocation failed %ld\n", repo->package_count + len);
+        color_print(BOLD, COLOR_RED, "Memory allocation failed: %ld packages.\n", repo->package_count + len);
         for (int i = 0; i < len; i++)
             free(areas[i]);
         free(areas);
@@ -83,7 +83,7 @@ static void repository_load_data(Repository *repo, const char *data, bool is_sou
         repo->packages[repo->package_count]->is_virtual = true;
         repo->packages[repo->package_count]->repo = (void *) repo;
         if (repo->packages[repo->package_count] == NULL) {
-            print(_("Failed to create new package\n"));
+            print(_("Failed to create new package.\n"));
             continue;
         }
         package_load_from_metadata(repo->packages[repo->package_count], areas[i], is_source);

@@ -141,7 +141,7 @@ static int readelf_callback(void *args) {
         }
         free(lines[i]);
     }
-    info(_("checking file: %s\n"), file);
+    info("Checking file: %s\n", file);
     free(output);
     free(lines);
     if (missing != NULL) {
@@ -149,7 +149,7 @@ static int readelf_callback(void *args) {
         size_t len;
         char **list = array_get(missing, &len);
         for (size_t i = 0; i < len; i++) {
-            warning(_("missing library: %s from %s\n"), list[i], file);
+            warning(_("Missing library: %s from %s\n"), list[i], file);
             free(list[i]);
         }
         free(list);

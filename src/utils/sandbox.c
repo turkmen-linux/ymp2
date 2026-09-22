@@ -1,4 +1,5 @@
 #define _GNU_SOURCE
+#include <libintl.h>
 #include <sched.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,6 +8,7 @@
 
 #include <core/logger.h>
 #include <core/variable.h>
+#include <core/ymp.h>
 #include <sys/mount.h>
 #include <utils/file.h>
 #include <utils/sandbox.h>
@@ -99,7 +101,7 @@ visible void sandbox_apply(sandbox_handle_t *sandbox) {
         }
         if (ret < 0) {
             perror("mount");
-            warning("Failed to mount: %s\n", target);
+            warning(_("Failed to mount: %s\n"), target);
             continue;
         }
         free(target);

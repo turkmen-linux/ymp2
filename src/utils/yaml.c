@@ -151,7 +151,7 @@ visible char **yaml_get_area_list(const char *fdata, const char *path, int *area
                         ret = tmp;
                     }
                     if (ret == NULL) {
-                        print(_("Memory allocation failed\n"));
+                        print(_("Memory allocation failed.\n"));
                         array_unref(area);
                         return NULL;
                     }
@@ -183,7 +183,7 @@ visible char **yaml_get_area_list(const char *fdata, const char *path, int *area
             max += 32;  // Increase size by 32
             ret = realloc(ret, max * sizeof(char *));
             if (ret == NULL) {
-                print(_("Memory allocation failed\n"));
+                print(_("Memory allocation failed.\n"));
                 return NULL;
             }
         }

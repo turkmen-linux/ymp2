@@ -60,7 +60,7 @@ static void list_installed() {
             color_print(NORMAL, COLOR_DEFAULT, " %s\n", desc);
             free(desc);
         } else {
-            warning("Failed to read package metadata: %s\n", meta[i]);
+            warning("Failed to read package metadata: %s", meta[i]);
         }
         // free memory
         package_unref(pi);

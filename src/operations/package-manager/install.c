@@ -20,10 +20,10 @@ static int download_cb(Package *p, int num) {
         // package file or non-repository package
         return 0;
     }
-    print("%s: %s\n", "Downloading", p->name);
+    print(_("Downloading: %s\n"), p->name);
     debug("download %d %s\n", num, r->uri);
     if (!package_download(p, r->uri)) {
-        print("%s: %s\n", "Download Failed", p->name);
+        print(_("Download failed for: %s\n"), p->name);
         return 1;
     }
     package_load_from_file(p, p->path);
@@ -32,9 +32,9 @@ static int download_cb(Package *p, int num) {
 
 static int install_cb(Package *p, int num) {
     debug("install %d", num);
-    print("%s: %s\n", "Installing", p->name);
+    print(_("Installing: %s\n"), p->name);
     if (!package_extract(p)) {
-        print("%s: %s\n", "Install Failed", p->name);
+        print(_("Installation failed for: %s\n"), p->name);
         return 1;
     }
     if (get_bool("sync-single")) {

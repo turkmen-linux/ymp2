@@ -1,3 +1,4 @@
+#include <libintl.h>
 #include <stdio.h>
 
 #include <core/ymp.h>

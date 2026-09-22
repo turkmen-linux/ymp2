@@ -23,7 +23,7 @@ static int sysconf_main(char **args) {
         if (strlen(destdir) > 0 && strcmp(destdir, "/") != 0) {
             int rc = chroot(destdir);
             if (rc < 0) {
-                warning("Failed to chroot: %s\n", destdir);
+                warning(_("Failed to chroot: %s\n"), destdir);
                 exit(1);
             }
         }

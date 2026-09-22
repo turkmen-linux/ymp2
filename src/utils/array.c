@@ -9,15 +9,17 @@
 
 #define csort(A, B) qsort(A, B, sizeof(const char *), (int (*)(const void *, const void *)) strcmp)
 
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+
 visible array *array_new() {
     array *arr = (array *) calloc(1, sizeof(array));
     if (!arr) {
-        print(_("memory allocation failed"));
+        print(_("Memory allocation failed.\n"));
         return NULL;
     }
     arr->data = (char **) calloc(1024, sizeof(char *));
     if (!arr->data) {
-        print(_("memory allocation failed"));
+        print(_("Memory allocation failed.\n"));
         free(arr);
         return NULL;
     }
@@ -80,7 +82,7 @@ visible void array_set(array *arr, char **new_data) {
 
 visible char *array_get_string(array *arr) {
     if (!arr) {
-        warning("Invalid array detected\n");
+        warning("Invalid array detected.");
         return NULL;
     }
     pthread_mutex_lock(&arr->lock);
@@ -96,7 +98,9 @@ visible char *array_get_string(array *arr) {
     start = 0;
     while (start < arr->capacity) {
         if (arr->data[start] != NULL) {
-            strncat(ret, arr->data[start], strlen(arr->data[start]));
+            size_t item_len = strlen(arr->data[start]);
+            item_len = MIN(item_len, strlen(ret));
+            strncat(ret, arr->data[start], item_len);
         }
         start++;
     }

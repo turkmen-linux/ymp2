@@ -16,7 +16,7 @@ static int key_add(char **args) {
     char *name = get_value("name");
     char *destdir = get_value("DESTDIR");
     if (strlen(name) == 0) {
-        color_print(BOLD, COLOR_RED, "Key name is not defined!\n");
+        color_print(BOLD, COLOR_RED, "Key name is not defined.\n");
         return 1;
     }
     char *file = args[0];
@@ -39,7 +39,7 @@ static int key_remove(char **args) {
         if (isfile(dest)) {
             unlink(dest);
         } else {
-            warning("Key not found: %s\n", args[i]);
+            warning("Key not found: %s", args[i]);
         }
     }
     return status;

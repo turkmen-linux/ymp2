@@ -126,7 +126,7 @@ static void archive_extract_fn(Archive *data, const char *path, bool all) {
             continue;
         }
         target_file = build_string("%s/%s", data->target_path, entry_path);
-        info("Extract: %s\n", entry_path);
+        info("Extracting: %s\n", entry_path);
         /* Check if entry is a directory */
         mode_t mode = archive_entry_filetype(entry);
         if (S_ISDIR(mode)) {

@@ -1,3 +1,4 @@
+#include <libintl.h>
 #include <stdio.h>
 #include <string.h>
 

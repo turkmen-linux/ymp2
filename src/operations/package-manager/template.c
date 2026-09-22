@@ -58,7 +58,7 @@ static int template_main(char **args) {
     (void) args;
     char *name = str_or_def("name", "");
     if (strlen(name) == 0) {
-        warning(_("Variable '%s' is not defined. please use --%s\n"), "name", "name");
+        warning(_("Variable '%s' is not defined. Please use --%s\n"), "name", "name");
         free(name);
         return 1;
     }
@@ -120,7 +120,7 @@ static int template_main(char **args) {
     array_unref(out);
 
     if (get_bool("ask")) {
-        print("%s\n", _("Please check ympbuild:"));
+        print(_("Please check ympbuild:\n"));
         print("%s\n", data);
         if (!gui_yes_no(_("Template"), _("Is it OK ?"), false)) {
             free(data);
