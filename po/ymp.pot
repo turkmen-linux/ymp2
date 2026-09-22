@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-22 22:26+0300\n"
+"POT-Creation-Date: 2026-09-22 22:37+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -68,9 +68,47 @@ msgstr ""
 msgid "Invalid VariableManager\n"
 msgstr ""
 
+#: src/core/variable.c:122
+msgid "Please call ymp_init() before using get_value().\n"
+msgstr ""
+
+#: src/core/variable.c:130
+msgid "Please call ymp_init() before using set_value().\n"
+msgstr ""
+
+#: src/core/variable.c:138
+msgid "Please call ymp_init() before using set_value_read_only().\n"
+msgstr ""
+
+#: src/core/operations.c:127
+#, c-format
+msgid "Operation failed: %s (exited with code %d)\n"
+msgstr ""
+
+#: src/core/logger.c:46
+msgid "Warning"
+msgstr ""
+
+#: src/core/logger.c:48
+msgid "INFO"
+msgstr ""
+
+#: src/core/logger.c:50
+msgid "ERROR"
+msgstr ""
+
+#: src/utils/archive.c:129
+#, c-format
+msgid "Extracting: %s\n"
+msgstr ""
+
 #: src/utils/archive.c:191
 #, c-format
 msgid "Skip unsupported archive entry: %s\n"
+msgstr ""
+
+#: src/utils/array.c:85
+msgid "Invalid array detected.\n"
 msgstr ""
 
 #: src/utils/file.c:332
@@ -245,6 +283,10 @@ msgstr ""
 msgid "ympbuild output directory"
 msgstr ""
 
+#: src/operations/package-manager/build.c:41
+msgid "Failed to fetch git repository\n"
+msgstr ""
+
 #: src/operations/package-manager/build.c:96
 msgid "Build package"
 msgstr ""
@@ -259,6 +301,11 @@ msgstr ""
 
 #: src/operations/package-manager/build.c:101
 msgid "FILE... : ympbuild files or directories to build"
+msgstr ""
+
+#: src/operations/package-manager/key.c:42
+#, c-format
+msgid "Key not found: %s\n"
 msgstr ""
 
 #: src/operations/package-manager/key.c:80
@@ -281,6 +328,11 @@ msgstr ""
 msgid "Name for new key"
 msgstr ""
 
+#: src/operations/package-manager/list.c:63
+#, c-format
+msgid "Failed to read package metadata: %s\n"
+msgstr ""
+
 #: src/operations/package-manager/list.c:87
 msgid "List packages, repos and more"
 msgstr ""
@@ -291,6 +343,12 @@ msgstr ""
 
 #: src/operations/package-manager/list.c:91
 msgid "List installed packages"
+msgstr ""
+
+#: src/operations/package-manager/remove.c:70
+#: src/operations/package-manager/remove.c:89
+#, c-format
+msgid "Removing: %s\n"
 msgstr ""
 
 #: src/operations/package-manager/remove.c:150
@@ -451,6 +509,11 @@ msgstr ""
 msgid "Takes no arguments. Runs sysconf scripts from /etc/sysconf.d/"
 msgstr ""
 
+#: src/operations/utility/revdep.c:144
+#, c-format
+msgid "Checking file: %s\n"
+msgstr ""
+
 #: src/operations/utility/revdep.c:152
 #, c-format
 msgid "Missing library: %s from %s\n"
@@ -588,6 +651,11 @@ msgstr ""
 msgid "Failed to execute build command.\n"
 msgstr ""
 
+#: src/data/build.c:227
+#, c-format
+msgid "Stripping: %s\n"
+msgstr ""
+
 #: src/data/build.c:295
 #, c-format
 msgid "Hash calculation failed for: %s\n"
@@ -610,6 +678,10 @@ msgstr ""
 msgid "Global context not initialized. Please initialize ymp first.\n"
 msgstr ""
 
+#: src/data/build.c:619
+msgid "Error: ymp global missing!\n"
+msgstr ""
+
 #: src/data/build.c:629
 #, c-format
 msgid "ympbuild file not found: %s\n"
@@ -617,6 +689,11 @@ msgstr ""
 
 #: src/data/build.c:642
 msgid "Syntax error detected in ympbuild file.\n"
+msgstr ""
+
+#: src/data/build.c:740
+#, c-format
+msgid "Source created at: %s\n"
 msgstr ""
 
 #: src/data/build.c:749

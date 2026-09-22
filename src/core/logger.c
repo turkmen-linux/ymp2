@@ -43,11 +43,11 @@ visible int print_fn(const char *caller, const char *filename, int line, int typ
         color_print(NORMAL, COLOR_MAGENTA, "[%s:%d (%s) %ld]: ", basename((char *) filename), line, caller, get_epoch() - cur_time);
         cur_time = get_epoch();
     } else if (type == WARNING) {
-        color_print(BOLD, COLOR_YELLOW, "%s: ", "Warning");
+        color_print(BOLD, COLOR_YELLOW, "%s: ", _("Warning"));
     } else if (type == INFO) {
-        color_print(BOLD, COLOR_CYAN, "%s: ", "INFO");
+        color_print(BOLD, COLOR_CYAN, "%s: ", _("INFO"));
     } else if (type == ERROR) {
-        color_print(BOLD, COLOR_RED, "%s: ", "ERROR");
+        color_print(BOLD, COLOR_RED, "%s: ", _("ERROR"));
     }
 
     int status = print_functions[type](format, args);

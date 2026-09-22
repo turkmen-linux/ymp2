@@ -38,7 +38,7 @@ static int build(void **args) {
             if (git_path) {
                 args[i] = git_path;
             } else {
-                warning("Failed to fetch git repository\n");
+                warning(_("Failed to fetch git repository\n"));
                 return 1;
             }
         }

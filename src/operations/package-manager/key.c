@@ -39,7 +39,7 @@ static int key_remove(char **args) {
         if (isfile(dest)) {
             unlink(dest);
         } else {
-            warning("Key not found: %s", args[i]);
+            warning(_("Key not found: %s\n"), args[i]);
         }
     }
     return status;

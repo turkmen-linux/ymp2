@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-22 22:26+0300\n"
+"POT-Creation-Date: 2026-09-22 22:37+0300\n"
 "PO-Revision-Date: 2026-09-22 22:24+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -69,10 +69,47 @@ msgstr "Bellek ayrilamadi.\n"
 msgid "Invalid VariableManager\n"
 msgstr "Gecersiz DegiskenYoneticisi\n"
 
+#: src/core/variable.c:122
+msgid "Please call ymp_init() before using get_value().\n"
+msgstr "Lütfen get_value() öncesi ymp_init() çağırın.\n"
+
+#: src/core/variable.c:130
+msgid "Please call ymp_init() before using set_value().\n"
+msgstr "Lütfen set_value() öncesi ymp_init() çağırın.\n"
+
+#: src/core/variable.c:138
+msgid "Please call ymp_init() before using set_value_read_only().\n"
+msgstr "Lütfen set_value_read_only() öncesi ymp_init() çağırın.\n"
+
+#: src/core/operations.c:127
+#, c-format
+msgid "Operation failed: %s (exited with code %d)\n"
+msgstr "Eylem başarısız: %s (%d ile çıktı)\n"
+
+#: src/core/logger.c:46
+msgid "Warning"
+msgstr "Uyarı"
+
+#: src/core/logger.c:48
+msgid "INFO"
+msgstr "BİLGİ"
+
+#: src/core/logger.c:50
+msgid "ERROR"
+msgstr "HATA"
+
+#: src/utils/archive.c:129
+msgid "Extracting: %s\n"
+msgstr "Ayiklaniyor: %s\n"
+
 #: src/utils/archive.c:191
 #, c-format
 msgid "Skip unsupported archive entry: %s\n"
 msgstr "Desteklenmeyen arsiv girdisi atlaniyor: %s\n"
+
+#: src/utils/array.c:85
+msgid "Invalid array detected.\n"
+msgstr "Gecersiz dizi tespit edilri.\n"
 
 #: src/utils/file.c:332
 #, c-format
@@ -246,6 +283,10 @@ msgstr "paket derleme turu (autotool cmake meson)"
 msgid "ympbuild output directory"
 msgstr "ympbuild cikti dizini"
 
+#: src/operations/package-manager/build.c:41
+msgid "Failed to fetch git repository\n"
+msgstr "Git reposu çekilemedi\n"
+
 #: src/operations/package-manager/build.c:96
 msgid "Build package"
 msgstr "Paket derle"
@@ -261,6 +302,10 @@ msgstr "derlenmis paketler icin cikti dizini"
 #: src/operations/package-manager/build.c:101
 msgid "FILE... : ympbuild files or directories to build"
 msgstr "DOSYA... : derleme icin ympbuild dosyalari veya dizinleri"
+
+#: src/operations/package-manager/key.c:42
+msgid "Key not found: %s\n"
+msgstr "Anahtar bulunamadi: %s\n"
 
 #: src/operations/package-manager/key.c:80
 msgid "Ymp key manager"
@@ -282,6 +327,10 @@ msgstr "Ymp anakhar deposundaki anahtarlari listele"
 msgid "Name for new key"
 msgstr "Yeni anahtar icin ad"
 
+#: src/operations/package-manager/list.c:63
+msgid "Failed to read package metadata: %s\n"
+msgstr "Paket metadatası okunamadı: %s\n"
+
 #: src/operations/package-manager/list.c:87
 msgid "List packages, repos and more"
 msgstr "Paketleri, depolari ve daha fazlasini listele"
@@ -293,6 +342,11 @@ msgstr "Kullanilabilir paketleri listele"
 #: src/operations/package-manager/list.c:91
 msgid "List installed packages"
 msgstr "Kurulu paketleri listele"
+
+#: src/operations/package-manager/remove.c:70
+#: src/operations/package-manager/remove.c:89
+msgid "Removing: %s\n"
+msgstr "Siliniyor: %s\n"
 
 #: src/operations/package-manager/remove.c:150
 msgid "Remove package"
@@ -453,6 +507,10 @@ msgid "Takes no arguments. Runs sysconf scripts from /etc/sysconf.d/"
 msgstr ""
 "Arguman istemez. /etc/sysconf.d/ dizininden sysconf scriptlerini calistirir"
 
+#: src/operations/utility/revdep.c:144
+msgid "Checking file: %s\n"
+msgstr "Dosya kontrol ediliyor: %s\n"
+
 #: src/operations/utility/revdep.c:152
 #, c-format
 msgid "Missing library: %s from %s\n"
@@ -591,6 +649,10 @@ msgstr "Derleme dizini gecersiz veya erisilemez.\n"
 msgid "Failed to execute build command.\n"
 msgstr "Derleme komutu calistirilamadi.\n"
 
+#: src/data/build.c:227
+msgid "Stripping: %s\n"
+msgstr "Soyuluyor: %s\n"
+
 #: src/data/build.c:295
 #, c-format
 msgid "Hash calculation failed for: %s\n"
@@ -616,6 +678,10 @@ msgstr ""
 msgid "Global context not initialized. Please initialize ymp first.\n"
 msgstr "Global kotesizlestirilmedi. Lutfen yempi ilk olarak baslatin.\n"
 
+#: src/data/build.c:619
+msgid "Error: ymp global missing!\n"
+msgstr "Hata: ymp global eksik!"
+
 #: src/data/build.c:629
 #, c-format
 msgid "ympbuild file not found: %s\n"
@@ -624,6 +690,10 @@ msgstr "ympbuild dosyasi bulunamadi: %s\n"
 #: src/data/build.c:642
 msgid "Syntax error detected in ympbuild file.\n"
 msgstr "ympbuild dosyasinin sintaks hatasi algiland.\n"
+
+#: src/data/build.c:740
+msgid "Source created at: %s\n"
+msgstr "Kaynak surada olusturuldu: %s\n"
 
 #: src/data/build.c:749
 #, c-format
@@ -882,4 +952,3 @@ msgstr "dizini sun (varsayilan /)"
 #: plugin/httpd.c:312
 msgid "server tcp port (default 8000)"
 msgstr "sunucu tcp portu (varsayilan 8000)"
-

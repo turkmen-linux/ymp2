@@ -119,7 +119,7 @@ visible char **variable_get_names(VariableManager *variables) {
 char *get_value(const char *name) {
     if (!global) {
         global = ymp_init();
-        warning("Please call ymp_init() before using get_value().");
+        warning(_("Please call ymp_init() before using get_value().\n"));
     }
     return variable_get_value(global->variables, name);
 }
@@ -127,7 +127,7 @@ char *get_value(const char *name) {
 void set_value(const char *name, const char *value) {
     if (!global) {
         global = ymp_init();
-        warning("Please call ymp_init() before using set_value().");
+        warning(_("Please call ymp_init() before using set_value().\n"));
     }
     variable_set_value(global->variables, name, value);
 }
@@ -135,7 +135,7 @@ void set_value(const char *name, const char *value) {
 void set_value_read_only(const char *name, const char *value) {
     if (!global) {
         global = ymp_init();
-        warning("Please call ymp_init() before using set_value_read_only().");
+        warning(_("Please call ymp_init() before using set_value_read_only().\n"));
     }
     variable_set_value_read_only(global->variables, name, value);
 }

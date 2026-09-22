@@ -124,7 +124,7 @@ int visible operation_main(OperationManager *manager, const char *name, void *ar
     priv->running = false;
     if (status > 0) {
     operation_main_on_error:
-        warning("Operation failed: %s (exited with code %d)", op.name, status);
+        warning(_("Operation failed: %s (exited with code %d)\n"), op.name, status);
         if (manager->on_error.call) {
             mode_t ue = umask(0022);
             manager->on_error.call(NULL);

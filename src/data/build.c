@@ -224,7 +224,7 @@ static void binary_process(const char *path) {
             free(inodes[i]);
             continue;
         }
-        print("Stripping: %s\n", inodes[i] + strlen(path) + 7);
+        print(_("Stripping: %s\n"), inodes[i] + strlen(path) + 7);
         pid_t pid = fork();
         if (pid == 0) {
             char *cmd[] = {
@@ -616,7 +616,7 @@ visible char *build_source_from_path(const char *path) {
 visible char *build_binary_from_path(const char *path) {
     // Check if the global context is initialized
     if (!global) {
-        print("Error: ymp global missing!\n");
+        print(_("Error: ymp global missing!\n"));
         return NULL;  // Return NULL if global context is missing
     }
 
@@ -737,7 +737,7 @@ visible char *build_binary_from_path(const char *path) {
 visible bool build_from_path(const char *path) {
     // Create the source from the specified path
     char *cache = build_source_from_path(path);
-    print("Source created at: %s\n", cache);
+    print(_("Source created at: %s\n"), cache);
 
     if (cache == NULL) {
         return NULL;

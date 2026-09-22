@@ -67,7 +67,7 @@ static int remove_package(Package *pi) {
         // remove files
         line[40] = '/';
         snprintf(tmp, sizeof(tmp), "%s%s", destdir, line + 40);
-        info("Removing: %s\n", tmp);
+        info(_("Removing: %s\n"), tmp);
         if (!isfile(tmp)) {
             continue;
         }
@@ -86,7 +86,7 @@ static int remove_package(Package *pi) {
         // remove links
         line[offset] = '/';
         snprintf(tmp, sizeof(tmp), "%s%s", destdir, line + offset);
-        info("Removing: %s\n", tmp);
+        info(_("Removing: %s\n"), tmp);
         if (!issymlink(tmp)) {
             continue;
         }

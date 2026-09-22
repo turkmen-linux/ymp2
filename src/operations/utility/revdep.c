@@ -141,7 +141,7 @@ static int readelf_callback(void *args) {
         }
         free(lines[i]);
     }
-    info("Checking file: %s\n", file);
+    info(_("Checking file: %s\n"), file);
     free(output);
     free(lines);
     if (missing != NULL) {

@@ -82,7 +82,7 @@ visible void array_set(array *arr, char **new_data) {
 
 visible char *array_get_string(array *arr) {
     if (!arr) {
-        warning("Invalid array detected.");
+        warning(_("Invalid array detected.\n"));
         return NULL;
     }
     pthread_mutex_lock(&arr->lock);
