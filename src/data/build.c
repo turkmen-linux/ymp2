@@ -66,12 +66,14 @@ visible char *ympbuild_package_filename(const char *path) {
     char *name = ympbuild_get_value(ymp, "name");
     char *version = ympbuild_get_value(ymp, "version");
     char *release = ympbuild_get_value(ymp, "release");
-    char *ret = calloc((strlen(name) + strlen(version) + strlen(release) + strlen(ARCH) + 9), sizeof(char));
+    char *ret = NULL;
+    size_t total_size = strlen(name) + strlen(version) + strlen(release) + strlen(ARCH) + 10;
+    ret = calloc(total_size, sizeof(char));
     if (!ret) {
         ret = NULL;
         goto ympbuild_package_filename_free;
     }
-    sprintf(ret, "%s_%s_%s_%s.ymp", name, version, release, ARCH);
+    snprintf(ret, total_size, "%s_%s_%s_%s.ymp", name, version, release, ARCH);
 ympbuild_package_filename_free:
     // free memory
     free(name);
@@ -99,12 +101,14 @@ visible char *ympbuild_source_filename(const char *path) {
     char *name = ympbuild_get_value(ymp, "name");
     char *version = ympbuild_get_value(ymp, "version");
     char *release = ympbuild_get_value(ymp, "release");
-    char *ret = calloc((strlen(name) + strlen(version) + strlen(release) + 15), sizeof(char));
+    char *ret = NULL;
+    size_t total_size = strlen(name) + strlen(version) + strlen(release) + 20;
+    ret = calloc(total_size, sizeof(char));
     if (!ret) {
         ret = NULL;
         goto ympbuild_source_filename_free;
     }
-    sprintf(ret, "%s_%s_%s_source.ymp", name, version, release);
+    snprintf(ret, total_size, "%s_%s_%s_source.ymp", name, version, release);
 ympbuild_source_filename_free:
     // free memory
     free(name);

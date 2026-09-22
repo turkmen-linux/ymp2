@@ -17,7 +17,7 @@
 
 static void purge_empty_directories(const char *path) {
     char dir[PATH_MAX];
-    sprintf(dir, "%s", path);
+    snprintf(dir, sizeof(dir), "%s", path);
     size_t len = strlen(path);
     // remove parent directories until failture
     for (int i = len - 1; i >= 0; i--) {
@@ -66,7 +66,7 @@ static int remove_package(Package *pi) {
         }
         // remove files
         line[40] = '/';
-        sprintf(tmp, "%s%s", destdir, line + 40);
+        snprintf(tmp, sizeof(tmp), "%s%s", destdir, line + 40);
         info("Removing: %s\n", tmp);
         if (!isfile(tmp)) {
             continue;
@@ -85,7 +85,7 @@ static int remove_package(Package *pi) {
         }
         // remove links
         line[offset] = '/';
-        sprintf(tmp, "%s%s", destdir, line + offset);
+        snprintf(tmp, sizeof(tmp), "%s%s", destdir, line + offset);
         info("Removing: %s\n", tmp);
         if (!issymlink(tmp)) {
             continue;

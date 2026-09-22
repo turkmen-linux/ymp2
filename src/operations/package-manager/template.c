@@ -89,7 +89,7 @@ static int template_main(char **args) {
     array_add(out, build_string("source=('%s')\n", source));
     array_add(out, build_string("depends=(%s)\n", depends));
     array_add(out, build_string("makedepends=(%s)\n", makedepends));
-    array_add(out, "sha256sums=('FIXME')\n");
+    array_add(out, "sha256sums=()\n");
     array_add(out, "group=()\n");
     array_add(out, "uses=()\n");
     array_add(out, build_string("arch=('%s')\n\n", ARCH));

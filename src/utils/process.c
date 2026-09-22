@@ -51,7 +51,7 @@ visible char *which(char *cmd) {
 
     /* walk through other tokens */
     while (token != NULL) {
-        sprintf(fullfilename, "%s/%s", token, fileOrDirectory);
+        snprintf(fullfilename, sizeof(token) + sizeof(fileOrDirectory) + 2, "%s/%s", token, fileOrDirectory);
         int exists = stat(fullfilename, &buffer);
         if (exists == 0 && (S_IFREG & buffer.st_mode)) {
             return (char *) fullfilename;

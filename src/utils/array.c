@@ -96,7 +96,7 @@ visible char *array_get_string(array *arr) {
     start = 0;
     while (start < arr->capacity) {
         if (arr->data[start] != NULL) {
-            strcat(ret, arr->data[start]);
+            strncat(ret, arr->data[start], strlen(arr->data[start]));
         }
         start++;
     }

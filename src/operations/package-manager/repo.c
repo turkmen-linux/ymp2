@@ -205,7 +205,7 @@ static int repo_index(const char *path) {
     jobs_run(j);
     // write index to file
     char index_path[PATH_MAX];
-    sprintf(index_path, "%s/ymp-index.yaml", path);
+    snprintf(index_path, sizeof(index_path), "%s/ymp-index.yaml", path);
     FILE *f = fopen(index_path, "w");
     if (!f) {
         perror("Failed to open file:");

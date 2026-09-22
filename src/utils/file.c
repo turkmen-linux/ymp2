@@ -236,7 +236,7 @@ visible char *getoutput_unshare(char *argv[], int flags) {
                 }
                 ret = tmp;
             }
-            strcat(ret, buff);
+            strncat(ret, buff, bytes_read);
             total_read += bytes_read;
         }
 

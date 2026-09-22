@@ -108,7 +108,7 @@ static int quarantine_validate_files(const char *name) {
         }
 
         // Build the actual file path in quarantine root filesystem
-        sprintf(actual_file, "%s%s", rootfs_path, line + 41);
+        snprintf(actual_file, sizeof(actual_file), "%s%s", rootfs_path, line + 41);
 
         debug("Validate file: %s\n", actual_file + strlen(rootfs_path));
 
@@ -190,7 +190,7 @@ static int quarantine_validate_links(const char *name) {
         // Build link target
         line[offset] = '\0';
         // Build actual_link
-        sprintf(actual_link, "%s%s", rootfs_path, line);
+        snprintf(actual_link, sizeof(actual_link), "%s%s", rootfs_path, line);
         ssize_t rc = readlink(actual_link, link_target, PATH_MAX);
         if (rc < 0) {
             warning("Error reading symlink: %s\n", actual_link);
@@ -259,11 +259,11 @@ visible int quarantine_sync(const char *name) {
         }
         line[40] = '/';
         // Build source & target path
-        sprintf(source, "%s%s", rootfs_path, line + 40);
-        sprintf(target, "%s%s", destdir, line + 40);
+        snprintf(source, sizeof(source), "%s%s", rootfs_path, line + 40);
+        snprintf(target, sizeof(target), "%s%s", destdir, line + 40);
         debug("file: %s -> %s\n", source, target);
         // create parent directory if not exists
-        sprintf(tmp, "%s", target);
+        snprintf(tmp, sizeof(tmp), "%s", target);
         (void) dirname(tmp);
         create_dir(tmp);
         // move file
@@ -294,10 +294,10 @@ visible int quarantine_sync(const char *name) {
             offset++;
         }
         line[offset] = '\0';
-        sprintf(target, "%s%s", destdir, line);
+        snprintf(target, sizeof(target), "%s%s", destdir, line);
         debug("file: %s -> %s\n", line + offset + 1, target);
         // create parent directory if not exists
-        sprintf(tmp, "%s", target);
+        snprintf(tmp, sizeof(tmp), "%s", target);
         (void) dirname(tmp);
         create_dir(tmp);
         // create symlink
@@ -312,7 +312,7 @@ visible int quarantine_sync(const char *name) {
     }
 
     // Move files
-    sprintf(target, "%s/%s/files/%s", destdir, STORAGE, name);
+    snprintf(target, sizeof(target), "%s/%s/files/%s", destdir, STORAGE, name);
     int stat = !move_file(files_path, target);
     if (stat) {
         warning("failed to sync: %s\n", files_path);
@@ -320,7 +320,7 @@ visible int quarantine_sync(const char *name) {
     }
 
     // Move files
-    sprintf(target, "%s/%s/links/%s", destdir, STORAGE, name);
+    snprintf(target, sizeof(target), "%s/%s/links/%s", destdir, STORAGE, name);
     stat = !move_file(links_path, target);
     if (stat) {
         warning("failed to sync: %s\n", links_path);
@@ -328,7 +328,7 @@ visible int quarantine_sync(const char *name) {
     }
 
     // Move files
-    sprintf(target, "%s/%s/metadata/%s.yaml", destdir, STORAGE, name);
+    snprintf(target, sizeof(target), "%s/%s/metadata/%s.yaml", destdir, STORAGE, name);
     stat = !move_file(metadata_path, target);
     if (stat) {
         warning("failed to sync: %s\n", metadata_path);
@@ -464,7 +464,7 @@ visible bool quarantine_validate() {
     char **left = array_get(leftover, &len);
     char target[PATH_MAX];
     for (size_t i = 0; i < len; i++) {
-        sprintf(target, "%s/%s", destdir, left[i]);
+        snprintf(target, sizeof(target), "%s/%s", destdir, left[i]);
         unlink(target);
         free(left[i]);
     }

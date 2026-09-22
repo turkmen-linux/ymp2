@@ -68,7 +68,7 @@ visible char *calculate_hash(int type, const char *path) {
     close(fd);
     EVP_cleanup();
     for (unsigned int i = 0; i < md_len; i++) {
-        sprintf(&hashstring[i * 2], "%02x", (unsigned int) digest[i]);
+        snprintf(&hashstring[i * 2], sizeof(hashstring) - (i * 2), "%02x", (unsigned int) digest[i]);
     }
 
     return strdup(hashstring);

@@ -33,7 +33,7 @@ visible ssize_t write(int fd, const void *buf, size_t count) {
     return bytes_written;
 }
 
-typedef void *(*malloc_func_t)(int);
+typedef void *(*malloc_func_t)(size_t);
 static malloc_func_t original_malloc;
 
 /* malloc buffer default filled by zero */
@@ -41,8 +41,13 @@ visible void *malloc(size_t size) {
     if (!original_malloc) {
         original_malloc = dlsym(RTLD_NEXT, "malloc");
     }
+    if (!original_malloc) {
+        return NULL;
+    }
     void *buf = original_malloc(size);
-    memset(buf, 0, size);
+    if (buf) {
+        memset(buf, 0, size);
+    }
     return buf;
 }
 

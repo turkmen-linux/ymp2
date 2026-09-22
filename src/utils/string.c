@@ -69,15 +69,15 @@ visible char *join(const char *f, char **array) {
     if (!ret) {
         return NULL;
     }
-    strcpy(ret, "");
+    ret[0] = '\0';
     /* copy item len and reset value */
     int cnt = i;
     i = 0;
     /* copy items */
     while (array[i]) {
-        strcat(ret, array[i]);
+        strncat(ret, array[i], strlen(array[i]) + 1);
         if (i < cnt - 1) {
-            strcat(ret, f);
+            strncat(ret, f, strlen(f) + 1);
         }
         i++;
     }
@@ -89,7 +89,7 @@ visible char *str_add(const char *str1, const char *str2) {
     if (!ret) {
         return NULL;
     }
-    sprintf(ret, "%s%s", str1, str2);
+    snprintf(ret, strlen(str1) + strlen(str2) + 1, "%s%s", str1, str2);
     return ret;
 }
 
@@ -208,7 +208,7 @@ visible char *url_encode(const char *input) {
         if (isalnum_c(input[i])) {
             output[j++] = input[i];
         } else {
-            sprintf(output + j, "%%%02X", (unsigned char) input[i]);
+            snprintf(output + j, sizeof(output) - j, "%%%02X", (unsigned char) input[i]);
             /* Move to the next position in the output string */
             j += 3;
         }
