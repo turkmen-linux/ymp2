@@ -9,8 +9,6 @@
 
 #define csort(A, B) qsort(A, B, sizeof(const char *), (int (*)(const void *, const void *)) strcmp)
 
-#define MIN(a, b) ((a) < (b) ? (a) : (b))
-
 visible array *array_new() {
     array *arr = (array *) calloc(1, sizeof(array));
     if (!arr) {
@@ -98,9 +96,7 @@ visible char *array_get_string(array *arr) {
     start = 0;
     while (start < arr->capacity) {
         if (arr->data[start] != NULL) {
-            size_t item_len = strlen(arr->data[start]);
-            item_len = MIN(item_len, strlen(ret));
-            strncat(ret, arr->data[start], item_len);
+            strcat(ret, arr->data[start]);
         }
         start++;
     }
