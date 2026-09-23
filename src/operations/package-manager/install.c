@@ -12,6 +12,7 @@
 #include <utils/file.h>
 #include <utils/jobs.h>
 #include <utils/string.h>
+#include <utils/process.h>
 #include <utils/yaml.h>
 
 static int download_cb(Package *p, int num) {
@@ -130,6 +131,11 @@ static int install_main(char **args) {
     if (!quarantine_validate()) {
         status = 1;
     }
+    const char* ldconfig[] = {"/sbin/ldconfig", NULL};
+    if (status == 0){
+        status = run_args((char**)ldconfig);
+    }
+    
 
 install_main_free:
 
