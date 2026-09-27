@@ -144,12 +144,13 @@ visible bool package_load_from_metadata(Package *pkg, const char *metadata, bool
     pkg->name = yaml_get_value(pkg->metadata, "name");
     pkg->version = yaml_get_value(pkg->metadata, "version");
     pkg->release = 1;
-    const char *rel = yaml_get_value(pkg->metadata, "release");
+    char *rel = yaml_get_value(pkg->metadata, "release");
     if (rel == NULL) {
         pkg->release = 0;
     } else if (strlen(rel) > 0) {
         pkg->release = atoi(rel);
     }
+    free(rel);
     int dep_count = 0;
     int grp_count = 0;
     pkg->dependencies = yaml_get_array(pkg->metadata, "depends", &dep_count);
@@ -161,7 +162,9 @@ visible bool package_load_from_metadata(Package *pkg, const char *metadata, bool
 visible bool package_download(Package *p, const char *repo_uri) {
     // Generate download URI
     debug("Download from repo: %s %s\n", repo_uri, p->name);
-    char *uri = str_replace(repo_uri, "$uri", yaml_get_value(p->metadata, "uri"));
+    char *uri_val = yaml_get_value(p->metadata, "uri");
+    char *uri = str_replace(repo_uri, "$uri", uri_val ? uri_val : "");
+    free(uri_val);
     // Download file into cache
     char *destdir = get_value("DESTDIR");
     char *pkgname = build_string("%s-%s-%d", p->name, p->version, p->release);
@@ -183,7 +186,14 @@ static bool package_import_from_build(Package *pkg, const char *path) {
     // Copy Rootfs files
     char *rootfs = build_string("%s/%s/quarantine/rootfs", destdir, STORAGE);
     char *output = build_string("%s/output/", path);
+    if (!rootfs || !output) {
+        free(rootfs);
+        free(output);
+        return false;
+    }
     if (!copy_directory(output, rootfs)) {
+        free(rootfs);
+        free(output);
         return false;
     }
 // Copy metadata, files, links
@@ -194,6 +204,8 @@ static bool package_import_from_build(Package *pkg, const char *path) {
         if (!copy_file(a, b)) { \
             free(a);            \
             free(b);            \
+            free(rootfs);       \
+            free(output);       \
             return false;       \
         };                      \
         free(a);                \
@@ -202,6 +214,8 @@ static bool package_import_from_build(Package *pkg, const char *path) {
     copy_free(build_string("%s/metadata.yaml", path), build_string("%s/../metadata/%s.yaml", rootfs, pkg->name));
     copy_free(build_string("%s/files", path), build_string("%s/../files/%s", rootfs, pkg->name));
     copy_free(build_string("%s/links", path), build_string("%s/../links/%s", rootfs, pkg->name));
+    free(rootfs);
+    free(output);
     return true;
 }
 
@@ -220,8 +234,10 @@ visible bool package_extract(Package *pkg) {
     }
     info(_("Extracting package: %s\n"), pkg->name);
 
-    const char *unsafe = yaml_get_value(pkg->metadata, "unsafe");
-    if (unsafe && strlen(yaml_get_value(pkg->metadata, "unsafe")) > 0) {
+    char *unsafe = yaml_get_value(pkg->metadata, "unsafe");
+    bool is_unsafe = unsafe && strlen(unsafe) > 0;
+    free(unsafe);
+    if (is_unsafe) {
         warning(_("Package %s is marked as unsafe.\n"), pkg->name);
         if (strcmp(get_value("unsafe"), "true") != 0) {
             return false;
@@ -241,14 +257,32 @@ visible bool package_extract(Package *pkg) {
     if (pkg->is_source) {
         // Extract source package to the cache
         char *cache = build_string("%s/cache/%s-%s", BUILD_DIR, pkg->name, pkg->version);
+        if (!cache) {
+            free(rootfs);
+            free(metadata_dir);
+            free(files_dir);
+            free(links_dir);
+            return false;
+        }
         archive_set_target(pkg->archive, cache);
         archive_extract_all(pkg->archive);
         // Build source package
-        const char *build = build_binary_from_path(cache);
+        char *build = build_binary_from_path(cache);
+        free(cache);
         if (build) {
-            return package_import_from_build(pkg, build);
+            bool ok = package_import_from_build(pkg, build);
+            free((void *) build);
+            free(rootfs);
+            free(metadata_dir);
+            free(files_dir);
+            free(links_dir);
+            return ok;
         } else {
             // build error or invalid package
+            free(rootfs);
+            free(metadata_dir);
+            free(files_dir);
+            free(links_dir);
             return false;
         }
     }
@@ -298,14 +332,25 @@ visible bool package_extract(Package *pkg) {
                 free(hash);
                 free(yaml_hash);
                 free(file);
+                for (size_t k = 0; files[k]; k++) {
+                    free(files[k]);
+                }
+                free(files);
+                free(tmpdir);
+                free(rootfs);
+                free(metadata_dir);
+                free(files_dir);
+                free(links_dir);
                 return false;  // Return false if hashes do not match
             }
             debug("Package archive hash: %s\n", hash);
 
             // Create a new archive object for the data file
             Archive *data = archive_new();
-            if(!archive_load(data, file)){  // Load the data file into the archive
-                archive_unref(data);
+            if(!data || !archive_load(data, file)){  // Load the data file into the archive
+                if (data) {
+                    archive_unref(data);
+                }
                 free(hash);
                 free(yaml_hash);
                 free(file);
@@ -334,6 +379,9 @@ visible bool package_extract(Package *pkg) {
         i++;  // Move to the next file
     }
 
+    for (size_t k = 0; files[k]; k++) {
+        free(files[k]);
+    }
     free(files);  // Free the list of files
 
 // Rename and move the metadata, files, and links to their respective directories
@@ -406,10 +454,25 @@ visible bool package_is_installed(Package *pkg) {
     if (is_package) {
         // check update available
         Package *pi = package_new();
+        if (!pi) {
+            free(meta);
+            return false;
+        }
         pi->is_virtual = true;
         char *manifest = readfile(meta);
+        if (!manifest) {
+            package_unref(pi);
+            free(meta);
+            return false;
+        }
         char *ymp_data = yaml_get_area(manifest, "ymp");
-        char *data;
+        if (!ymp_data) {
+            package_unref(pi);
+            free(manifest);
+            free(meta);
+            return false;
+        }
+        char *data = NULL;
         if (yaml_has_area(ymp_data, "package")) {
             data = yaml_get_area(ymp_data, "package");
         } else if (yaml_has_area(ymp_data, "source")) {
@@ -419,6 +482,14 @@ visible bool package_is_installed(Package *pkg) {
             package_unref(pi);
             free(ymp_data);
             free(manifest);
+            free(meta);
+            return false;
+        }
+        if (!data) {
+            package_unref(pi);
+            free(ymp_data);
+            free(manifest);
+            free(meta);
             return false;
         }
         package_load_from_metadata(pi, data, false);  // load virtual installed package
