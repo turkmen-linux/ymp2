@@ -78,7 +78,8 @@ visible char *join(const char *f, char **array) {
     while (array[i]) {
         size_t item_len = strlen(array[i]);
         if (remaining < item_len) {
-            ret = realloc(ret, len + item_len);
+            len += item_len;
+            ret = realloc(ret, len);
             if (!ret) {
                 return NULL;
             }
@@ -88,9 +89,14 @@ visible char *join(const char *f, char **array) {
         if (i < cnt - 1) {
             size_t sep_len = strlen(f);
             if (remaining < sep_len) {
-                remaining = sep_len;
+                len += sep_len;
+                ret = realloc(ret, len);
+                if (!ret) {
+                    return NULL;
+                }
             }
             strncat(ret, f, remaining);
+            remaining -= sep_len;
         }
         i++;
     }
