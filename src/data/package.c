@@ -80,7 +80,9 @@ visible bool package_load_from_file(Package *pkg, const char *path) {
     }
 
     // 1. Load the archive from the specified file path
-    archive_load(pkg->archive, path);
+    if(!archive_load(pkg->archive, path)){
+        return false;
+    }
 
     // Read the metadata from the archive
     pkg->metadata = archive_readfile(pkg->archive, "metadata.yaml");
@@ -302,7 +304,9 @@ visible bool package_extract(Package *pkg) {
 
             // Create a new archive object for the data file
             Archive *data = archive_new();
-            archive_load(data, file);  // Load the data file into the archive
+            if(!archive_load(data, file)){  // Load the data file into the archive
+                return false;
+            }
 
             // Set the target for the data extraction to the root filesystem
             archive_set_target(data, rootfs);

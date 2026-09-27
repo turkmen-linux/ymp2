@@ -120,7 +120,10 @@ typedef struct {
 static int repo_index_op(char *file, PkgIndex *i) {
     int status = 0;
     Archive *a = archive_new();
-    archive_load(a, file);
+    if(!archive_load(a, file)){
+        archive_unref(a);
+        return 1;
+    }
     char *metadata = archive_readfile(a, "metadata.yaml");
     if (!metadata) {
         status = 1;

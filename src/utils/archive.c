@@ -39,11 +39,16 @@ visible void archive_unref(Archive *data) {
     free(data);
 }
 
-visible void archive_load(Archive *data, const char *path) {
+visible bool archive_load(Archive *data, const char *path) {
     debug("archive load:  %s\n", path);
     free(data->archive_path);
     data->archive_path = strdup(path);
+    if(!archive_is_archive(data, path)){
+        warning(_("%s is not an archive.\n"));
+        return false;
+    }
     archive_set_type(data, "zip", "none");
+    return true;
 }
 
 static void archive_load_archive(Archive *data) {
@@ -113,6 +118,9 @@ visible void archive_create(Archive *data) {
 
 static void archive_extract_fn(Archive *data, const char *path, bool all) {
     archive_load_archive(data);
+    if(!data->archive){
+        return;
+    }
     struct archive_entry *entry;
     while (archive_read_next_header(data->archive, &entry) == ARCHIVE_OK) {
         const char *entry_path = archive_entry_pathname(entry);

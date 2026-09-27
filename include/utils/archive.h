@@ -61,8 +61,10 @@ Archive* archive_new();
  *
  * @param data Pointer to the Archive instance.
  * @param path Path to the archive file.
+ *
+ * @return true if archive load success.
  */
-void archive_load(Archive *data, const char* path);
+bool archive_load(Archive *data, const char* path);
 
 /**
  * @brief Sets the target extraction path for the archive.

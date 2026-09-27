@@ -682,7 +682,9 @@ visible char *build_binary_from_path(const char *path) {
         // Check if the current source file is an archive
         if (archive_is_archive(a, src_files[i])) {
             // Load the archive and set the target path for extraction
-            archive_load(a, src_files[i]);
+            if(!archive_load(a, src_files[i])){
+                return NULL;
+            }
             archive_set_target(a, ymp->path);
             archive_extract_all(a);  // Extract all contents of the archive
         } else {
@@ -795,7 +797,9 @@ visible char *create_package(const char *path) {
     // If the "source" area exists in the metadata, create a package
     if (yaml_has_area(metadata, "source")) {
         Archive *a = archive_new();          // Create a new archive object
-        archive_load(a, ret);                // Load the package file
+        if(!archive_load(a, ret)){                // Load the package file
+            return NULL;
+        }
         archive_set_type(a, "zip", "none");  // Set the archive type to ZIP
 
         // Find all files in the specified path
@@ -817,7 +821,9 @@ visible char *create_package(const char *path) {
 
         // Load the specified TAR.GZ package file into the archive object
         char *datafile = build_string("%s/data.tar.gz", path);
-        archive_load(a, datafile);
+        if(!archive_load(a, datafile)){
+            return NULL;
+        }
 
         // Set the archive type to TAR with GZIP compression
         archive_set_type(a, "tar", "gzip");
@@ -863,7 +869,9 @@ visible char *create_package(const char *path) {
         a = archive_new();
 
         // Load the previously created package file into the new archive object
-        archive_load(a, ret);
+        if(!archive_load(a, ret)){
+            return NULL;
+        }
 
         // Set the archive type to ZIP with no compression
         archive_set_type(a, "zip", "none");
