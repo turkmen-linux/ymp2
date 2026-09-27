@@ -80,7 +80,7 @@ visible bool package_load_from_file(Package *pkg, const char *path) {
     }
 
     // 1. Load the archive from the specified file path
-    if(!archive_load(pkg->archive, path)){
+    if (!archive_load(pkg->archive, path)) {
         return false;
     }
 
@@ -347,7 +347,7 @@ visible bool package_extract(Package *pkg) {
 
             // Create a new archive object for the data file
             Archive *data = archive_new();
-            if(!data || !archive_load(data, file)){  // Load the data file into the archive
+            if (!data || !archive_load(data, file)) {  // Load the data file into the archive
                 if (data) {
                     archive_unref(data);
                 }

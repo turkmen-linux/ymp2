@@ -403,11 +403,11 @@ static void configure_header(ympbuild *ymp) {
     char *old = NULL;
     ymp->header = str_replace(tmp ? tmp : "", "@buildpath@", ymp->path ? ymp->path : "");
     free(tmp);
-#define header_replace(H, A, B)         \
-    do {                                \
-        old = (H);                      \
+#define header_replace(H, A, B)           \
+    do {                                  \
+        old = (H);                        \
         (H) = str_replace(old, (A), (B)); \
-        free(old);                      \
+        free(old);                        \
     } while (0)
     header_replace(ymp->header, "@CC@", variable_get_value(global->variables, "build:cc"));
     header_replace(ymp->header, "@CXX@", variable_get_value(global->variables, "build:cxx"));
@@ -692,7 +692,7 @@ static void generate_metadata(ympbuild *ymp, bool is_source) {
 
     // Convert the array to a string and write it to the metadata file
     char *ret = array_get_string(a);
-    array_unref(a);                                               // Unreference the metadata array
+    array_unref(a);  // Unreference the metadata array
     char *meta_path = build_string("%s/metadata.yaml", ymp->path);
     if (meta_path) {
         writefile(meta_path, ret ? ret : "");  // Write to the specified file
@@ -926,7 +926,7 @@ visible char *build_binary_from_path(const char *path) {
         // Check if the current source file is an archive
         if (archive_is_archive(a, src_files[i])) {
             // Load the archive and set the target path for extraction
-            if(!archive_load(a, src_files[i])){
+            if (!archive_load(a, src_files[i])) {
                 archive_unref(a);
                 for (size_t k = 0; src_files[k]; k++) {
                     free(src_files[k]);
@@ -1028,6 +1028,7 @@ visible char *create_package(const char *path) {
     if (getcwd(curdir, sizeof(curdir)) == NULL) {
         perror("getcwd() error");
     }
+    int rc = 0;
 
     // Construct the path for the metadata file and the output package
     char *metadata_file = build_string("%s/metadata.yaml", path);
@@ -1069,7 +1070,7 @@ visible char *create_package(const char *path) {
         free(metadata_raw);
         free(metadata_file);
         free(ret);
-        chdir(curdir);
+        rc = chdir(curdir);
         return NULL;  // Return NULL if the metadata is invalid
     }
 
@@ -1079,21 +1080,21 @@ visible char *create_package(const char *path) {
     if (!metadata) {
         free(metadata_file);
         free(ret);
-        chdir(curdir);
+        rc = chdir(curdir);
         return NULL;
     }
 
     // If the "source" area exists in the metadata, create a package
     if (yaml_has_area(metadata, "source")) {
-        Archive *a = archive_new();          // Create a new archive object
-        if(!a || !archive_load(a, ret)){                // Load the package file
+        Archive *a = archive_new();         // Create a new archive object
+        if (!a || !archive_load(a, ret)) {  // Load the package file
             if (a) {
                 archive_unref(a);
             }
             free(metadata);
             free(metadata_file);
             free(ret);
-            chdir(curdir);
+            rc = chdir(curdir);
             return NULL;
         }
         archive_set_type(a, "zip", "none");  // Set the archive type to ZIP
@@ -1123,7 +1124,7 @@ visible char *create_package(const char *path) {
 
         // Load the specified TAR.GZ package file into the archive object
         char *datafile = build_string("%s/data.tar.gz", path);
-        if(!a || !datafile || !archive_load(a, datafile)){
+        if (!a || !datafile || !archive_load(a, datafile)) {
             if (a) {
                 archive_unref(a);
             }
@@ -1131,7 +1132,7 @@ visible char *create_package(const char *path) {
             free(metadata);
             free(metadata_file);
             free(ret);
-            chdir(curdir);
+            rc = chdir(curdir);
             return NULL;
         }
 
@@ -1146,7 +1147,7 @@ visible char *create_package(const char *path) {
             free(metadata);
             free(metadata_file);
             free(ret);
-            chdir(curdir);
+            rc = chdir(curdir);
             return NULL;  // Return NULL if changing the directory fails
         }
 
@@ -1181,7 +1182,7 @@ visible char *create_package(const char *path) {
                 fflush(meta_fp);                                   // Flush file
                 fclose(meta_fp);                                   // Close file
             }
-            free(hash);                                         // Free hash after use
+            free(hash);  // Free hash after use
         }
 
         // Change the current working directory back to the original specified path
@@ -1191,7 +1192,7 @@ visible char *create_package(const char *path) {
             free(metadata);
             free(metadata_file);
             free(ret);
-            chdir(curdir);
+            rc = chdir(curdir);
             return NULL;  // Return NULL if changing the directory fails
         }
 
@@ -1199,7 +1200,7 @@ visible char *create_package(const char *path) {
         a = archive_new();
 
         // Load the previously created package file into the new archive object
-        if(!a || !archive_load(a, ret)){
+        if (!a || !archive_load(a, ret)) {
             if (a) {
                 archive_unref(a);
             }
@@ -1207,7 +1208,7 @@ visible char *create_package(const char *path) {
             free(metadata);
             free(metadata_file);
             free(ret);
-            chdir(curdir);
+            rc = chdir(curdir);
             return NULL;
         }
 
@@ -1239,6 +1240,9 @@ visible char *create_package(const char *path) {
         print(_("Failed to change directory back.\n"));
         free(ret);
         return NULL;  // Return NULL if changing back fails
+    }
+    if (rc < 0) {
+        return NULL;
     }
 
     // Return the path of the created package

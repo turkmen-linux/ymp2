@@ -49,7 +49,7 @@ visible bool archive_load(Archive *data, const char *path) {
     if (!data->archive_path) {
         return false;
     }
-    if(!archive_is_archive(data, path)){
+    if (!archive_is_archive(data, path)) {
         warning(_("%s is not an archive.\n"), path);
         return false;
     }
@@ -128,7 +128,7 @@ visible void archive_create(Archive *data) {
 
 static void archive_extract_fn(Archive *data, const char *path, bool all) {
     archive_load_archive(data);
-    if(!data->archive){
+    if (!data->archive) {
         return;
     }
     struct archive_entry *entry;

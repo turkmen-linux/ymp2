@@ -8,7 +8,7 @@
 visible bool deb_extract(const char *package, const char *target) {
     // 1. extract deb package
     Archive *deb = archive_new();
-    if(!archive_load(deb, package)){
+    if (!archive_load(deb, package)) {
         archive_unref(deb);
         return false;
     }
@@ -23,7 +23,7 @@ visible bool deb_extract(const char *package, const char *target) {
         snprintf(path, sizeof(path), "%s/%s", target, files[j]);
         if (strncmp(files[j], "control.tar.", 12) == 0) {
             Archive *control = archive_new();
-            if(!archive_load(control, path)){
+            if (!archive_load(control, path)) {
                 archive_unref(control);
                 for (size_t k = 0; files[k]; k++) {
                     free(files[k]);
@@ -38,7 +38,7 @@ visible bool deb_extract(const char *package, const char *target) {
             unlink(path);
         } else if (strncmp(files[j], "data.tar.", 9) == 0) {
             Archive *data = archive_new();
-            if(!archive_load(data, path)){
+            if (!archive_load(data, path)) {
                 archive_unref(data);
                 for (size_t k = 0; files[k]; k++) {
                     free(files[k]);
