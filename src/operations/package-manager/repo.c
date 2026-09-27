@@ -70,7 +70,9 @@ static int repo_update() {
         char *repo_ctx = trim(repo_data);
         char **repo_urls = split(repo_ctx, "\n");
         for (size_t i = 0; repo_urls[i]; i++) {
-            status += repo_update_op(repo_urls[i], repos[r]);
+            if(strlen(repo_urls[i]) > 0){
+                status += repo_update_op(repo_urls[i], repos[r]);
+            }
             free(repo_urls[i]);
         }
         // free memory
