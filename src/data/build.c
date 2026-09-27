@@ -683,6 +683,17 @@ visible char *build_binary_from_path(const char *path) {
         if (archive_is_archive(a, src_files[i])) {
             // Load the archive and set the target path for extraction
             if(!archive_load(a, src_files[i])){
+                archive_unref(a);
+                for (size_t k = 0; src_files[k]; k++) {
+                    free(src_files[k]);
+                }
+                free(src_files);
+                free(ymp->header);
+                free(ymp->ctx);
+                free(ymp->path);
+                free(ymp);
+                free(build_id);
+                free(ympfile);
                 return NULL;
             }
             archive_set_target(a, ymp->path);
@@ -798,6 +809,11 @@ visible char *create_package(const char *path) {
     if (yaml_has_area(metadata, "source")) {
         Archive *a = archive_new();          // Create a new archive object
         if(!archive_load(a, ret)){                // Load the package file
+            archive_unref(a);
+            free(metadata);
+            free(metadata_file);
+            free(ret);
+            chdir(curdir);
             return NULL;
         }
         archive_set_type(a, "zip", "none");  // Set the archive type to ZIP
@@ -822,6 +838,12 @@ visible char *create_package(const char *path) {
         // Load the specified TAR.GZ package file into the archive object
         char *datafile = build_string("%s/data.tar.gz", path);
         if(!archive_load(a, datafile)){
+            archive_unref(a);
+            free(datafile);
+            free(metadata);
+            free(metadata_file);
+            free(ret);
+            chdir(curdir);
             return NULL;
         }
 
@@ -853,10 +875,10 @@ visible char *create_package(const char *path) {
 
         // Add archive hash to metadata.yaml file
         char *hash = calculate_hash(SHA1, datafile);
-        FILE *metadata = fopen(metadata_file, "a");
-        fprintf(metadata, "    archive-hash: %s\n", hash);  // Append  archive hash
-        fflush(metadata);                                   // Flush file
-        fclose(metadata);                                   // Close file
+        FILE *meta_fp = fopen(metadata_file, "a");
+        fprintf(meta_fp, "    archive-hash: %s\n", hash);  // Append  archive hash
+        fflush(meta_fp);                                   // Flush file
+        fclose(meta_fp);                                   // Close file
         free(hash);                                         // Free hash after use
 
         // Change the current working directory back to the original specified path
@@ -870,6 +892,12 @@ visible char *create_package(const char *path) {
 
         // Load the previously created package file into the new archive object
         if(!archive_load(a, ret)){
+            archive_unref(a);
+            free(datafile);
+            free(metadata);
+            free(metadata_file);
+            free(ret);
+            chdir(curdir);
             return NULL;
         }
 

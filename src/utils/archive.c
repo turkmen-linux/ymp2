@@ -41,10 +41,16 @@ visible void archive_unref(Archive *data) {
 
 visible bool archive_load(Archive *data, const char *path) {
     debug("archive load:  %s\n", path);
+    if (!data || !path) {
+        return false;
+    }
     free(data->archive_path);
     data->archive_path = strdup(path);
+    if (!data->archive_path) {
+        return false;
+    }
     if(!archive_is_archive(data, path)){
-        warning(_("%s is not an archive.\n"));
+        warning(_("%s is not an archive.\n"), path);
         return false;
     }
     archive_set_type(data, "zip", "none");
@@ -76,6 +82,10 @@ visible void archive_set_target(Archive *data, const char *target) {
 
 visible bool archive_is_archive(Archive *data, const char *path) {
     debug("check is archive:  %s\n", path);
+    if (data->archive) {
+        archive_read_free(data->archive);
+        data->archive = NULL;
+    }
     data->archive = archive_read_new();
     archive_read_support_filter_all(data->archive);
     archive_read_support_format_all(data->archive);

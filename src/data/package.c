@@ -305,6 +305,19 @@ visible bool package_extract(Package *pkg) {
             // Create a new archive object for the data file
             Archive *data = archive_new();
             if(!archive_load(data, file)){  // Load the data file into the archive
+                archive_unref(data);
+                free(hash);
+                free(yaml_hash);
+                free(file);
+                for (size_t k = 0; files[k]; k++) {
+                    free(files[k]);
+                }
+                free(files);
+                free(tmpdir);
+                free(rootfs);
+                free(metadata_dir);
+                free(files_dir);
+                free(links_dir);
                 return false;
             }
 

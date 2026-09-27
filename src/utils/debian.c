@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include <utils/archive.h>
@@ -24,6 +25,10 @@ visible bool deb_extract(const char *package, const char *target) {
             Archive *control = archive_new();
             if(!archive_load(control, path)){
                 archive_unref(control);
+                for (size_t k = 0; files[k]; k++) {
+                    free(files[k]);
+                }
+                free(files);
                 return false;
             }
             snprintf(path2, sizeof(path2), "%s/DEBIAN", target);
@@ -35,6 +40,10 @@ visible bool deb_extract(const char *package, const char *target) {
             Archive *data = archive_new();
             if(!archive_load(data, path)){
                 archive_unref(data);
+                for (size_t k = 0; files[k]; k++) {
+                    free(files[k]);
+                }
+                free(files);
                 return false;
             }
             archive_set_target(data, target);
@@ -44,5 +53,9 @@ visible bool deb_extract(const char *package, const char *target) {
         }
         unlink(path);
     }
+    for (size_t k = 0; files[k]; k++) {
+        free(files[k]);
+    }
+    free(files);
     return true;
 }
