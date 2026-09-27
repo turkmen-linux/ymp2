@@ -31,7 +31,8 @@ data = {
     meson.current_build_dir()+'/ymp.pc': get_option('libdir')/ 'pkgconfig',
     'application-x-ymp.svg'            : get_option('prefix')/ 'share/icons/hicolor/scalable/mimetypes',
     'ymp-mime.xml'                     : get_option('prefix') / 'share/mime/packages/',
-    meson.current_build_dir() / 'empty.o': get_option('libdir')
+    meson.current_build_dir() / 'empty.o': get_option('libdir'),
+    'ymp-extract.desktop'              : get_option('prefix')/ 'share/applications'
 }
 
 foreach src, target : data
