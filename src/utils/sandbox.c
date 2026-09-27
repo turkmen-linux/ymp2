@@ -79,6 +79,7 @@ visible void sandbox_apply(sandbox_handle_t *sandbox) {
 
     // New rootfs.
     create_dir("/tmp/ymp-root");
+    rc = mount("tmpfs", "/tmp/ymp-root", "tmpfs", 0, NULL);
     rc = chdir("/tmp/ymp-root");
     if (rc) {
         exit(rc);
@@ -92,11 +93,11 @@ visible void sandbox_apply(sandbox_handle_t *sandbox) {
         char *target = build_string("/tmp/ymp-root%s", parts[1]);
         // A "tmpfs" source is mounted as a fresh tmpfs instead of a bind mount.
         int ret;
+        create_dir(target);
         if (strcmp(parts[0], "tmpfs") == 0) {
             ret = mount("tmpfs", target, "tmpfs", 0, NULL);
         } else {
             debug("%s => %s\n", parts[0], target);
-            create_dir(target);
             ret = mount(parts[0], target, NULL, MS_BIND | MS_REC, NULL);
         }
         if (ret < 0) {

@@ -402,7 +402,6 @@ static void configure_header(ympbuild *ymp) {
     char *tmp = readfile(":/ympbuild-header.sh");
     char *old = NULL;
     ymp->header = str_replace(tmp ? tmp : "", "@buildpath@", ymp->path ? ymp->path : "");
-    free(tmp);
 #define header_replace(H, A, B)           \
     do {                                  \
         old = (H);                        \
